@@ -9,32 +9,29 @@
 
 <style>
   :host {
-    --bright-blue: oklch(51.01% 0.274 263.83);
-    --electric-violet: oklch(53.18% 0.28 296.97);
-    --french-violet: oklch(47.66% 0.246 305.88);
-    --vivid-pink: oklch(69.02% 0.277 332.77);
-    --hot-red: oklch(61.42% 0.238 15.34);
-    --orange-red: oklch(63.32% 0.24 31.68);
-
-    --gray-900: oklch(19.37% 0.006 300.98);
-    --gray-700: oklch(36.98% 0.014 302.71);
-    --gray-400: oklch(70.9% 0.015 304.04);
-
-    --red-to-pink-to-purple-vertical-gradient: linear-gradient(
-      180deg,
-      var(--orange-red) 0%,
-      var(--vivid-pink) 50%,
-      var(--electric-violet) 100%
+    /* Colores de la bandera de Perú - versión suavizada */
+    --peru-red: #C72C41;     /* Rojo peruano suavizado */
+    --peru-white: #FFFFFF;    /* Blanco */
+    /* Colores complementarios */
+    --golden-brown: #B8860B;  /* Marrón dorado en lugar de dorado brillante */
+    --dark-red: #9A1F2E;     /* Rojo oscuro más suave */
+    --light-beige: #F8F4E6;   /* Beige claro más cálido */
+    --dark-brown: #4A3C30;    /* Marrón oscuro más suave para texto */
+    
+    /* Gradientes */
+    --peru-gradient: linear-gradient(
+      135deg,
+      var(--peru-red) 0%,
+      var(--dark-red) 100%
+    );
+    
+    --light-gradient: linear-gradient(
+      135deg,
+      var(--peru-white) 0%,
+      var(--light-beige) 100%
     );
 
-    --red-to-pink-to-purple-horizontal-gradient: linear-gradient(
-      90deg,
-      var(--orange-red) 0%,
-      var(--vivid-pink) 50%,
-      var(--electric-violet) 100%
-    );
-
-    --pill-accent: var(--bright-blue);
+    --pill-accent: var(--peru-red);
 
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
@@ -192,4 +189,145 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 
-<router-outlet />
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>
+
+<footer class="footer">
+  <div class="contact-container">
+    <h2>Contacto</h2>
+    <div class="contact-info">
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <p>Calle Marqués de Zenete #17, Bajo Izquierda<br>46007 Valencia, España</p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone"></i>
+        <p><a href="tel:+34606790925">+34 606 79 09 25</a></p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <p><a href="mailto:info@elperuanojofemar.com">info&#64;elperuanojofemar.com</a></p>
+      </div>
+    </div>
+    <div class="social-media">
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="TripAdvisor"><i class="fab fa-tripadvisor"></i></a>
+    </div>
+  </div>
+  <div class="copyright">
+    <p>&copy; 2025 El Peruano Jofemar. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--peru-gradient);
+    color: var(--peru-white);
+    padding: 3rem 1rem;
+    margin-top: 2rem;
+    border-top: 5px solid var(--golden-brown);
+  }
+
+  .contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #ffffff;
+    font-family: "Inter Tight", sans-serif;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .contact-item i {
+    font-size: 1.5rem;
+    color: var(--golden-brown);
+    min-width: 30px;
+  }
+
+  .contact-item a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .contact-item a:hover {
+    color: var(--golden-brown);
+    text-decoration: underline;
+  }
+
+  .social-media {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .social-media a {
+    color: #ffffff;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+
+  .social-media a:hover {
+    color: var(--golden-brown);
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+  }
+
+  .copyright {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(184, 134, 11, 0.4);
+    font-size: 0.9rem;
+    color: var(--golden-brown);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .main-content {
+    min-height: calc(100vh - 300px); /* Asegura que el footer quede al final */
+    background-color: var(--light-beige);
+    padding: 2rem 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-beige);
+  }
+
+  @media (max-width: 768px) {
+    .contact-info {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .contact-item {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+
+<!-- Agregar Font Awesome para los íconos -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
