@@ -1,0 +1,39 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>{{ title }}</h1>
+      <p>Sabores auténticos de la cocina peruana</p>
+      <a routerLink="/menu" class="cta-button">Ver Menú</a>
+    </div>
+  </section>
+
+  <!-- Featured Dishes -->
+  <section class="featured-dishes">
+    <h2>Nuestros Platos Estrella</h2>
+    <div class="dishes-grid">
+      <div class="dish-card" *ngFor="let dish of featuredDishes">
+        <img [src]="dish.image" [alt]="dish.name" class="dish-image">
+        <div class="dish-info">
+          <h3>{{ dish.name }}</h3>
+          <p>{{ dish.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="about-content">
+      <h2>Sobre Nosotros</h2>
+      <p>En El Peruano Jofemar nos enorgullece ofrecer los auténticos sabores de la cocina peruana, preparados con ingredientes frescos y siguiendo las recetas tradicionales que han pasado de generación en generación.</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <h2>Contáctanos</h2>
+    <p>¿Tienes alguna pregunta o quieres hacer una reservación?</p>
+    <a href="tel:+1234567890" class="contact-button">Llámanos</a>
+  </section>
+</div>
