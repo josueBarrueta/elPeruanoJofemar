@@ -1,39 +1,58 @@
 <div class="home-container">
-  <!-- Hero Section -->
-  <section class="hero">
+  <header class="main-header">
+    <nav>
+      <ul>
+        <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+        <li><a href="#nuestra-carta">Nuestra carta</a></li>
+        <li><a href="#contactanos">Contáctanos</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <div class="hero-banner">
     <div class="hero-content">
-      <h1>{{ title }}</h1>
-      <p>Sabores auténticos de la cocina peruana</p>
-      <a routerLink="/menu" class="cta-button">Ver Menú</a>
+      <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="logo">
     </div>
+  </div>
+
+  <section id="sobre-nosotros" class="section">
+    <h2>Sobre nosotros</h2>
+    <!-- Add your content here -->
   </section>
 
-  <!-- Featured Dishes -->
-  <section class="featured-dishes">
-    <h2>Nuestros Platos Estrella</h2>
-    <div class="dishes-grid">
-      <div class="dish-card" *ngFor="let dish of featuredDishes">
-        <img [src]="dish.image" [alt]="dish.name" class="dish-image">
-        <div class="dish-info">
-          <h3>{{ dish.name }}</h3>
-          <p>{{ dish.description }}</p>
+  <section id="nuestra-carta" class="section">
+    <h2>Nuestra carta</h2>
+    <!-- Add your content here -->
+  </section>
+
+  <section id="contactanos" class="section contact-section">
+    <div class="contact-container">
+      <h2>Contáctanos</h2>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <p>Calle Marqués de Zenete #17, Bajo Izquierda<br>46007 Valencia, España</p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <p><a href="tel:+34606790925">+34 606 79 09 25</a></p>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <p><a href="mailto:info@elperuanojofemar.com">info&#64;elperuanojofemar.com</a></p>
         </div>
       </div>
+      <div class="social-media">
+        <a href="https://www.facebook.com/p/Restaurante-Peruano-Jofemar-100061924994153/" target="_blank" rel="noopener noreferrer" class="social-icon">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/restaurante_peruano_valencia/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 El Peruano Jofemar. Todos los derechos reservados.</p>
+      </div>
     </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="about-section">
-    <div class="about-content">
-      <h2>Sobre Nosotros</h2>
-      <p>En El Peruano Jofemar nos enorgullece ofrecer los auténticos sabores de la cocina peruana, preparados con ingredientes frescos y siguiendo las recetas tradicionales que han pasado de generación en generación.</p>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section class="contact-section">
-    <h2>Contáctanos</h2>
-    <p>¿Tienes alguna pregunta o quieres hacer una reservación?</p>
-    <a href="tel:+1234567890" class="contact-button">Llámanos</a>
   </section>
 </div>
