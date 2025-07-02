@@ -87,21 +87,55 @@ $text-color: #333;
   box-sizing: border-box;
 }
 
+// Estilos para la sección Sobre Nosotros
+#sobre-nosotros.section {
+  min-height: auto;
+  height: auto;
+  padding: 5rem 0;
+  
+  .about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    line-height: 1.6;
+    text-align: justify;
+    text-justify: inter-word;
+    color: #444;
+    font-size: 1.1rem;
+    
+    p {
+      margin-bottom: 1.5rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0 1.5rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  }
+}
+
 // Secciones
 .section {
   background-color: #fff;
   width: 100%;
-  height: 100vh;
-  max-height: 100%;
+  min-height: 100vh;
+  height: auto;
   margin: 0;
-  padding: 0;
-  position: relative;
-  left: 0;
-  right: 0;
+  padding: 2rem 1rem;
   color: #333;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
