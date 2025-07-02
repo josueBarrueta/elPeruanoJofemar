@@ -1,7 +1,3 @@
-// Variables
-$primary-color: #e74c3c;
-$text-color: #333;
-
 // Header
 .main-header {
   position: fixed;
@@ -136,11 +132,6 @@ $text-color: #333;
   box-sizing: border-box;
   position: relative;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
   
   h2 {
     font-size: 2.5rem;
@@ -201,9 +192,6 @@ $text-color: #333;
   text-align: center;
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   
   .hero-content {
     width: 100%;
@@ -376,13 +364,11 @@ $text-color: #333;
     }
 
     .contact-info {
-      flex-direction: column;
       align-items: center;
       text-align: center;
     }
 
     .contact-item {
-      flex-direction: column;
       align-items: center;
       text-align: center;
       width: 100%;
