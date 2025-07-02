@@ -180,12 +180,23 @@ $text-color: #333;
   position: relative;
   left: 0;
   right: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-              url('https://aem-all.accor.com/content/dam/all/hubs/americas/latam/generic-images/all-magazine/machu-picchu-todo-lo-que-necesitas-saber-antes-de-viajar-2024-1.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('https://aem-all.accor.com/content/dam/all/hubs/americas/latam/generic-images/all-magazine/machu-picchu-todo-lo-que-necesitas-saber-antes-de-viajar-2024-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+  }
   color: white;
   text-align: center;
   position: relative;
