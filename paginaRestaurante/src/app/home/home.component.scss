@@ -24,8 +24,10 @@ $text-color: #333;
       justify-content: center;
       list-style: none;
       margin: 0;
-      padding: 0;
-      gap: 0.2rem;
+      padding: 0 5px;
+      gap: 0.1rem;
+      flex-wrap: nowrap;
+      white-space: nowrap;
       
       li {
         a {
@@ -51,19 +53,21 @@ $text-color: #333;
     overflow-x: hidden;
     
     nav ul {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: center;
-      padding: 0.5rem 1rem;
-      white-space: normal;
+      padding: 0.3rem 0.5rem;
+      white-space: nowrap;
+      overflow-x: hidden;
       
       li {
         display: inline-block;
         margin: 0.2rem;
         
         a {
-          font-size: 0.9rem;
-          padding: 0.3rem 0.6rem;
+          font-size: 0.85rem;
+          padding: 0.3rem 0.4rem;
           white-space: nowrap;
+          display: inline-block;
         }
       }
     }
