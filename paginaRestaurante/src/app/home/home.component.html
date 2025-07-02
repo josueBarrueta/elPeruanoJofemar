@@ -34,8 +34,30 @@
   </section>
 
   <section id="nuestra-carta" class="section">
-    <h2>Nuestra carta</h2>
-    <!-- Add your content here -->
+    <div class="section-content">
+      <h2>Nuestra carta</h2>
+      <div class="menu-accordion">
+        <div *ngFor="let category of menuCategories" class="menu-category">
+          <div class="category-header" (click)="toggleCategory(category)">
+            <h3>{{ category.title }}</h3>
+            <span class="toggle-icon">{{ category.isOpen ? '−' : '+' }}</span>
+          </div>
+          <div class="category-content" [class.open]="category.isOpen">
+            <div class="menu-cards">
+              <div *ngFor="let item of category.items" class="menu-card">
+                <div class="menu-item">
+                  <div class="item-info">
+                    <h4>{{ item.name }}</h4>
+                    <span class="price">€{{ item.price.toFixed(2) }}</span>
+                  </div>
+                  <p class="description">{{ item.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section id="contactanos" class="section contact-section">
