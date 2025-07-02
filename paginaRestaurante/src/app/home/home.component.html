@@ -43,7 +43,8 @@
             <span class="toggle-icon">{{ category.isOpen ? '−' : '+' }}</span>
           </div>
           <div class="category-content" [class.open]="category.isOpen">
-            <div class="menu-cards">
+            <!-- Mostrar items directos si existen -->
+            <div class="menu-cards" *ngIf="category.items">
               <div *ngFor="let item of category.items" class="menu-card">
                 <div class="menu-item">
                   <div class="item-info">
@@ -51,6 +52,29 @@
                     <span class="price">€{{ item.price.toFixed(2) }}</span>
                   </div>
                   <p class="description">{{ item.description }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Mostrar subcategorías si existen -->
+            <div class="subcategories" *ngIf="category.subcategories">
+              <div *ngFor="let subcategory of category.subcategories" class="subcategory">
+                <div class="subcategory-header" (click)="toggleSubcategory(category, subcategory)">
+                  <h4>{{ subcategory.title }}</h4>
+                  <span class="toggle-icon">{{ subcategory.isOpen ? '−' : '+' }}</span>
+                </div>
+                <div class="subcategory-content" [class.open]="subcategory.isOpen">
+                  <div class="menu-cards">
+                    <div *ngFor="let item of subcategory.items" class="menu-card">
+                      <div class="menu-item">
+                        <div class="item-info">
+                          <h5>{{ item.name }}</h5>
+                          <span class="price">€{{ item.price.toFixed(2) }}</span>
+                        </div>
+                        <p class="description">{{ item.description }}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

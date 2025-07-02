@@ -1,14 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+interface MenuItem {
+  name: string;
+  price: number;
+  description: string;
+}
+
 interface MenuCategory {
   id: string;
   title: string;
   isOpen: boolean;
-  items: {
-    name: string;
-    price: number;
-    description: string;
+  items?: MenuItem[];
+  subcategories?: {
+    id: string;
+    title: string;
+    isOpen: boolean;
+    items: MenuItem[];
   }[];
 }
 
@@ -45,9 +53,43 @@ export class HomeComponent implements OnInit {
       id: 'bebidas',
       title: 'Bebidas',
       isOpen: false,
-      items: [
-        { name: 'Chicha Morada', price: 2.50, description: 'Refrescante bebida peruana hecha de maíz morado.' },
-        { name: 'Pisco Sour', price: 5.50, description: 'El cóctel bandera del Perú, preparado con pisco, limón, clara de huevo y amargo de angostura.' }
+      subcategories: [
+        {
+          id: 'refrescos',
+          title: 'Refrescos',
+          isOpen: false,
+          items: [
+            { name: 'Inca Kola', price: 2.50, description: 'Refresco peruano de sabor único.' },
+            { name: 'Chicha Morada', price: 3.00, description: 'Refrescante bebida peruana hecha de maíz morado.' }
+          ]
+        },
+        {
+          id: 'cervezas',
+          title: 'Cervezas',
+          isOpen: false,
+          items: [
+            { name: 'Cusqueña', price: 3.50, description: 'Cerveza lager peruana.' },
+            { name: 'Cristal', price: 3.00, description: 'Cerveza rubia peruana.' }
+          ]
+        },
+        {
+          id: 'vinos',
+          title: 'Vinos',
+          isOpen: false,
+          items: [
+            { name: 'Tacama Blanco', price: 4.50, description: 'Vino blanco peruano.' },
+            { name: 'Intipalka Tinto', price: 5.00, description: 'Vino tinto peruano.' }
+          ]
+        },
+        {
+          id: 'cocteles',
+          title: 'Cócteles Peruanos',
+          isOpen: false,
+          items: [
+            { name: 'Pisco Sour', price: 6.50, description: 'El cóctel bandera del Perú, preparado con pisco, limón, clara de huevo y amargo de angostura.' },
+            { name: 'Chilcano', price: 5.50, description: 'Refrescante cóctel de pisco con ginger ale y limón.' }
+          ]
+        }
       ]
     }
   ];
@@ -66,9 +108,27 @@ export class HomeComponent implements OnInit {
     this.menuCategories.forEach(cat => {
       if (cat.id !== category.id) {
         cat.isOpen = false;
+        // Cerrar también todas las subcategorías al cambiar de categoría
+        if (cat.subcategories) {
+          cat.subcategories.forEach(sub => sub.isOpen = false);
+        }
       }
     });
     // Alternar la categoría seleccionada
     category.isOpen = !category.isOpen;
+  }
+
+  toggleSubcategory(category: MenuCategory, subcategory: any): void {
+    if (!category.subcategories) return;
+    
+    // Cerrar otras subcategorías de la misma categoría
+    category.subcategories.forEach(sub => {
+      if (sub.id !== subcategory.id) {
+        sub.isOpen = false;
+      }
+    });
+    
+    // Alternar la subcategoría seleccionada
+    subcategory.isOpen = !subcategory.isOpen;
   }
 }
