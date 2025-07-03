@@ -58,17 +58,17 @@
             
             <!-- Mostrar subcategorías si existen -->
             <div class="subcategories" *ngIf="category.subcategories">
-              <div *ngFor="let subcategory of category.subcategories" class="subcategory">
-                <div class="subcategory-header" (click)="toggleSubcategory(category, subcategory)">
-                  <h4>{{ subcategory.title }}</h4>
+              <div *ngFor="let subcategory of category.subcategories" class="menu-category subcategory">
+                <div class="category-header subcategory-header" (click)="toggleSubcategory(category, subcategory)">
+                  <h3>{{ subcategory.title }}</h3>
                   <span class="toggle-icon">{{ subcategory.isOpen ? '−' : '+' }}</span>
                 </div>
-                <div class="subcategory-content" [class.open]="subcategory.isOpen">
+                <div class="category-content" [class.open]="subcategory.isOpen">
                   <div class="menu-cards">
                     <div *ngFor="let item of subcategory.items" class="menu-card">
                       <div class="menu-item">
                         <div class="item-info">
-                          <h5>{{ item.name }}</h5>
+                          <h4>{{ item.name }}</h4>
                           <span class="price">€{{ item.price.toFixed(2) }}</span>
                         </div>
                         <p class="description">{{ item.description }}</p>
