@@ -182,10 +182,7 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // Opcional: Abrir la primera categoría por defecto
-    if (this.menuCategories.length > 0) {
-      this.toggleCategory(this.menuCategories[0]);
-    }
+    // Todas las categorías comienzan cerradas por defecto
   }
 
   toggleCategory(category: MenuCategory): void {
