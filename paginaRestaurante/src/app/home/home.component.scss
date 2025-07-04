@@ -270,6 +270,13 @@
   border-radius: 8px;
   overflow: hidden;
   
+  // Estilo para los títulos de las subcategorías
+  .subcategory {
+    .category-header h3 {
+      font-size: 1.1rem;
+    }
+  }
+  
   .subcategories {
     padding: 0 1rem 1rem 1rem;
     
