@@ -51,7 +51,18 @@
                     <h4>{{ item.name }}</h4>
                     <span class="price">€{{ item.price.toFixed(2) }}</span>
                   </div>
-                  <p class="description">{{ item.description }}</p>
+                  <div class="allergens-container">
+                    <div class="allergens" *ngIf="item.allergens && item.allergens.length > 0">
+                      <img *ngFor="let allergenId of item.allergens" 
+                          [src]="'assets/images/' + getAllergenImage(allergenId)" 
+                          [alt]="getAllergenName(allergenId)"
+                          class="allergen-icon"
+                          [title]="getAllergenName(allergenId)">
+                    </div>
+                    <p class="no-allergens" *ngIf="!item.allergens || item.allergens.length === 0">
+                      No contiene alérgenos conocidos
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -71,13 +82,37 @@
                           <h4>{{ item.name }}</h4>
                           <span class="price">€{{ item.price.toFixed(2) }}</span>
                         </div>
-                        <p class="description">{{ item.description }}</p>
+                        <div class="allergens-container">
+                          <div class="allergens" *ngIf="item.allergens && item.allergens.length > 0">
+                            <img *ngFor="let allergenId of item.allergens" 
+                                [src]="'assets/images/' + getAllergenImage(allergenId)" 
+                                [alt]="getAllergenName(allergenId)"
+                                class="allergen-icon"
+                                [title]="getAllergenName(allergenId)">
+                          </div>
+                          <p class="no-allergens" *ngIf="!item.allergens || item.allergens.length === 0">
+                            No contiene alérgenos conocidos
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Leyenda de alérgenos -->
+      <div class="allergens-legend">
+        <h3>Leyenda de alérgenos</h3>
+        <div class="allergens-grid">
+          <div *ngFor="let allergen of allergensList" class="allergen-item">
+            <img [src]="'assets/images/' + allergen.image" 
+                 [alt]="allergen.name"
+                 class="allergen-legend-icon">
+            <span>{{ allergen.name }}</span>
           </div>
         </div>
       </div>
