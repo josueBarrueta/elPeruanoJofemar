@@ -30,7 +30,7 @@ jobs:
 
       - name: Instalar dependencias
         working-directory: paginaRestaurante
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Generar la web
         working-directory: paginaRestaurante
