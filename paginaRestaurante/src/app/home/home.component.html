@@ -5,7 +5,6 @@
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
         <li><a href="#nuestra-carta">Nuestra carta</a></li>
-        <li><a href="#contactanos">Contáctanos</a></li>
       </ul>
     </nav>
   </header>
@@ -47,8 +46,8 @@
             <div class="menu-cards" *ngIf="category.items">
               <div *ngFor="let item of category.items" class="menu-card">
                 <div class="menu-item">
-                  <div class="item-image" *ngIf="item.image">
-                    <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image" loading="lazy">
+                  <div class="item-image">
+                    <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy">
                   </div>
                   <div class="item-info">
                     <h4>{{ item.name }}</h4>
@@ -81,8 +80,8 @@
                   <div class="menu-cards">
                     <div *ngFor="let item of subcategory.items" class="menu-card">
                       <div class="menu-item">
-                        <div class="item-image" *ngIf="item.image">
-                          <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image" loading="lazy">
+                        <div class="item-image">
+                          <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy">
                         </div>
                         <div class="item-info">
                           <h4>{{ item.name }}</h4>
@@ -125,35 +124,42 @@
     </div>
   </section>
 
-  <section id="contactanos" class="section contact-section">
-    <div class="contact-container">
-      <h2>Contáctanos</h2>
-      <div class="contact-info">
-        <div class="contact-item">
-          <i class="fas fa-map-marker-alt"></i>
-          <a href="https://maps.app.goo.gl/X5c5Aah1y5yrFJB67" target="_blank" rel="noopener noreferrer">Calle Marqués de Zenete #17, Bajo Izquierda<br>46007 Valencia, España</a>
-        </div>
-        <div class="contact-item">
-          <i class="fas fa-phone"></i>
-          <div class="phone-numbers">
-            <a href="tel:+34606790925">+34 606 79 09 25</a><br>
-            <a href="tel:+34632255275">+34 632 25 52 75</a>
-          </div>
-        </div>
-
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>El Peruano Jofemar</h3>
+        <p>Un rinconcito pequeño con el corazón grande</p>
+        <p>Auténtica gastronomía peruana en Valencia</p>
       </div>
-      <div class="social-media">
-        <a href="https://www.facebook.com/p/Restaurante-Peruano-Jofemar-100061924994153/" target="_blank" rel="noopener noreferrer" class="social-icon">
-          <i class="fab fa-facebook-f"></i>
-        </a>
-        <a href="https://www.instagram.com/restauranteperuano.jofemar/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
-          <i class="fab fa-instagram"></i>
-        </a>
+      <div class="footer-section">
+        <h3>Horario</h3>
+        <p>Domingo, Lunes, Miércoles y Jueves</p>
+        <p>12:30 - 18:00</p>
+        <p>Viernes y Sábados</p>
+        <p>12:30 - 16:00</p>
+        <p>20:00 - 23:00</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p><a href="https://maps.app.goo.gl/X5c5Aah1y5yrFJB67" target="_blank" rel="noopener noreferrer">Calle Marqués de Zenete #17, Bajo Izquierda</a></p>
+        <p>46007 Valencia, España</p>
+        <div class="phone-numbers">
+          <a href="tel:+34606790925">+34 606 79 09 25</a><br>
+          <a href="tel:+34632255275">+34 632 25 52 75</a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/p/Restaurante-Peruano-Jofemar-100061924994153/" target="_blank" rel="noopener noreferrer" class="footer-social-icon">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://www.instagram.com/restauranteperuano.jofemar/" target="_blank" rel="noopener noreferrer" class="footer-social-icon">
+            <i class="fab fa-instagram"></i>
+          </a>
+        </div>
       </div>
     </div>
-  </section>
-
-  <footer class="main-footer">
     <div class="copyright">
       <p>&copy; 2026 El Peruano Jofemar. Todos los derechos reservados.</p>
     </div>
