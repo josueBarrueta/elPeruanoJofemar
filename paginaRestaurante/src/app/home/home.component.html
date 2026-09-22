@@ -12,7 +12,7 @@
   
   <div id="inicio" class="hero-banner">
     <div class="hero-content">
-      <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="logo" loading="eager">
+      <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="logo" loading="eager" fetchpriority="high" decoding="async">
     </div>
   </div>
 
@@ -37,7 +37,7 @@
     <div class="section-content">
       <h2>Nuestra carta</h2>
       <div class="menu-accordion">
-        <div *ngFor="let category of menuCategories" class="menu-category">
+        <div *ngFor="let category of menuCategories; trackBy: trackById" class="menu-category">
           <div class="category-header" (click)="toggleCategory(category)">
             <h3>{{ category.title }}</h3>
             <span class="toggle-icon">{{ category.isOpen ? '−' : '+' }}</span>
@@ -45,10 +45,10 @@
           <div class="category-content" [class.open]="category.isOpen">
             <!-- Mostrar items directos si existen -->
             <div class="menu-cards" *ngIf="category.items">
-              <div *ngFor="let item of category.items" class="menu-card">
+              <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card">
                 <div class="menu-item">
                   <div class="item-image">
-                    <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy">
+                    <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                   </div>
                   <div class="item-info">
                     <h4>{{ item.name }}</h4>
@@ -59,7 +59,7 @@
                       <img *ngFor="let allergenId of item.allergens"
                           [src]="'assets/images/' + getAllergenImage(allergenId)"
                           [alt]="getAllergenName(allergenId)"
-                          class="allergen-icon"
+                          class="allergen-icon" loading="lazy" decoding="async"
                           [title]="getAllergenName(allergenId)">
                     </div>
                     <p class="no-allergens" *ngIf="!item.allergens || item.allergens.length === 0">
@@ -72,17 +72,17 @@
             
             <!-- Mostrar subcategorías si existen -->
             <div class="subcategories" *ngIf="category.subcategories">
-              <div *ngFor="let subcategory of category.subcategories" class="menu-category subcategory">
+              <div *ngFor="let subcategory of category.subcategories; trackBy: trackById" class="menu-category subcategory">
                 <div class="category-header subcategory-header" (click)="toggleSubcategory(category, subcategory)">
                   <h3>{{ subcategory.title }}</h3>
                   <span class="toggle-icon">{{ subcategory.isOpen ? '−' : '+' }}</span>
                 </div>
                 <div class="category-content" [class.open]="subcategory.isOpen">
                   <div class="menu-cards">
-                    <div *ngFor="let item of subcategory.items" class="menu-card">
+                    <div *ngFor="let item of subcategory.items; trackBy: trackByName" class="menu-card">
                       <div class="menu-item">
                         <div class="item-image">
-                          <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy">
+                          <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                         </div>
                         <div class="item-info">
                           <h4>{{ item.name }}</h4>
@@ -93,7 +93,7 @@
                             <img *ngFor="let allergenId of item.allergens"
                                 [src]="'assets/images/' + getAllergenImage(allergenId)"
                                 [alt]="getAllergenName(allergenId)"
-                                class="allergen-icon"
+                                class="allergen-icon" loading="lazy" decoding="async"
                                 [title]="getAllergenName(allergenId)">
                           </div>
                           <p class="no-allergens" *ngIf="!item.allergens || item.allergens.length === 0">
@@ -114,8 +114,8 @@
       <div class="allergens-legend">
         <h3>Leyenda de alérgenos</h3>
         <div class="allergens-grid">
-          <div *ngFor="let allergen of allergensList" class="allergen-item">
-            <img [src]="'assets/images/' + allergen.image" 
+          <div *ngFor="let allergen of allergensList; trackBy: trackById" class="allergen-item">
+            <img [src]="'assets/images/' + allergen.image" loading="lazy" decoding="async"
                  [alt]="allergen.name"
                  class="allergen-legend-icon">
             <span>{{ allergen.name }}</span>

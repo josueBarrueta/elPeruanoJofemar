@@ -8,6 +8,10 @@
   <link rel="icon" type="image/png" href="https://www.consuladoperugalicia.org/wp-content/uploads/2023/05/marcaoficial.png">
   <link rel="apple-touch-icon" href="https://www.consuladoperugalicia.org/wp-content/uploads/2023/05/marcaoficial.png">
   <meta name="theme-color" content="#d52b1e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://cdn.trustindex.io">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
@@ -23,7 +27,10 @@
         const target = document.querySelector('.trustindex-widget');
         if (widget && target && widget.parentElement !== target) target.appendChild(widget);
       };
-      const observer = new MutationObserver(moveWidget);
+      const observer = new MutationObserver(() => {
+        moveWidget();
+        if (document.querySelector('.trustindex-widget > .ti-widget')) observer.disconnect();
+      });
       observer.observe(document.body, { childList: true, subtree: true });
       const script = document.createElement('script');
       script.src = src;
@@ -31,6 +38,7 @@
       script.async = true;
       document.body.appendChild(script);
       moveWidget();
+      window.setTimeout(() => observer.disconnect(), 10000);
     })();
   </script>
 </body>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Allergen {
@@ -14,17 +14,19 @@ interface MenuItem {
   image?: string; // Imagen opcional del plato
 }
 
+interface MenuSubcategory {
+  id: string;
+  title: string;
+  isOpen: boolean;
+  items: MenuItem[];
+}
+
 interface MenuCategory {
   id: string;
   title: string;
   isOpen: boolean;
   items?: MenuItem[];
-  subcategories?: {
-    id: string;
-    title: string;
-    isOpen: boolean;
-    items: MenuItem[];
-  }[];
+  subcategories?: MenuSubcategory[];
 }
 
 @Component({
@@ -32,9 +34,10 @@ interface MenuCategory {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   // Lista de alérgenos con sus IDs, nombres e imágenes
   allergensList: Allergen[] = [
     { id: 'Pescado', name: 'Pescado', image: 'Pescado.png' },
@@ -53,6 +56,8 @@ export class HomeComponent implements OnInit {
     { id: 'Altramuces', name: 'Altramuces', image: 'Altramuces.png' }
 
   ];
+
+  readonly allergenById = new Map(this.allergensList.map(allergen => [allergen.id, allergen]));
 
   menuCategories: MenuCategory[] = [
     {
@@ -589,48 +594,6 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor() { }
-
-  ngOnInit(): void {
-    // Todas las categorías comienzan cerradas por defecto
-    // Trustindex se carga una sola vez desde index.html.
-
-    const moveWidget = window.setInterval(() => {
-      const widget = document.querySelector('body > .ti-widget');
-      const target = document.querySelector('.trustindex-widget');
-
-      if (widget && target && widget.parentElement !== target) {
-        target.appendChild(widget);
-        window.clearInterval(moveWidget);
-      }
-    }, 250);
-
-    window.setTimeout(() => window.clearInterval(moveWidget), 10000);
-    this.handleResizeObserverError();
-  }
-
-  // Manejar error de ResizeObserver de SociableKIT
-  handleResizeObserverError(): void {
-    window.addEventListener('error', (event) => {
-      if (event.message === 'ResizeObserver loop completed with undelivered notifications.' ||
-          event.message?.includes('ResizeObserver')) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    });
-  }
-
-  // Cargar script de Trustindex dinámicamente
-  loadTrustindexScript(): void {
-    if (!document.querySelector('script[src="https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226';
-      script.defer = true;
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }
-
   toggleCategory(category: MenuCategory): void {
     // Cerrar todas las categorías primero
     this.menuCategories.forEach(cat => {
@@ -646,7 +609,7 @@ export class HomeComponent implements OnInit {
     category.isOpen = !category.isOpen;
   }
 
-  toggleSubcategory(category: MenuCategory, subcategory: any): void {
+  toggleSubcategory(category: MenuCategory, subcategory: MenuSubcategory): void {
     if (!category.subcategories) return;
     
     // Cerrar otras subcategorías de la misma categoría
@@ -662,13 +625,21 @@ export class HomeComponent implements OnInit {
 
   // Obtener la ruta de la imagen de un alérgeno por su ID
   getAllergenImage(allergenId: string): string {
-    const allergen = this.allergensList.find(a => a.id === allergenId);
+    const allergen = this.allergenById.get(allergenId);
     return allergen ? allergen.image : '';
   }
 
   // Obtener el nombre de un alérgeno por su ID
   getAllergenName(allergenId: string): string {
-    const allergen = this.allergensList.find(a => a.id === allergenId);
+    const allergen = this.allergenById.get(allergenId);
     return allergen ? allergen.name : '';
+  }
+
+  trackById(_: number, item: { id: string }): string {
+    return item.id;
+  }
+
+  trackByName(_: number, item: MenuItem): string {
+    return item.name;
   }
 }
