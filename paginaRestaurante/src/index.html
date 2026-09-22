@@ -15,5 +15,23 @@
 </head>
 <body>
   <app-root></app-root>
+  <script>
+    (() => {
+      const src = 'https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226';
+      const moveWidget = () => {
+        const widget = document.querySelector('body > .ti-widget');
+        const target = document.querySelector('.trustindex-widget');
+        if (widget && target && widget.parentElement !== target) target.appendChild(widget);
+      };
+      const observer = new MutationObserver(moveWidget);
+      observer.observe(document.body, { childList: true, subtree: true });
+      const script = document.createElement('script');
+      script.src = src;
+      script.defer = true;
+      script.async = true;
+      document.body.appendChild(script);
+      moveWidget();
+    })();
+  </script>
 </body>
 </html>
