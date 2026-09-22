@@ -40,7 +40,7 @@
         <div *ngFor="let category of menuCategories; trackBy: trackById" class="menu-category">
           <div class="category-header" (click)="toggleCategory(category)">
             <h3>{{ category.title }}</h3>
-            <span class="toggle-icon">{{ category.isOpen ? '−' : '+' }}</span>
+            <span class="toggle-icon" [class.is-open]="category.isOpen" aria-hidden="true"></span>
           </div>
           <div class="category-content" [class.open]="category.isOpen">
             <!-- Mostrar items directos si existen -->
@@ -75,7 +75,7 @@
               <div *ngFor="let subcategory of category.subcategories; trackBy: trackById" class="menu-category subcategory">
                 <div class="category-header subcategory-header" (click)="toggleSubcategory(category, subcategory)">
                   <h3>{{ subcategory.title }}</h3>
-                  <span class="toggle-icon">{{ subcategory.isOpen ? '−' : '+' }}</span>
+                  <span class="toggle-icon" [class.is-open]="subcategory.isOpen" aria-hidden="true"></span>
                 </div>
                 <div class="category-content" [class.open]="subcategory.isOpen">
                   <div class="menu-cards">
