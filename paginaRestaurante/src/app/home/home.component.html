@@ -12,7 +12,7 @@
   
   <div id="inicio" class="hero-banner">
     <div class="hero-content">
-      <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="logo">
+      <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="logo" loading="eager">
     </div>
   </div>
 
@@ -48,7 +48,7 @@
               <div *ngFor="let item of category.items" class="menu-card">
                 <div class="menu-item">
                   <div class="item-image" *ngIf="item.image">
-                    <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image">
+                    <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image" loading="lazy">
                   </div>
                   <div class="item-info">
                     <h4>{{ item.name }}</h4>
@@ -82,7 +82,7 @@
                     <div *ngFor="let item of subcategory.items" class="menu-card">
                       <div class="menu-item">
                         <div class="item-image" *ngIf="item.image">
-                          <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image">
+                          <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image" loading="lazy">
                         </div>
                         <div class="item-info">
                           <h4>{{ item.name }}</h4>
