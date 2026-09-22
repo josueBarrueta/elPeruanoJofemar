@@ -972,3 +972,24 @@
     }
   }
 }
+// Mantener las reseñas de Trustindex dentro de la sección blanca
+:host ::ng-deep .trustindex-widget {
+  display: block;
+  width: 100%;
+  min-height: 580px;
+  overflow: hidden;
+}
+:host ::ng-deep .trustindex-widget iframe {
+  display: block !important;
+  width: 100% !important;
+  min-height: 540px !important;
+  border: 0 !important;
+}
+@media (max-width: 768px) {
+  :host ::ng-deep .trustindex-widget {
+    min-height: 640px;
+  }
+  :host ::ng-deep .trustindex-widget iframe {
+    min-height: 600px !important;
+  }
+}
