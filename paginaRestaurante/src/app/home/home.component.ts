@@ -594,6 +594,18 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     // Todas las categorías comienzan cerradas por defecto
     this.loadTrustindexScript();
+
+    const moveWidget = window.setInterval(() => {
+      const widget = document.querySelector('body > .ti-widget');
+      const target = document.querySelector('.trustindex-widget');
+
+      if (widget && target && widget.parentElement !== target) {
+        target.appendChild(widget);
+        window.clearInterval(moveWidget);
+      }
+    }, 250);
+
+    window.setTimeout(() => window.clearInterval(moveWidget), 10000);
     this.handleResizeObserverError();
   }
 
