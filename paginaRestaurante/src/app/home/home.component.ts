@@ -593,6 +593,29 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     // Todas las categorías comienzan cerradas por defecto
+    this.loadSociableKitScript();
+    this.handleResizeObserverError();
+  }
+
+  // Manejar error de ResizeObserver de SociableKIT
+  handleResizeObserverError(): void {
+    window.addEventListener('error', (event) => {
+      if (event.message === 'ResizeObserver loop completed with undelivered notifications.' ||
+          event.message?.includes('ResizeObserver')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    });
+  }
+
+  // Cargar script de SociableKIT dinámicamente
+  loadSociableKitScript(): void {
+    if (!document.querySelector('script[src="https://widgets.sociablekit.com/google-reviews/widget.js"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://widgets.sociablekit.com/google-reviews/widget.js';
+      script.defer = true;
+      document.body.appendChild(script);
+    }
   }
 
   toggleCategory(category: MenuCategory): void {

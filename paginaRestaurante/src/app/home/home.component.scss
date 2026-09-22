@@ -721,6 +721,113 @@
   }
 }
 
+// Sección de reseñas de Google
+.reviews-section {
+  background: white;
+  padding: 1.5rem 1rem 1.5rem 1rem;
+  margin-top: 2rem;
+  
+  .reviews-content {
+    max-width: 100%;
+    margin: 0 auto;
+    
+    h2 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 3rem;
+      position: relative;
+      padding-bottom: 1rem;
+      text-align: center;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: #C72C41;
+      }
+    }
+    
+    .google-reviews-widget {
+      // El widget de SociableKIT tiene sus propios estilos
+      // Intentamos eliminar bordes
+      max-width: 1200px;
+      margin: 0 auto;
+      
+      // Intentar eliminar bordes del widget externo
+      :global(.sk-ww-google-reviews) {
+        border: none !important;
+        box-shadow: none !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+      }
+      
+      :global(.sk-ww-google-reviews *) {
+        border: none !important;
+        box-shadow: none !important;
+      }
+      
+      // Reducir espacio entre el encabezado y las reseñas
+      :global(.sk-ww-google-reviews) {
+        > div {
+          &:nth-child(2) {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+          }
+          
+          > div {
+            margin-bottom: 10px !important;
+          }
+        }
+      }
+      
+      // Ocultar el branding de SociableKIT de forma más agresiva
+      :global(.sk-ww-google-reviews) {
+        > div:last-child {
+          display: none !important;
+        }
+        
+        > div:last-of-type {
+          display: none !important;
+        }
+        
+        > div:last-child > a {
+          display: none !important;
+        }
+        
+        [style*="993333"] {
+          display: none !important;
+        }
+        
+        [style*="rgba(153, 51, 51"] {
+          display: none !important;
+        }
+        
+        a[href*="sociablekit"] {
+          display: none !important;
+        }
+        
+        a[href*="SociableKIT"] {
+          display: none !important;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 3rem 1rem;
+    
+    .reviews-content {
+      h2 {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
 // Footer principal
 .main-footer {
   background: linear-gradient(135deg, #C72C41 0%, #9A1F2E 100%);
