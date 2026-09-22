@@ -724,7 +724,7 @@
 // Sección de reseñas de Google
 .reviews-section {
   background: white;
-  padding: 1.5rem 1rem 1.5rem 1rem;
+  padding: 1.5rem 1rem 3rem;
   margin-top: 2rem;
   
   .reviews-content {
@@ -976,8 +976,10 @@
 :host ::ng-deep .trustindex-widget {
   display: block;
   width: 100%;
-  min-height: 440px;
   overflow: hidden;
+}
+:host ::ng-deep .trustindex-widget .ti-widget-container {
+  margin-bottom: 0 !important;
 }
 :host ::ng-deep .trustindex-widget iframe {
   display: block !important;
@@ -986,9 +988,6 @@
   border: 0 !important;
 }
 @media (max-width: 768px) {
-  :host ::ng-deep .trustindex-widget {
-    min-height: 640px;
-  }
   :host ::ng-deep .trustindex-widget iframe {
     min-height: 600px !important;
   }
