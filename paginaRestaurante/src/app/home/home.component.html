@@ -47,14 +47,17 @@
             <div class="menu-cards" *ngIf="category.items">
               <div *ngFor="let item of category.items" class="menu-card">
                 <div class="menu-item">
+                  <div class="item-image" *ngIf="item.image">
+                    <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image">
+                  </div>
                   <div class="item-info">
                     <h4>{{ item.name }}</h4>
                     <span class="price">€{{ item.price.toFixed(2) }}</span>
                   </div>
                   <div class="allergens-container">
                     <div class="allergens" *ngIf="item.allergens && item.allergens.length > 0">
-                      <img *ngFor="let allergenId of item.allergens" 
-                          [src]="'assets/images/' + getAllergenImage(allergenId)" 
+                      <img *ngFor="let allergenId of item.allergens"
+                          [src]="'assets/images/' + getAllergenImage(allergenId)"
                           [alt]="getAllergenName(allergenId)"
                           class="allergen-icon"
                           [title]="getAllergenName(allergenId)">
@@ -78,14 +81,17 @@
                   <div class="menu-cards">
                     <div *ngFor="let item of subcategory.items" class="menu-card">
                       <div class="menu-item">
+                        <div class="item-image" *ngIf="item.image">
+                          <img [src]="'assets/images/' + item.image" [alt]="item.name" class="dish-image">
+                        </div>
                         <div class="item-info">
                           <h4>{{ item.name }}</h4>
                           <span class="price">€{{ item.price.toFixed(2) }}</span>
                         </div>
                         <div class="allergens-container">
                           <div class="allergens" *ngIf="item.allergens && item.allergens.length > 0">
-                            <img *ngFor="let allergenId of item.allergens" 
-                                [src]="'assets/images/' + getAllergenImage(allergenId)" 
+                            <img *ngFor="let allergenId of item.allergens"
+                                [src]="'assets/images/' + getAllergenImage(allergenId)"
                                 [alt]="getAllergenName(allergenId)"
                                 class="allergen-icon"
                                 [title]="getAllergenName(allergenId)">
@@ -144,9 +150,12 @@
           <i class="fab fa-instagram"></i>
         </a>
       </div>
-      <div class="copyright">
-        <p>&copy; 2025 El Peruano Jofemar. Todos los derechos reservados.</p>
-      </div>
     </div>
   </section>
+
+  <footer class="main-footer">
+    <div class="copyright">
+      <p>&copy; 2026 El Peruano Jofemar. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 </div>

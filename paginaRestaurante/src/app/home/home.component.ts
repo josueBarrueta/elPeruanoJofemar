@@ -11,6 +11,7 @@ interface MenuItem {
   name: string;
   price: number;
   allergens: string[]; // Array de IDs de alérgenos
+  image?: string; // Imagen opcional del plato
 }
 
 interface MenuCategory {
@@ -59,65 +60,75 @@ export class HomeComponent implements OnInit {
       title: 'Primer plato o Entradas',
       isOpen: false,
       items: [
-        { 
-          name: 'Causa rellena', 
+        {
+          name: 'Causa rellena',
           price: 7.50,
-          allergens: ['Pescado', 'Apio']
+          allergens: ['Pescado', 'Apio'],
+          image: 'causa-rellena-mejorada.png'
         },
-        { 
-          name: 'Papa rellena', 
+        {
+          name: 'Papa rellena',
           price: 7.50,
-          allergens: ['Huevos', 'FrutosSecos']
+          allergens: ['Huevos', 'FrutosSecos'],
+          image: 'papa-rellena-mejorada.png'
         },
-        { 
-          name: 'Causa acevichada', 
+        {
+          name: 'Causa acevichada',
           price: 14.50,
-          allergens: ['Pescado', 'Apio']
+          allergens: ['Pescado', 'Apio'],
+          image: 'causa-rellena-acevichada-mejorada.png'
         },
-        { 
-          name: 'Papa a la huancaina', 
+        {
+          name: 'Papa a la huancaina',
           price: 6.50,
-          allergens: ['Huevos', 'Lacteos']
+          allergens: ['Huevos', 'Lacteos'],
+          image: 'papa-a-la-huancaina-mejorada.png'
         },
-        { 
-          name: 'Caldo de gallina', 
+        {
+          name: 'Caldo de gallina',
           price: 9.50,
           allergens: []
         },
-        { 
-          name: 'Ocopa', 
+        {
+          name: 'Ocopa',
           price: 7.50,
-          allergens: ['Huevos', 'Cacahuetes', 'Lacteos']
+          allergens: ['Huevos', 'Cacahuetes', 'Lacteos'],
+          image: 'ocopa-mejorada.png'
         },
-        { 
-          name: 'Palta rellena', 
+        {
+          name: 'Palta rellena',
           price: 7.50,
-          allergens: ['Pescado', 'Soja']
+          allergens: ['Pescado', 'Soja'],
+          image: 'aguacate-relleno-mejorada.png'
         },
-        { 
-          name: 'Tamal', 
+        {
+          name: 'Tamal',
           price: 6.50,
-          allergens: ['Huevos']
+          allergens: ['Huevos'],
+          image: 'tamal-mejorada.png'
         },
-        { 
-          name: 'Anticuchos', 
+        {
+          name: 'Anticuchos',
           price: 12.00,
-          allergens: []
+          allergens: [],
+          image: 'anticuchos-mejorada.png'
         },
-        { 
-          name: 'Ensalada Jofemar', 
+        {
+          name: 'Ensalada Jofemar',
           price: 8.50,
           allergens: ['Pescado', 'Huevos']
         },
-        { 
-          name: 'Leche de tigre', 
+        {
+          name: 'Leche de tigre',
           price: 13.50,
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos']
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
+          image: 'leche-de-tigre-mejorada.png'
         },
-        { 
-          name: 'Aguacate relleno', 
+        {
+          name: 'Aguacate relleno',
           price: 7.00,
-          allergens: []
+          allergens: [],
+          image: 'aguacate-relleno-mejorada.png'
         }
       ]
     },
@@ -126,75 +137,86 @@ export class HomeComponent implements OnInit {
       title: 'Pescado y Mariscos',
       isOpen: false,
       items: [
-        { 
-          name: 'Picante de marisco', 
-          price: 14.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Lacteos'] 
+        {
+          name: 'Picante de marisco',
+          price: 14.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Lacteos']
         },
-        { 
-          name: 'Chupe de langostino', 
-          price: 14.50, 
-          allergens: ['Crustaceos', 'Lacteos', 'Huevos'] 
+        {
+          name: 'Chupe de langostino',
+          price: 14.50,
+          allergens: ['Crustaceos', 'Lacteos', 'Huevos'],
+          image: 'chupe_de_langostinos.png'
         },
-        { 
-          name: 'Parihuela', 
-          price: 14.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos'] 
+        {
+          name: 'Parihuela',
+          price: 14.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
+          image: 'parihuela.png'
         },
-        { 
-          name: 'Ceviche mixto', 
-          price: 18.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos'] 
+        {
+          name: 'Ceviche mixto',
+          price: 18.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
+          image: 'ceviche_mixto.png'
         },
-        { 
-          name: 'Ceviche de pescado', 
-          price: 16.50, 
-          allergens: ['Pescado', 'Lacteos'] 
+        {
+          name: 'Ceviche de pescado',
+          price: 16.50,
+          allergens: ['Pescado', 'Lacteos'],
+          image: 'ceviche_de_pescado.png'
         },
-        { 
-          name: 'Chaufa de mariscos', 
-          price: 14.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja'] 
+        {
+          name: 'Chaufa de mariscos',
+          price: 14.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja'],
+          image: 'chaufa_de_mariscos.png'
         },
-        { 
-          name: 'Jalea personal', 
-          price: 19.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Huevos', 'Gluten'] 
+        {
+          name: 'Jalea personal',
+          price: 19.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Huevos', 'Gluten'],
+          image: 'jalea.png'
         },
-        { 
-          name: 'Filete de pescado con frijoles y arroz', 
-          price: 10.00, 
-          allergens: ['Pescado'] 
+        {
+          name: 'Filete de pescado con frijoles y arroz',
+          price: 10.00,
+          allergens: ['Pescado']
         },
-        { 
-          name: 'Arroz con mariscos', 
-          price: 16.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos'] 
+        {
+          name: 'Arroz con mariscos',
+          price: 16.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
+          image: 'arroz_con_mariscos.png'
         },
-        { 
-          name: 'Aeropuerto de mariscos', 
-          price: 16.50, 
-          allergens: ['Gluten', 'Soja'] 
+        {
+          name: 'Aeropuerto de mariscos',
+          price: 16.50,
+          allergens: ['Gluten', 'Soja'],
+          image: 'aeropuerto.png'
         },
-        { 
-          name: 'Chicharrón de pescado', 
-          price: 14.50, 
-          allergens: ['Pescado', 'Gluten', 'Huevos'] 
+        {
+          name: 'Chicharrón de pescado',
+          price: 14.50,
+          allergens: ['Pescado', 'Gluten', 'Huevos'],
+          image: 'chicharron_de_pescado.png'
         },
-        { 
-          name: 'Dorada frita', 
-          price: 16.50, 
-          allergens: ['Pescado'] 
+        {
+          name: 'Dorada frita',
+          price: 16.50,
+          allergens: ['Pescado']
         },
-        { 
-          name: 'Pescado a lo macho', 
-          price: 16.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Lacteos'] 
+        {
+          name: 'Pescado a lo macho',
+          price: 16.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Lacteos'],
+          image: 'pescado_a_lo_macho.png'
         },
-        { 
-          name: 'Pescado a la chorrillana', 
-          price: 12.00, 
-          allergens: ['Pescado', 'Soja'] 
+        {
+          name: 'Pescado a la chorrillana',
+          price: 12.00,
+          allergens: ['Pescado', 'Soja'],
+          image: 'pescado_a_la_chorrillana.png'
         }
       ]
     },
@@ -203,110 +225,125 @@ export class HomeComponent implements OnInit {
       title: 'Carnes y Pollo',
       isOpen: false,
       items: [
-        { 
-          name: 'Tallarín saltado de ternera', 
-          price: 12.50, 
-          allergens: ['Gluten', 'Soja'] 
+        {
+          name: 'Tallarín saltado de ternera',
+          price: 12.50,
+          allergens: ['Gluten', 'Soja'],
+          image: 'tallarin_saltado_ternera.png'
         },
-        { 
-          name: 'Tallarín saltado de mariscos', 
-          price: 14.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Gluten'] 
+        {
+          name: 'Tallarín saltado de mariscos',
+          price: 14.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Gluten'],
+          image: 'tallarin_saltado_de_mariscos.png'
         },
-        { 
-          name: 'Tallarín verde con bistec', 
-          price: 12.50, 
-          allergens: ['Gluten', 'Lacteos'] 
+        {
+          name: 'Tallarín verde con bistec',
+          price: 12.50,
+          allergens: ['Gluten', 'Lacteos'],
+          image: 'tallarin_verde_bistec.png'
         },
-        { 
-          name: 'Seco de cordero con frijoles', 
-          price: 12.50, 
-          allergens: ['Lacteos'] 
+        {
+          name: 'Seco de cordero con frijoles',
+          price: 12.50,
+          allergens: ['Lacteos']
         },
-        { 
-          name: 'Super parrillada Jofemar', 
-          price: 16.50, 
-          allergens: [] 
+        {
+          name: 'Super parrillada Jofemar',
+          price: 16.50,
+          allergens: [],
+          image: 'parrillada_jofemar.png'
         },
-        { 
-          name: 'Bistec a lo pobre', 
-          price: 12.50, 
-          allergens: ['Huevos', 'Soja'] 
+        {
+          name: 'Bistec a lo pobre',
+          price: 12.50,
+          allergens: ['Huevos', 'Soja'],
+          image: 'bistec_a_lo_pobre.png'
         },
-        { 
-          name: 'Arroz chaufa', 
-          price: 12.00, 
-          allergens: ['Huevos', 'Soja'] 
+        {
+          name: 'Arroz chaufa',
+          price: 12.00,
+          allergens: ['Huevos', 'Soja'],
+          image: 'arroz_chaufa.png'
         },
-        { 
-          name: 'Arroz chaufa de ternera', 
-          price: 13.50, 
-          allergens: ['Huevos', 'Soja'] 
+        {
+          name: 'Arroz chaufa de ternera',
+          price: 13.50,
+          allergens: ['Huevos', 'Soja']
         },
-        { 
-          name: 'Arroz con pato', 
-          price: 15.50, 
-          allergens: [] 
+        {
+          name: 'Arroz con pato',
+          price: 15.50,
+          allergens: [],
+          image: 'arroz_con_pato.png'
         },
-        { 
-          name: 'Lomo saltado', 
-          price: 13.50, 
-          allergens: ['Soja'] 
+        {
+          name: 'Lomo saltado',
+          price: 13.50,
+          allergens: ['Soja'],
+          image: 'lomo_saltado.png'
         },
-        { 
-          name: 'Aeropuerto', 
-          price: 12.50, 
-          allergens: ['Gluten', 'Soja'] 
+        {
+          name: 'Aeropuerto',
+          price: 12.50,
+          allergens: ['Gluten', 'Soja'],
+          image: 'aeropuerto.png'
         },
-        { 
-          name: 'Aeropuerto de ternera', 
-          price: 13.50, 
-          allergens: ['Gluten', 'Soja'] 
+        {
+          name: 'Aeropuerto de ternera',
+          price: 13.50,
+          allergens: ['Gluten', 'Soja']
         },
-        { 
-          name: 'Mostrito', 
-          price: 16.50, 
-          allergens: ['Soja'] 
+        {
+          name: 'Mostrito',
+          price: 16.50,
+          allergens: ['Soja'],
+          image: 'mostrito.png'
         },
-        { 
-          name: 'Arroz con pollo', 
-          price: 12.50, 
-          allergens: [] 
+        {
+          name: 'Arroz con pollo',
+          price: 12.50,
+          allergens: [],
+          image: 'arroz_con_pollo.png'
         },
-        { 
-          name: 'Pollo broaster', 
-          price: 13.50, 
-          allergens: ['Gluten', 'Huevos'] 
+        {
+          name: 'Pollo broaster',
+          price: 13.50,
+          allergens: ['Gluten', 'Huevos'],
+          image: 'pollo_broaster.png'
         },
-        { 
-          name: 'Aji de gallina', 
-          price: 12.50, 
-          allergens: ['Gluten', 'Huevos', 'Lacteos'] 
+        {
+          name: 'Aji de gallina',
+          price: 12.50,
+          allergens: ['Gluten', 'Huevos', 'Lacteos'],
+          image: 'aji_de_gallina.png'
         },
-        { 
-          name: 'Chicharrón de cerdo con camote y salsa criolla', 
-          price: 10.00, 
-          allergens: [] 
+        {
+          name: 'Chicharrón de cerdo con camote y salsa criolla',
+          price: 10.00,
+          allergens: []
         },
-        { 
-          name: 'Chuleta de cerdo con patatas fritas', 
-          price: 10.00, 
-          allergens: [] 
+        {
+          name: 'Chuleta de cerdo con patatas fritas',
+          price: 10.00,
+          allergens: []
         },
-        { 
-          name: 'Seco de pollo con frijoles y arroz', 
-          price: 12.50, 
-          allergens: [] 
+        {
+          name: 'Seco de pollo con frijoles y arroz',
+          price: 12.50,
+          allergens: []
         },
-        { 
-          name: 'Seco de ternera con frijoles y arroz', 
-          price: 12.50, 
-          allergens: [] 
+        {
+          name: 'Seco de ternera con frijoles y arroz',
+          price: 12.50,
+          allergens: [],
+          image: 'seco_ternera_frijoles.png'
         },
-        { 
-          name: 'Salchipapa', 
-          price: 7.50, 
-          allergens: [] 
+        {
+          name: 'Salchipapa',
+          price: 7.50,
+          allergens: [],
+          image: 'salchipapa.png'
         }
       ]
     },
@@ -315,80 +352,85 @@ export class HomeComponent implements OnInit {
       title: 'Platos Combinados',
       isOpen: false,
       items: [
-        { 
-          name: 'Chicharrón de pescado con ceviche de pescado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Lacteos', 'Gluten', 'Huevos'] 
+        {
+          name: 'Chicharrón de pescado con ceviche de pescado',
+          price: 22.50,
+          allergens: ['Pescado', 'Lacteos', 'Gluten', 'Huevos'],
+          image: 'chicharron_con_ceviche.png'
         },
-        { 
-          name: 'Chaufa de mariscos con ceviche de pescado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Lacteos', 'Crustaceos', 'Moluscos', 'Soja'] 
+        {
+          name: 'Chaufa de mariscos con ceviche de pescado',
+          price: 22.50,
+          allergens: ['Pescado', 'Lacteos', 'Crustaceos', 'Moluscos', 'Soja'],
+          image: 'chaufa_con_ceviche.png'
         },
-        { 
-          name: 'Arroz chaufa con tallarín saltado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Arroz chaufa con tallarín saltado',
+          price: 22.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'],
+          image: 'arroz_chaufa_con_tallarin.png'
         },
-        { 
-          name: 'Aeropuerto con chicharrón de pescado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Aeropuerto con chicharrón de pescado',
+          price: 22.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con arroz chaufa', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con arroz chaufa',
+          price: 22.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con aeropuerto', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con aeropuerto',
+          price: 22.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con arroz con marisco', 
-          price: 25.00, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con arroz con marisco',
+          price: 25.00,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con chaufa de pescado', 
-          price: 25.00, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con chaufa de pescado',
+          price: 25.00,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con chaufa de marisco', 
-          price: 25.00, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con chaufa de marisco',
+          price: 25.00,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche mixto con aeropuerto', 
-          price: 25.00, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche mixto con aeropuerto',
+          price: 25.00,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche mixto con chicharrón de pescado', 
-          price: 25.00, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche mixto con chicharrón de pescado',
+          price: 25.00,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Ceviche de pescado con chicharrón de pescado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos'] 
+        {
+          name: 'Ceviche de pescado con chicharrón de pescado',
+          price: 22.50,
+          allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
-        { 
-          name: 'Trio Jofemar', 
-          price: 33.00, 
-          allergens: [] 
+        {
+          name: 'Trio Jofemar',
+          price: 33.00,
+          allergens: [],
+          image: 'trio_ceviche_chicharron_chaufa.png'
         },
-        { 
-          name: 'Trio Marino', 
-          price: 33.00, 
-          allergens: [] 
+        {
+          name: 'Trio Marino',
+          price: 33.00,
+          allergens: [],
+          image: 'trio_ceviche_huancaina_arroz_pollo.png'
         },
-        { 
-          name: 'Arroz chaufa y chicharrón de pescado', 
-          price: 22.50, 
-          allergens: ['Pescado', 'Lacteos', 'Gluten', 'Huevos'] 
+        {
+          name: 'Arroz chaufa y chicharrón de pescado',
+          price: 22.50,
+          allergens: ['Pescado', 'Lacteos', 'Gluten', 'Huevos']
         }
       ]
     },
@@ -411,25 +453,25 @@ export class HomeComponent implements OnInit {
             { name: 'Inca Kola Pequeña', price: 3.50, allergens: [] },
             { name: 'Inca Kola 2L 1/2', price: 9.50, allergens: [] },
             { name: 'Inca Kola 625ml', price: 7.00, allergens: [] },
-            
+
             // Aguas
             { name: 'Agua Pequeña', price: 1.50, allergens: [] },
             { name: 'Agua Grande', price: 2.00, allergens: [] },
             { name: 'Agua con Gas', price: 2.50, allergens: [] },
-            
+
             // Bebidas de la casa
             { name: 'Tinto de Verano', price: 2.50, allergens: [] },
             { name: 'Casera', price: 2.50, allergens: [] },
             { name: 'Zumo de Melocotón', price: 2.00, allergens: [] },
-            
+
             // Por vaso
             { name: 'Vaso de Chicha Morada', price: 2.50, allergens: [] },
             { name: 'Vaso de Maracuyá', price: 2.50, allergens: [] },
-            
+
             // 1/2 Jarra
             { name: '1/2 Jarra de Chicha Morada', price: 4.00, allergens: [] },
             { name: '1/2 Jarra de Maracuyá', price: 4.00, allergens: [] },
-            
+
             // Jarra completa
             { name: 'Jarra de Chicha Morada', price: 7.00, allergens: [] },
             { name: 'Jarra de Maracuyá', price: 7.00, allergens: [] },
@@ -451,7 +493,7 @@ export class HomeComponent implements OnInit {
             { name: 'Amstel', price: 2.00, allergens: ['Gluten'] },
             { name: 'Amstel Sin Alcohol', price: 2.50, allergens: ['Gluten'] },
             { name: 'Radler', price: 2.50, allergens: ['Gluten'] },
-            
+
             // Formatos de cerveza de barril
             { name: 'Caña', price: 2.00, allergens: ['Gluten'] },
             { name: 'Doble', price: 2.50, allergens: ['Gluten'] },
@@ -531,18 +573,18 @@ export class HomeComponent implements OnInit {
       title: 'Postres',
       isOpen: false,
       items: [
-        { name: 'Tarta de Chocolate', price: 0, allergens: ['Gluten', 'Huevos', 'Lacteos'] },
-        { name: 'Crema Volteada', price: 0, allergens: ['Huevos', 'Lacteos'] },
-        { name: 'Tarta Helada', price: 0, allergens: ['Gluten', 'Huevos', 'Lacteos'] },
-        { name: 'Helado de Lucuma', price: 0, allergens: ['Lacteos'] },
-        { name: 'Tarta de Tres Chocolates', price: 0, allergens: ['Gluten', 'Lacteos'] },
-        { name: 'Pudin', price: 0, allergens: ['Gluten', 'Huevos', 'Lacteos', 'FrutosSecos'] },
-        { name: 'Arroz con Leche', price: 0, allergens: ['Lacteos'] },
-        { name: 'Mazamorra', price: 0, allergens: ['Lacteos'] },
-        { name: 'Gelatina', price: 0, allergens: [] },
-        { name: 'Pay de Limón', price: 0, allergens: ['Gluten', 'Huevos'] },
-        { name: 'Tarta de Queso con Arándanos', price: 0, allergens: ['Gluten', 'Huevos', 'Lacteos', 'FrutosSecos'] },
-        { name: 'Tarta de Vainilla', price: 0, allergens: ['Huevos', 'Lacteos'] }
+        { name: 'Tarta de Chocolate', price: 4.50, allergens: ['Gluten', 'Huevos', 'Lacteos'], image: 'tarta_chocolate.png' },
+        { name: 'Crema Volteada', price: 4.00, allergens: ['Huevos', 'Lacteos'], image: 'crema_volteada.png' },
+        { name: 'Tarta Helada', price: 5.00, allergens: ['Gluten', 'Huevos', 'Lacteos'], image: 'tarta_helada.png' },
+        { name: 'Helado de Lucuma', price: 3.50, allergens: ['Lacteos'], image: 'helado_lucuma.png' },
+        { name: 'Tarta de Tres Chocolates', price: 5.50, allergens: ['Gluten', 'Lacteos'], image: 'tarta_tres_chocolates.png' },
+        { name: 'Pudin', price: 3.50, allergens: ['Gluten', 'Huevos', 'Lacteos', 'FrutosSecos'], image: 'pudin.png' },
+        { name: 'Arroz con Leche', price: 3.00, allergens: ['Lacteos'], image: 'arroz_con_leche_combinado.png' },
+        { name: 'Mazamorra', price: 3.00, allergens: ['Lacteos'], image: 'mazamorra.png' },
+        { name: 'Gelatina', price: 2.50, allergens: [], image: 'gelatina.png' },
+        { name: 'Pay de Limón', price: 4.50, allergens: ['Gluten', 'Huevos'], image: 'pay_limon.png' },
+        { name: 'Tarta de Queso con Arándanos', price: 5.50, allergens: ['Gluten', 'Huevos', 'Lacteos', 'FrutosSecos'], image: 'tarta_queso_arandano.png' },
+        { name: 'Tarta de Vainilla', price: 4.50, allergens: ['Huevos', 'Lacteos'], image: 'torta_vainilla.png' }
       ]
     }
   ];
