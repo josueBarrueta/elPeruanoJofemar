@@ -725,11 +725,12 @@
 .main-footer {
   background: linear-gradient(135deg, #C72C41 0%, #9A1F2E 100%);
   color: white;
-  padding: 3rem 2rem 1.5rem;
+  padding: 3rem 1rem 1.5rem;
   text-align: center;
   width: 100%;
   margin: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
 
   .footer-content {
     max-width: 1200px;
@@ -738,6 +739,9 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 1rem;
 
     .footer-section {
       h3 {
