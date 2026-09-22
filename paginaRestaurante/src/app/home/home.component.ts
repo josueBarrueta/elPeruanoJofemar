@@ -445,37 +445,37 @@ export class HomeComponent implements OnInit {
           isOpen: false,
           items: [
             // Bebidas en botella/lata
-            { name: 'Coca Cola', price: 2.00, allergens: [] },
-            { name: 'Seven Up', price: 2.00, allergens: [] },
-            { name: 'Fanta', price: 2.00, allergens: [] },
-            { name: 'Nestea', price: 2.30, allergens: [] },
-            { name: 'Aquarius', price: 2.30, allergens: [] },
-            { name: 'Inca Kola Pequeña', price: 3.50, allergens: [] },
-            { name: 'Inca Kola 2L 1/2', price: 9.50, allergens: [] },
-            { name: 'Inca Kola 625ml', price: 7.00, allergens: [] },
+            { name: 'Coca Cola', price: 2.00, allergens: [], image: 'Coca-Cola.webp' },
+            { name: 'Seven Up', price: 2.00, allergens: [], image: 'seven-up.jpg' },
+            { name: 'Fanta', price: 2.00, allergens: [], image: 'fanta.png'},
+            { name: 'Nestea', price: 2.30, allergens: [], image: 'nestea.jpg'},
+            { name: 'Aquarius', price: 2.30, allergens: [], image: 'aquarius.jpg'},
+            { name: 'Inca Kola Pequeña', price: 3.50, allergens: [], image: 'inca-kola-pequena.jpeg'},
+            { name: 'Inca Kola 2L 1/2', price: 9.50, allergens: [], image: 'inca-kola-grande.jpeg'},
+            { name: 'Inca Kola 625ml', price: 7.00, allergens: [], image: 'inca-kola-gordita.jpeg'},
 
             // Aguas
-            { name: 'Agua Pequeña', price: 1.50, allergens: [] },
-            { name: 'Agua Grande', price: 2.00, allergens: [] },
-            { name: 'Agua con Gas', price: 2.50, allergens: [] },
+            { name: 'Agua Pequeña', price: 1.50, allergens: [], image: 'agua-pequena.jpeg'},
+            { name: 'Agua Grande', price: 2.00, allergens: [], image: 'agua-grande.jpeg'},
+            { name: 'Agua con Gas', price: 2.50, allergens: [], image: 'agua-con-gas.jpeg'},
 
             // Bebidas de la casa
-            { name: 'Tinto de Verano', price: 2.50, allergens: [] },
-            { name: 'Casera', price: 2.50, allergens: [] },
-            { name: 'Zumo de Melocotón', price: 2.00, allergens: [] },
+            { name: 'Tinto de Verano', price: 2.50, allergens: [], image: 'tinto-de-verano.jpeg'},
+            { name: 'Casera', price: 2.50, allergens: [], image: 'casera.jpeg'},
+            { name: 'Zumo de Melocotón', price: 2.00, allergens: [], image: 'zumo-melocoton.jpeg'},
 
             // Por vaso
-            { name: 'Vaso de Chicha Morada', price: 2.50, allergens: [] },
-            { name: 'Vaso de Maracuyá', price: 2.50, allergens: [] },
+            { name: 'Vaso de Chicha Morada', price: 2.50, allergens: [], image: 'vaso-chicha-morada.jpeg'},
+            { name: 'Vaso de Maracuyá', price: 2.50, allergens: [], image: 'vaso-maracuya.jpeg'},
 
             // 1/2 Jarra
-            { name: '1/2 Jarra de Chicha Morada', price: 4.00, allergens: [] },
-            { name: '1/2 Jarra de Maracuyá', price: 4.00, allergens: [] },
+            { name: '1/2 Jarra de Chicha Morada', price: 4.00, allergens: [], image: 'media-jarra-chicha-morada.jpeg'},
+            { name: '1/2 Jarra de Maracuyá', price: 4.00, allergens: [], image: 'media-jarra-maracuya.jpeg'},
 
             // Jarra completa
-            { name: 'Jarra de Chicha Morada', price: 7.00, allergens: [] },
-            { name: 'Jarra de Maracuyá', price: 7.00, allergens: [] },
-            { name: 'Jarra de Sangría', price: 12.50, allergens: [] }
+            { name: 'Jarra de Chicha Morada', price: 7.00, allergens: [], image: 'jarra-chicha-morada.jpeg'},
+            { name: 'Jarra de Maracuyá', price: 7.00, allergens: [], image: 'jarra-maracuya.jpeg'},
+            { name: 'Jarra de Sangría', price: 12.50, allergens: [], image: 'jarra-sangria.jpeg'}
           ]
         },
         {
