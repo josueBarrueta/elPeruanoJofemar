@@ -593,7 +593,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     // Todas las categorías comienzan cerradas por defecto
-    this.loadSociableKitScript();
+    this.loadTrustindexScript();
     this.handleResizeObserverError();
   }
 
@@ -608,12 +608,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Cargar script de SociableKIT dinámicamente
-  loadSociableKitScript(): void {
-    if (!document.querySelector('script[src="https://widgets.sociablekit.com/google-reviews/widget.js"]')) {
+  // Cargar script de Trustindex dinámicamente
+  loadTrustindexScript(): void {
+    if (!document.querySelector('script[src="https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226"]')) {
       const script = document.createElement('script');
-      script.src = 'https://widgets.sociablekit.com/google-reviews/widget.js';
+      script.src = 'https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226';
       script.defer = true;
+      script.async = true;
       document.body.appendChild(script);
     }
   }
