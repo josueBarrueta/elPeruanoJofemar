@@ -523,7 +523,7 @@ export class HomeComponent {
           title: 'Vino de la Casa',
           isOpen: false,
           items: [
-            { name: 'Abadía (Tinto)', price: 7.00, allergens: ['Sulfitos'] }
+            { name: 'Abadía (Tinto)', price: 7.00, allergens: ['Sulfitos'], image: 'abadia-tinto.jpeg'}
           ]
         },
         {
@@ -531,11 +531,11 @@ export class HomeComponent {
           title: 'Vinos Tintos',
           isOpen: false,
           items: [
-            { name: 'Abadía', price: 7.00, allergens: ['Sulfitos'] },
-            { name: 'Arrios Joven', price: 7.00, allergens: ['Sulfitos'] },
-            { name: 'El Coto', price: 12.00, allergens: ['Sulfitos'] },
-            { name: 'Estola Crianza', price: 9.50, allergens: ['Sulfitos'] },
-            { name: 'Hoya Cadenas 130', price: 10.50, allergens: ['Sulfitos'] }
+            { name: 'Abadía', price: 7.00, allergens: ['Sulfitos'], image: 'abadia-tinto.jpeg'},
+            { name: 'Arrios Joven', price: 7.00, allergens: ['Sulfitos'], image: 'arrios-joven-tinto.jpeg'},
+            { name: 'El Coto', price: 12.00, allergens: ['Sulfitos'], image: 'el-coto-tinto.jpeg'},
+            { name: 'Estola Crianza', price: 9.50, allergens: ['Sulfitos'], image: 'estola-crianza-tinto.jpeg'},
+            { name: 'Hoya Cadenas 130', price: 10.50, allergens: ['Sulfitos'], image: 'hoya-cadenas-130-tinto.jpeg'}
           ]
         },
         {
@@ -543,9 +543,9 @@ export class HomeComponent {
           title: 'Vinos Blancos',
           isOpen: false,
           items: [
-            { name: 'Abadía de Roble', price: 7.00, allergens: ['Sulfitos'] },
-            { name: 'El Coto', price: 12.00, allergens: ['Sulfitos'] },
-            { name: 'Boyante', price: 9.00, allergens: ['Sulfitos'] }
+            { name: 'Abadía de Roble', price: 7.00, allergens: ['Sulfitos'], image: 'abadia-roble-blanco.jpeg'},
+            { name: 'El Coto', price: 12.00, allergens: ['Sulfitos'], image: 'el-coto-blanco.jpeg'},
+            { name: 'Boyante', price: 9.00, allergens: ['Sulfitos'], image: 'boyante-blanco.jpeg'}
           ]
         },
         {
@@ -553,7 +553,7 @@ export class HomeComponent {
           title: 'Vinos Rosados',
           isOpen: false,
           items: [
-            { name: 'Viña Campus', price: 10.50, allergens: ['Sulfitos'] }
+            { name: 'Viña Campus', price: 10.50, allergens: ['Sulfitos'], image: 'vina-campus.jpeg' }
           ]
         },
         {
