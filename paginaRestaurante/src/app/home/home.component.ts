@@ -462,11 +462,11 @@ export class HomeComponent {
           isOpen: false,
           items: [
             // Bebidas en botella/lata
-            { name: 'Coca Cola', price: 2.00, allergens: [], image: 'Coca-Cola.webp' },
-            { name: 'Seven Up', price: 2.00, allergens: [], image: 'seven-up.jpg' },
-            { name: 'Fanta', price: 2.00, allergens: [], image: 'fanta.png'},
-            { name: 'Nestea', price: 2.30, allergens: [], image: 'nestea.jpg'},
-            { name: 'Aquarius', price: 2.30, allergens: [], image: 'aquarius.jpg'},
+            { name: 'Coca Cola', price: 2.00, allergens: [], image: 'coca-cola.jpeg' },
+            { name: 'Seven Up', price: 2.00, allergens: [], image: 'seven-up.jpeg' },
+            { name: 'Fanta', price: 2.00, allergens: [], image: 'fanta.jpeg'},
+            { name: 'Nestea', price: 2.30, allergens: [], image: 'nestea.jpeg'},
+            { name: 'Aquarius', price: 2.30, allergens: [], image: 'aquarius.jpeg'},
             { name: 'Inca Kola Pequeña', price: 3.50, allergens: [], image: 'inca-kola-pequena.jpeg'},
             { name: 'Inca Kola 2L 1/2', price: 9.50, allergens: [], image: 'inca-kola-grande.jpeg'},
             { name: 'Inca Kola 625ml', price: 7.00, allergens: [], image: 'inca-kola-gordita.jpeg'},
@@ -561,10 +561,10 @@ export class HomeComponent {
           title: 'Cócteles Peruanos',
           isOpen: false,
           items: [
-            { name: 'Pisco Sour', price: 6.50, allergens: ['Huevos'] },
-            { name: 'Chilcano de Pisco', price: 6.50, allergens: [] },
-            { name: 'Perú Libre', price: 6.50, allergens: [] },
-            { name: 'Capitán', price: 6.00, allergens: [] }
+            { name: 'Pisco Sour', price: 6.50, allergens: ['Huevos'], image: 'pisco-sour.jpeg'},
+            { name: 'Chilcano de Pisco', price: 6.50, allergens: [], image: 'chilcano-pisco.jpeg'},
+            { name: 'Perú Libre', price: 6.50, allergens: [], image: 'peru-libre.jpeg'},
+            { name: 'Capitán', price: 6.00, allergens: [], image: 'capitan.jpeg'}
           ]
         },
         {
