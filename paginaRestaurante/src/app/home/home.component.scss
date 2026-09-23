@@ -85,14 +85,21 @@
 
 // Estilos para la sección Sobre Nosotros
 #sobre-nosotros.section {
-  min-height: auto;
+  min-height: 0;
   height: auto;
-  padding: 5rem 0;
+  padding: 4rem 0 2rem;
   
-  .about-content {
-    max-width: 800px;
+  .about-layout {
+    width: min(1180px, 100%);
     margin: 0 auto;
-    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .about-content {
+    padding: 0 1rem;
     line-height: 1.6;
     text-align: justify;
     text-justify: inter-word;
@@ -247,6 +254,57 @@
         transform: scale(1.2);
       }
     }
+
+    .about-menu-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #C72C41;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s ease;
+      &:hover { border-color: #C72C41; }
+    }
+  }
+
+  .about-faq {
+    width: 100%;
+    margin-top: 1rem;
+    border-bottom: 3px solid #C72C41;
+    background: #fff;
+
+    .about-question {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      border: 0;
+      background: transparent;
+      color: #333;
+      font: inherit;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover { background: rgba(199, 44, 65, 0.06); }
+    }
+
+    .about-question-arrow { color: #C72C41; font-size: 2rem; line-height: 0.7; transform: rotate(90deg); transition: transform 0.25s ease; &.open { transform: rotate(-90deg); } }
+    .about-answer { padding: 0 1.25rem 1.1rem; color: #666; line-height: 1.6; animation: accordionIn 0.35s ease both; p { margin: 0; } }
+  }
+
+  .about-faq-list { width: min(1000px, 100%); margin: 0 auto; }
+
+  .about-values {
+    width: min(1180px, 100%);
+    margin: 3rem auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    article { padding: 1.4rem; border-top: 3px solid #C72C41; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: left; span { color: #C72C41; font-size: 0.8rem; font-weight: 700; } h3 { margin: 0.35rem 0; color: #333; } p { margin: 0; color: #666; line-height: 1.5; } }
   }
   
   .no-allergens {
@@ -340,9 +398,9 @@
 
 // Estilos para la sección de menú
 #nuestra-carta.section {
-  min-height: auto;
+  min-height: 0;
   height: auto;
-  padding: 5rem 0;
+  padding: 3rem 0 4rem;
 
   .section-content {
     max-width: 1400px;
@@ -780,6 +838,9 @@
     }
   }
 
+  #sobre-nosotros .about-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  #sobre-nosotros .about-values { grid-template-columns: 1fr; margin-top: 2rem; }
+
 }
 
 // Las categorías principales usan el mismo pliegue visual que las bebidas.
@@ -994,6 +1055,32 @@
         }
       }
 
+      .contact-actions {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1rem;
+
+        .contact-action {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.45rem;
+          width: 116px;
+          padding: 0.65rem 0.85rem;
+          border: 1px solid rgba(255, 255, 255, 0.55);
+          border-radius: 999px;
+          color: white;
+          text-decoration: none;
+          font-size: 0.9rem;
+          transition: background 0.2s ease, color 0.2s ease;
+
+          &:hover { background: white; color: #C72C41; }
+          i { font-size: 1rem; }
+        }
+      }
+
       .footer-social {
         display: flex;
         gap: 1rem;
@@ -1111,6 +1198,56 @@
   width: 100% !important;
   min-height: 540px !important;
   border: 0 !important;
+}
+
+#sobre-nosotros.section .about-faq-list {
+  width: min(1000px, 100%);
+  margin: 0 auto;
+}
+
+#sobre-nosotros.section .about-faq {
+  width: 100%;
+  margin: 0;
+  border-bottom: 0;
+  background: #fff;
+}
+
+#sobre-nosotros.section .about-question {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.1rem 1.25rem 1.5rem;
+  border: 0;
+  background: transparent;
+  color: #333;
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  &:hover { background: transparent; color: #333; }
+}
+
+#sobre-nosotros.section .about-question-arrow {
+  position: static;
+  display: block;
+  margin-top: 0.8rem;
+  color: #C72C41;
+  font-size: 2rem;
+  line-height: 0.7;
+  transform: rotate(90deg);
+  transition: transform 0.25s ease;
+  &.open { transform: rotate(270deg); }
+}
+
+#sobre-nosotros.section .about-answer {
+  padding: 0 1.25rem 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  animation: accordionIn 0.35s ease both;
+  p { margin: 0; }
 }
 @media (max-width: 768px) {
   :host ::ng-deep .trustindex-widget iframe {

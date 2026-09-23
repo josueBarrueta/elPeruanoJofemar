@@ -41,6 +41,15 @@ export class HomeComponent {
   selectedCategory: MenuCategory | null = null;
   selectedParentCategory: MenuCategory | null = null;
   showAllergens = false;
+  activeAboutQuestion: number | null = null;
+
+  aboutFaqs = [
+    { question: '¿Cómo comenzó nuestra historia?', answer: 'Prácticamente nacidos en Perú, decidimos arriesgarlo todo en busca de un futuro mejor en España. Comenzamos trabajando con mucha dedicación y humildad en una pequeña cafetería, un paso inicial que nos permitió conocer la ciudad, sus gentes y sus sabores.' },
+    { question: '¿Cuándo nació nuestro primer restaurante?', answer: 'En 2010, gracias al esfuerzo constante y a la pasión por nuestra tierra y nuestra cocina, dimos vida a nuestro primer restaurante en la emblemática calle Julio Antonio de Valencia.' },
+    { question: '¿De dónde viene el nombre Jofemar y cómo ha crecido nuestra familia?', answer: 'Lo llamamos Jofemar porque es una mezcla de los nombres de nuestra familia en ese momento: Josué, nuestro primer hijo; Mariana, la madre; y Fernando, el padre. Hoy, la familia ha crecido con la llegada de dos nuevos miembros, Thiago y Samantha, quienes llenan nuestro hogar y nuestro restaurante de alegría y energía renovada.' },
+    { question: '¿Qué significa nuestro lema?', answer: 'El primer local, aunque pequeño, se convirtió en un refugio lleno de sabor y cariño. Así nació nuestro eslogan: “Un rinconcito pequeño con el corazón grande”.' },
+    { question: '¿Qué representa Jofemar hoy?', answer: 'Después de varios años de éxito y reconocimiento, seguimos creciendo como punto de encuentro para los amantes de la auténtica gastronomía peruana en Valencia. En Jofemar, cada plato cuenta una historia, cada ingrediente es una herencia y cada cliente es parte de nuestra familia.' }
+  ];
   // Lista de alérgenos con sus IDs, nombres e imágenes
   allergensList: Allergen[] = [
     { id: 'Pescado', name: 'Pescado', image: 'Pescado.png' },
@@ -651,6 +660,21 @@ export class HomeComponent {
 
   toggleAllergens(): void {
     this.showAllergens = !this.showAllergens;
+  }
+
+  toggleAboutAnswer(index: number): void {
+    this.activeAboutQuestion = this.activeAboutQuestion === index ? null : index;
+  }
+
+  get whatsappUrl(): string {
+    const hour = new Date().getHours();
+    const greeting = hour < 12
+      ? '¡Hola, buenos días! ¿Podría reservar una mesa, por favor?'
+      : hour < 20
+        ? '¡Hola, buenas tardes! ¿Podría reservar una mesa, por favor?'
+        : '¡Hola, buenas noches! ¿Podría reservar una mesa, por favor?';
+
+    return `https://wa.me/34606790925?text=${encodeURIComponent(greeting)}`;
   }
 
 
