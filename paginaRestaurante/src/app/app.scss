@@ -1,0 +1,43 @@
+.site-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  animation: siteLoaderOut 0.5s ease 1s forwards;
+
+  img {
+    width: min(34vw, 165px);
+    height: auto;
+    display: block;
+    opacity: 0;
+    animation: logoReveal 0.3s ease 0.2s forwards;
+  }
+
+}
+
+@keyframes siteLoaderOut {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes logoReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-loader {
+    animation-duration: 0.01s;
+    animation-delay: 0s;
+  }
+}
