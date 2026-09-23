@@ -38,6 +38,9 @@ interface MenuCategory {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
+  selectedCategory: MenuCategory | null = null;
+  selectedParentCategory: MenuCategory | null = null;
+  showAllergens = false;
   // Lista de alérgenos con sus IDs, nombres e imágenes
   allergensList: Allergen[] = [
     { id: 'Pescado', name: 'Pescado', image: 'Pescado.png' },
@@ -608,6 +611,48 @@ export class HomeComponent {
     // Alternar la categoría seleccionada
     category.isOpen = !category.isOpen;
   }
+
+  openCategory(category: MenuCategory): void {
+    this.selectedCategory = category;
+    this.selectedParentCategory = null;
+    window.location.hash = `carta/${category.id}`;
+    setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  openSubcategory(category: MenuCategory, subcategory: MenuSubcategory): void {
+    this.selectedParentCategory = category;
+    this.selectedCategory = { ...category, title: `${category.title} · ${subcategory.title}`, items: subcategory.items, subcategories: undefined };
+    window.location.hash = `carta/${category.id}/${subcategory.id}`;
+    setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  closeMenuView(): void {
+    if (this.selectedParentCategory) {
+      const parent = this.selectedParentCategory;
+      this.selectedCategory = parent;
+      this.selectedParentCategory = null;
+      window.location.hash = `carta/${parent.id}`;
+      setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      return;
+    }
+    this.selectedCategory = null;
+    window.location.hash = 'nuestra-carta';
+    setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  goToMenu(event: Event): void {
+    event.preventDefault();
+    this.selectedCategory = null;
+    this.selectedParentCategory = null;
+    this.showAllergens = false;
+    window.location.hash = 'nuestra-carta';
+    setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  toggleAllergens(): void {
+    this.showAllergens = !this.showAllergens;
+  }
+
 
   toggleSubcategory(category: MenuCategory, subcategory: MenuSubcategory): void {
     if (!category.subcategories) return;

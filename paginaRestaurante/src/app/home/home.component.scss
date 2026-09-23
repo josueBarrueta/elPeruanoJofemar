@@ -461,6 +461,7 @@
       max-height: 5000px; 
       padding: 1.5rem;
       padding-top: 0.5rem;
+      animation: accordionIn 0.4s ease both;
     }
   }
   
@@ -610,6 +611,162 @@
   }
 }
 
+.allergens-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 2rem auto 0;
+  padding: 0.8rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: white;
+  color: #555;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover { border-color: #C72C41; background: #C72C41; color: white; }
+}
+
+.category-link {
+  transition: background-color 0.25s ease, transform 0.25s ease;
+  &:hover { background: rgba(199, 44, 65, 0.06) !important; transform: translateX(4px); }
+}
+
+.main-category-fold {
+  margin-bottom: 0.75rem;
+  padding: 1.1rem 1.25rem !important;
+  border-bottom: 3px solid #C72C41;
+  background: transparent;
+  transition: background 0.2s ease, padding 0.2s ease;
+
+  &:hover {
+    padding-left: 1.5rem !important;
+    background: rgba(199, 44, 65, 0.06) !important;
+    color: #333 !important;
+    transform: none;
+
+    h3 { color: #333 !important; }
+    .toggle-icon::after { color: #C72C41; }
+  }
+
+  h3 {
+    width: auto !important;
+    padding: 0 !important;
+    font-size: 1.35rem !important;
+    text-align: left;
+
+    &::after { display: none; }
+  }
+
+  .toggle-icon {
+    right: 1.25rem;
+    width: auto;
+    height: auto;
+    border: 0;
+    transform: none !important;
+
+    &::after {
+      content: '→';
+      color: #C72C41;
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.menu-page {
+  width: 100%;
+  animation: menuPageIn 0.35s ease both;
+  position: relative;
+  scroll-margin-top: 80px;
+  background: #fff;
+  .back-to-menu { border: 1px solid #C72C41; background: white; color: #C72C41; border-radius: 999px; padding: 0.75rem 1.25rem; cursor: pointer; font: inherit; font-weight: 600; transition: all 0.2s ease; &:hover { background: #C72C41; color: white; } }
+  .menu-page-heading { margin: 2rem auto 2.5rem; max-width: 720px; .menu-page-kicker { color: #C72C41; text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.75rem; font-weight: 700; } h3 { margin: 0.5rem 0; font-size: clamp(2rem, 5vw, 3.5rem); color: #333; } p { margin: 0; color: #666; font-size: 1.05rem; } }
+  .menu-page-subcategories { display: grid; gap: 0.75rem; max-width: 900px; margin: 0 auto 2rem; }
+  .menu-page-fold-header { width: 100%; display: flex; justify-content: space-between; align-items: center; border: 0; border-bottom: 3px solid #C72C41; background: transparent; color: #333; padding: 1.1rem 1.25rem; cursor: pointer; font: inherit; font-size: 1.35rem; font-weight: 600; text-align: left; transition: background 0.2s ease, padding 0.2s ease; &:hover { background: rgba(199, 44, 65, 0.06); padding-left: 1.5rem; } .fold-arrow { color: #C72C41; font-size: 1.5rem; }
+  }
+  .menu-cards {
+    padding-top: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.2rem;
+    width: 100%;
+  }
+
+  .menu-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: cardIn 0.9s ease both;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(100, 22, 35, 0.14);
+      border-color: rgba(199, 44, 65, 0.35);
+    }
+  }
+
+  @for $i from 1 through 20 {
+    .menu-card:nth-child(#{$i}) { animation-delay: #{($i - 1) * 100}ms; }
+  }
+
+  .menu-item {
+    padding: 1.2rem;
+
+    .item-image {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .dish-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .item-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+
+      h4 { margin: 0; font-size: 1.05rem; color: #333; font-weight: 600; }
+      .price { color: #C72C41; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+    }
+  }
+
+  @media (min-width: 768px) {
+    .menu-cards { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  }
+
+  @media (min-width: 1024px) {
+    .menu-cards { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  }
+
+  @media (max-width: 768px) {
+    .menu-cards { grid-template-columns: 1fr; gap: 1rem; }
+    .menu-item { padding: 1rem; .item-image { height: 160px; } .item-info { align-items: flex-start; } }
+  }
+}
+
+@keyframes menuPageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes accordionIn { from { opacity: 0.2; } to { opacity: 1; } }
+
+
 @media (max-width: 768px) {
   #nuestra-carta.section {
     padding: 4rem 1rem;
@@ -623,6 +780,46 @@
     }
   }
 
+}
+
+// Las categorías principales usan el mismo pliegue visual que las bebidas.
+#nuestra-carta.section .menu-accordion > .menu-category > .main-category-fold {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+  padding: 1.1rem 1.25rem !important;
+  border-bottom: 3px solid #C72C41 !important;
+  background: transparent !important;
+  transform: none !important;
+
+  &:hover { background: rgba(199, 44, 65, 0.06) !important; color: #333 !important; padding-left: 1.5rem !important; }
+
+  h3 {
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+    color: #333 !important;
+    &::after { display: none !important; }
+  }
+
+  .toggle-icon {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    border: 0 !important;
+    transform: none !important;
+    &::after { content: '→'; color: #C72C41; font-size: 1.5rem; }
+  }
+
+  &:hover .toggle-icon::after { color: #C72C41; }
+}
+
+#nuestra-carta.section .menu-accordion > .menu-category {
+  margin-bottom: 0 !important;
 }
 
 // Sección de reseñas de Google

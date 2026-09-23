@@ -4,7 +4,7 @@
       <ul>
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
-        <li><a href="#nuestra-carta">Nuestra carta</a></li>
+        <li><a href="#nuestra-carta" (click)="goToMenu($event)">Nuestra carta</a></li>
         <li><a href="#contactanos">Contáctanos</a></li>
       </ul>
     </nav>
@@ -36,9 +36,9 @@
   <section id="nuestra-carta" class="section">
     <div class="section-content">
       <h2>Nuestra carta</h2>
-      <div class="menu-accordion">
+      <div class="menu-accordion" *ngIf="!selectedCategory">
         <div *ngFor="let category of menuCategories; trackBy: trackById" class="menu-category">
-          <div class="category-header" (click)="toggleCategory(category)">
+          <div class="category-header category-link main-category-fold" (click)="openCategory(category)" role="button" tabindex="0">
             <h3>{{ category.title }}</h3>
             <span class="toggle-icon" [class.is-open]="category.isOpen" aria-hidden="true"></span>
           </div>
@@ -73,7 +73,7 @@
             <!-- Mostrar subcategorías si existen -->
             <div class="subcategories" *ngIf="category.subcategories">
               <div *ngFor="let subcategory of category.subcategories; trackBy: trackById" class="menu-category subcategory">
-                <div class="category-header subcategory-header" (click)="toggleSubcategory(category, subcategory)">
+                <div class="category-header subcategory-header category-link" (click)="openSubcategory(category, subcategory)" role="button" tabindex="0">
                   <h3>{{ subcategory.title }}</h3>
                   <span class="toggle-icon" [class.is-open]="subcategory.isOpen" aria-hidden="true"></span>
                 </div>
@@ -109,9 +109,44 @@
           </div>
         </div>
       </div>
+
+      <div class="menu-page" *ngIf="selectedCategory as category">
+        <button class="back-to-menu" type="button" (click)="closeMenuView()">
+          ← {{ selectedParentCategory ? 'Volver a Bebidas' : 'Volver a la carta' }}
+        </button>
+        <div class="menu-page-heading">
+          <span class="menu-page-kicker">Carta Jofemar</span>
+          <h3>{{ category.title }}</h3>
+          <p>Descubre nuestros platos preparados con el sabor de la cocina peruana.</p>
+        </div>
+        <div class="menu-page-subcategories" *ngIf="category.subcategories">
+          <div class="menu-page-fold" *ngFor="let subcategory of category.subcategories; trackBy: trackById">
+            <button type="button" class="menu-page-fold-header" (click)="openSubcategory(category, subcategory)">
+              <span>{{ subcategory.title }}</span>
+              <span class="fold-arrow">→</span>
+            </button>
+          </div>
+        </div>
+        <div class="menu-cards" *ngIf="category.items">
+          <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card">
+            <div class="menu-item">
+              <div class="item-image"><img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async"></div>
+              <div class="item-info"><h4>{{ item.name }}</h4><span class="price">€{{ item.price.toFixed(2) }}</span></div>
+              <div class="allergens-container">
+                <div class="allergens" *ngIf="item.allergens?.length"><img *ngFor="let allergenId of item.allergens" [src]="'assets/images/' + getAllergenImage(allergenId)" [alt]="getAllergenName(allergenId)" class="allergen-icon" [title]="getAllergenName(allergenId)"></div>
+                <p class="no-allergens" *ngIf="!item.allergens?.length">No contiene alérgenos conocidos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
+      <button class="allergens-toggle" type="button" (click)="toggleAllergens()" [attr.aria-expanded]="showAllergens">
+        <span>{{ showAllergens ? 'Ocultar alérgenos' : 'Ver leyenda de alérgenos' }}</span>
+      </button>
+
       <!-- Leyenda de alérgenos -->
-      <div class="allergens-legend">
+      <div class="allergens-legend" *ngIf="showAllergens">
         <h3>Leyenda de alérgenos</h3>
         <div class="allergens-grid">
           <div *ngFor="let allergen of allergensList; trackBy: trackById" class="allergen-item">
