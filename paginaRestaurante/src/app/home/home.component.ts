@@ -433,13 +433,13 @@ export class HomeComponent {
           allergens: ['Pescado', 'Crustaceos', 'Moluscos', 'Soja', 'Gluten', 'Huevos']
         },
         {
-          name: 'Trio Jofemar',
+          name: 'Trio Marino',
           price: 33.00,
           allergens: [],
           image: 'trio_ceviche_chicharron_chaufa.png'
         },
         {
-          name: 'Trio Marino',
+          name: 'Trio Criollo',
           price: 33.00,
           allergens: [],
           image: 'trio_ceviche_huancaina_arroz_pollo.png'
