@@ -11,14 +11,19 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = 'El Peruano Jofemar';
   currentYear = new Date().getFullYear();
-  isRouteTransitioning = false;
+  isRouteTransitioning = true;
+  private transitionTimer?: number;
   constructor(router: Router) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'));
-        // La transición se muestra una sola vez, al terminar de entrar en la nueva pantalla.
-        this.isRouteTransitioning = true;
-        window.setTimeout(() => this.isRouteTransitioning = false, 1100);
+        // Reiniciamos una única animación al entrar en la pantalla nueva.
+        this.isRouteTransitioning = false;
+        window.requestAnimationFrame(() => {
+          this.isRouteTransitioning = true;
+          window.clearTimeout(this.transitionTimer);
+          this.transitionTimer = window.setTimeout(() => this.isRouteTransitioning = false, 1100);
+        });
       }
     });
   }

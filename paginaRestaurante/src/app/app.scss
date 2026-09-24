@@ -6,7 +6,7 @@
   pointer-events: none;
   display: grid;
   place-items: center;
-  animation: siteLoaderOut 0.5s ease 1s forwards;
+  visibility: hidden;
 
   img {
     width: min(34vw, 165px);
