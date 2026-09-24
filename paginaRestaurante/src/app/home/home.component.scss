@@ -916,18 +916,18 @@
 @media (max-width: 700px) {
   .dish-modal { grid-template-columns: 1fr; max-height: 92vh; }
   .dish-modal-image-wrap {
-    height: auto;
-    min-height: 0;
+    height: min(62vh, 500px);
+    min-height: 250px;
     background-image: none !important;
     &::before { display: none; }
   }
   .dish-modal-image {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     min-height: 0;
-    max-height: 52vh;
-    object-fit: contain;
+    object-fit: cover;
+    object-position: center;
   }
 }
 
