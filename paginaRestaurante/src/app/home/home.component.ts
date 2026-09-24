@@ -12,6 +12,7 @@ interface MenuItem {
   price: number;
   allergens: string[]; // Array de IDs de alérgenos
   image?: string; // Imagen opcional del plato
+  description?: string;
 }
 
 interface MenuSubcategory {
@@ -42,6 +43,7 @@ export class HomeComponent {
   selectedParentCategory: MenuCategory | null = null;
   showAllergens = false;
   activeAboutQuestion: number | null = null;
+  selectedItem: MenuItem | null = null;
 
   aboutFaqs = [
     { question: '¿Cómo comenzó nuestra historia?', answer: 'Prácticamente nacidos en Perú, decidimos arriesgarlo todo en busca de un futuro mejor en España. Comenzamos trabajando con mucha dedicación y humildad en una pequeña cafetería, un paso inicial que nos permitió conocer la ciudad, sus gentes y sus sabores.' },
@@ -649,6 +651,16 @@ export class HomeComponent {
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
+  openDish(item: MenuItem): void {
+    this.selectedItem = item;
+    document.body.classList.add('modal-open');
+  }
+
+  closeDish(): void {
+    this.selectedItem = null;
+    document.body.classList.remove('modal-open');
+  }
+
   goToMenu(event: Event): void {
     event.preventDefault();
     this.selectedCategory = null;
@@ -702,6 +714,65 @@ export class HomeComponent {
   getAllergenName(allergenId: string): string {
     const allergen = this.allergenById.get(allergenId);
     return allergen ? allergen.name : '';
+  }
+
+  getDishDescription(item: MenuItem): string {
+    if (item.description) return item.description;
+
+    const name = item.name.toLowerCase();
+    const descriptions: Array<[string, string]> = [
+      ['causa acevichada', 'Causa de patata amarilla sazonada con lima, rellena y coronada con pescado marinado al estilo ceviche.'],
+      ['causa rellena', 'Patata amarilla prensada con lima y ají amarillo, rellena de una cremosa preparación de pescado y verduras.'],
+      ['causa', 'Patata amarilla sazonada con lima y ají amarillo, acompañada de un relleno fresco y sabroso.'],
+      ['papa rellena', 'Patata rellena de un guiso casero de carne, cebolla y especias, rebozada y frita hasta quedar dorada.'],
+      ['papa a la huancaina', 'Rodajas de patata cocida con la tradicional salsa huancaína de queso, leche, ají amarillo y galleta.'],
+      ['ocopa', 'Patata cocida acompañada de salsa de huacatay, queso, leche, cacahuetes y ají amarillo.'],
+      ['caldo de gallina', 'Caldo casero reconfortante con gallina, patata, fideos y hierbas aromáticas.'],
+      ['tamal', 'Masa de maíz sazonada y cocida al vapor, con un sabroso relleno y envuelta en hoja de plátano.'],
+      ['anticuchos', 'Brochetas de corazón de ternera marinadas con ají panca y especias, acompañadas de patata y maíz.'],
+      ['ensalada', 'Ensalada fresca de la casa con verduras seleccionadas y un aliño ligero.'],
+      ['leche de tigre', 'Marinada cítrica de pescado con lima, cebolla roja, ají y cilantro, servida bien fría.'],
+      ['ceviche mixto', 'Pescado, mariscos y cebolla roja marinados en lima, ají y cilantro, acompañados de guarnición peruana.'],
+      ['ceviche de pescado', 'Dados de pescado fresco marinados en lima con cebolla roja, ají y cilantro.'],
+      ['parihuela', 'Sopa marina intensa con pescado, mariscos, tomate, ají y hierbas, servida bien caliente.'],
+      ['marisco', 'Preparación de arroz o pasta salteada con mariscos, verduras y el toque criollo de la casa.'],
+      ['pescado', 'Pescado seleccionado preparado con sazón peruana y acompañado de guarnición de la casa.'],
+      ['jalea', 'Fritura crujiente de pescado y mariscos con cebolla criolla, lima y salsa de la casa.'],
+      ['tallarín', 'Tallarines salteados al wok con verduras, salsa de soja y el ingrediente principal elegido.'],
+      ['chaufa', 'Arroz salteado al wok con huevo, cebolleta, salsa de soja y el ingrediente principal del plato.'],
+      ['aeropuerto', 'Combinación de arroz chaufa y tallarines salteados al wok con verduras y salsa de soja.'],
+      ['lomo saltado', 'Tiras de ternera salteadas con cebolla, tomate, cilantro y salsa de soja, con patatas y arroz.'],
+      ['seco', 'Guiso lento de carne con cilantro y especias, servido con frijoles y arroz blanco.'],
+      ['arroz con pato', 'Arroz verde aromático preparado con cilantro y acompañado de pato guisado al estilo norteño.'],
+      ['pollo broaster', 'Pollo marinado y crujiente, acompañado de patatas fritas y salsa de la casa.'],
+      ['ají de gallina', 'Guiso cremoso de gallina deshilachada con ají amarillo, pan, leche y nueces, servido con arroz.'],
+      ['chicharrón de cerdo', 'Cerdo cocinado hasta quedar tierno y dorado, servido con camote y salsa criolla.'],
+      ['salchipapa', 'Patatas fritas con salchicha dorada y salsas para compartir.'],
+      ['tarta', 'Porción de tarta casera elaborada con ingredientes seleccionados y servida lista para disfrutar.'],
+      ['crema volteada', 'Postre suave de huevo, leche y caramelo, con textura cremosa y delicada.'],
+      ['helado', 'Helado cremoso de lúcuma, con el sabor dulce y característico de esta fruta peruana.'],
+      ['arroz con leche', 'Postre tradicional de arroz cocido lentamente con leche, canela y un toque de limón.'],
+      ['mazamorra', 'Postre peruano dulce y cremoso preparado con fruta, canela y especias.'],
+      ['chicha morada', 'Bebida tradicional peruana de maíz morado, piña, canela y clavo, servida fría.'],
+      ['maracuyá', 'Bebida refrescante de maracuyá con su equilibrio natural entre dulzor y acidez.'],
+      ['pisco sour', 'Cóctel peruano de pisco, lima, jarabe de goma y clara de huevo, terminado con amargo de angostura.'],
+      ['chilcano', 'Cóctel de pisco con ginger ale, lima y unas gotas de amargo, ligero y refrescante.'],
+      ['capitán', 'Cóctel clásico de pisco y vermut rojo, equilibrado y aromático.'],
+      ['vino', 'Copa o botella de vino seleccionada para acompañar nuestra cocina.'],
+      ['cerveza', 'Cerveza fría servida en el formato elegido.'],
+      ['cuzqueña', 'Cerveza peruana de carácter maltoso, servida bien fría.'],
+      ['agua', 'Agua mineral servida fría, con o sin gas según la elección.'],
+      ['coca cola', 'Refresco de cola servido frío.'],
+      ['fanta', 'Refresco de naranja servido frío.'],
+      ['seven up', 'Refresco de lima-limón servido frío.'],
+      ['nestea', 'Refresco de té con limón servido frío.'],
+      ['aquarius', 'Bebida refrescante con sales minerales y sabor ligero.'],
+      ['zumo', 'Zumo refrescante de fruta servido frío.'],
+      ['chupito', 'Medida de licor servida fría, ideal para terminar la comida.']
+    ];
+
+    const match = descriptions.find(([keyword]) => name.includes(keyword));
+    return match?.[1] ?? `Preparación de la casa elaborada con ingredientes seleccionados y la sazón peruana de Jofemar.`;
   }
 
   trackById(_: number, item: { id: string }): string {

@@ -41,7 +41,7 @@
           <div class="category-content" [class.open]="category.isOpen">
             <!-- Mostrar items directos si existen -->
             <div class="menu-cards" *ngIf="category.items">
-              <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card">
+              <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
                 <div class="menu-item">
                   <div class="item-image">
                     <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
@@ -75,7 +75,7 @@
                 </div>
                 <div class="category-content" [class.open]="subcategory.isOpen">
                   <div class="menu-cards">
-                    <div *ngFor="let item of subcategory.items; trackBy: trackByName" class="menu-card">
+                    <div *ngFor="let item of subcategory.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
                       <div class="menu-item">
                         <div class="item-image">
                           <img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
@@ -124,7 +124,7 @@
           </div>
         </div>
         <div class="menu-cards" *ngIf="category.items">
-          <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card">
+          <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
             <div class="menu-item">
               <div class="item-image"><img [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async"></div>
               <div class="item-info"><h4>{{ item.name }}</h4><span class="price">€{{ item.price.toFixed(2) }}</span></div>
@@ -135,6 +135,25 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="dish-modal-backdrop" *ngIf="selectedItem as item" (click)="closeDish()">
+        <article class="dish-modal" role="dialog" aria-modal="true" [attr.aria-label]="item.name" (click)="$event.stopPropagation()">
+          <button class="dish-modal-close" type="button" aria-label="Cerrar" (click)="closeDish()">×</button>
+          <img class="dish-modal-image" [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name">
+          <div class="dish-modal-content">
+            <h3>{{ item.name }}</h3>
+           <p class="dish-modal-description">{{ getDishDescription(item) }}</p>
+            <p class="dish-modal-price">€{{ item.price.toFixed(2) }}</p>
+            <div class="dish-modal-allergens">
+              <h4>Alérgenos</h4>
+              <ng-container *ngIf="item.allergens?.length; else noModalAllergens">
+                <span *ngFor="let allergenId of item.allergens">{{ getAllergenName(allergenId) }}</span>
+              </ng-container>
+              <ng-template #noModalAllergens><span>No contiene alérgenos conocidos</span></ng-template>
+            </div>
+          </div>
+        </article>
       </div>
       
       <button class="allergens-toggle" type="button" (click)="toggleAllergens()" [attr.aria-expanded]="showAllergens">
