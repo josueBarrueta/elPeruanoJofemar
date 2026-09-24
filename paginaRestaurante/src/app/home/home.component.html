@@ -140,7 +140,9 @@
       <div class="dish-modal-backdrop" *ngIf="selectedItem as item" (click)="closeDish()">
         <article class="dish-modal" role="dialog" aria-modal="true" [attr.aria-label]="item.name" (click)="$event.stopPropagation()">
           <button class="dish-modal-close" type="button" aria-label="Cerrar" (click)="closeDish()">×</button>
-          <img class="dish-modal-image" [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name">
+          <div class="dish-modal-image-wrap" [style.backgroundImage]="'url(' + (item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png') + ')'">
+            <img class="dish-modal-image" [src]="item.image ? 'assets/images/' + item.image : 'assets/images/peru-flag.png'" [alt]="item.name">
+          </div>
           <div class="dish-modal-content">
             <h3>{{ item.name }}</h3>
            <p class="dish-modal-description">{{ getDishDescription(item) }}</p>
