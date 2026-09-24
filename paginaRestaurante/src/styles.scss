@@ -1,1 +1,7 @@
+@import 'primeicons/primeicons.css';
+
+body.admin-route .reviews-section { display: none !important; }
+body:has(.admin-shell) .reviews-section { display: none !important; }
+body.admin-route #resenas, body:has(.admin-shell) #resenas { display: none !important; }
+
 /* You can add global styles to this file, and also import other style files */

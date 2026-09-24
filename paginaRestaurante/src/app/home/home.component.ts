@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 
 interface Allergen {
   id: string;
@@ -39,11 +40,27 @@ interface MenuCategory {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
+  private readonly menuApi: MenuApiService | null;
   selectedCategory: MenuCategory | null = null;
   selectedParentCategory: MenuCategory | null = null;
   showAllergens = false;
   activeAboutQuestion: number | null = null;
   selectedItem: MenuItem | null = null;
+
+  constructor() {
+    const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
+    this.menuApi = seedMode ? null : inject(MenuApiService);
+    if (this.menuApi) {
+      this.menuApi.getMenu().subscribe({
+        next: (items) => {
+          if (items.length > 0) this.menuCategories = this.groupApiItems(items);
+        },
+        error: () => {
+          // La carta local se mantiene como respaldo mientras la API no esté disponible.
+        }
+      });
+    }
+  }
 
   aboutFaqs = [
     { question: '¿Cómo comenzó nuestra historia?', answer: 'Prácticamente nacidos en Perú, decidimos arriesgarlo todo en busca de un futuro mejor en España. Comenzamos trabajando con mucha dedicación y humildad en una pequeña cafetería, un paso inicial que nos permitió conocer la ciudad, sus gentes y sus sabores.' },
@@ -607,6 +624,48 @@ export class HomeComponent {
       ]
     }
   ];
+
+  private groupApiItems(items: ApiMenuItem[]): MenuCategory[] {
+    const categories = new Map<string, MenuCategory>();
+
+    for (const item of items) {
+      const categoryId = this.toSlug(item.category);
+      let category = categories.get(categoryId);
+      if (!category) {
+        category = { id: categoryId, title: item.category, isOpen: false, items: [] };
+        categories.set(categoryId, category);
+      }
+
+      const menuItem: MenuItem = {
+        name: item.name,
+        price: item.price,
+        allergens: item.allergens,
+        image: item.image,
+        description: item.description
+      };
+
+      if (!item.subcategory) {
+        category.items!.push(menuItem);
+        continue;
+      }
+
+      category.items = undefined;
+      category.subcategories ??= [];
+      const subcategoryId = this.toSlug(item.subcategory);
+      let subcategory = category.subcategories.find((entry) => entry.id === subcategoryId);
+      if (!subcategory) {
+        subcategory = { id: subcategoryId, title: item.subcategory, isOpen: false, items: [] };
+        category.subcategories.push(subcategory);
+      }
+      subcategory.items.push(menuItem);
+    }
+
+    return [...categories.values()];
+  }
+
+  private toSlug(value: string): string {
+    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
 
   toggleCategory(category: MenuCategory): void {
     // Cerrar todas las categorías primero

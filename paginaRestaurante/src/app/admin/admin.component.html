@@ -1,0 +1,27 @@
+<main class="admin-shell">
+  <header class="admin-header">
+    <div>
+      <span class="eyebrow">Panel privado</span>
+      <h1>Administrar carta</h1>
+      <p>{{ status }}</p>
+    </div>
+    <a href="/">← Volver a la web</a>
+  </header>
+
+  <section class="admin-layout">
+    <form class="editor-card" (ngSubmit)="save()">
+      <div class="card-heading"><h2>{{ isEditing ? 'Editar producto' : 'Nuevo producto' }}</h2><button type="button" class="ghost" (click)="newItem()">Limpiar</button></div>
+      <label>Nombre<input name="name" [(ngModel)]="selected.name" required></label>
+      <div class="form-grid"><label>Categoría<select name="category" [(ngModel)]="selected.category" required><option *ngFor="let category of categoryOptions" [value]="category">{{ category }}</option></select></label><label>Subcategoría<select name="subcategory" [(ngModel)]="selected.subcategory"><option value="">Sin subcategoría</option><option *ngFor="let subcategory of subcategoryOptions" [value]="subcategory">{{ subcategory }}</option></select></label></div>
+      <label>Precio (€)<input type="number" step="0.01" name="price" [(ngModel)]="selected.price" required></label>
+      <label>Imagen<input name="image" [(ngModel)]="selected.image" placeholder="ceviche_mixto.png"></label>
+      <label>Alérgenos<div class="allergen-options"><label class="allergen-option" *ngFor="let allergen of allergenOptions"><input type="checkbox" [checked]="selected.allergens.includes(allergen)" (change)="toggleAllergen(allergen, $any($event.target).checked)"><span>{{ allergen }}</span></label></div></label>
+      <label>Descripción<textarea name="description" rows="3" [(ngModel)]="selected.description"></textarea></label>
+      <button class="primary" type="submit">{{ isEditing ? 'Guardar cambios' : 'Añadir a la carta' }}</button>
+    </form>
+
+    <section class="list-card"><div class="card-heading"><h2>Productos</h2><div class="heading-actions"><button type="button" (click)="toggleOrderingMode()">{{ orderingMode ? 'Cancelar' : 'Ordenar productos' }}</button><button *ngIf="orderingMode" class="primary small" type="button" (click)="saveOrder()">Guardar orden</button><button *ngIf="!orderingMode" class="primary small" type="button" (click)="newItem()">+ Nuevo</button></div></div><p class="ordering-help" *ngIf="orderingMode">Mantén pulsado un producto y arrástralo arriba o abajo dentro de su misma subcategoría.</p><div class="items-list" [class.is-ordering]="orderingMode"><div class="category-group" *ngFor="let group of groupedItems"><button type="button" class="category-toggle" [class.is-open]="openCategories.has(group.category)" (click)="toggleCategory(group.category)">{{ group.category }} <span>{{ group.subcategories.length }} subcategorías</span></button><div class="subcategory-group" [hidden]="!openCategories.has(group.category)" *ngFor="let subcategory of group.subcategories"><h4>{{ subcategory.name }}</h4><article *ngFor="let item of subcategory.items" [class.is-draggable]="orderingMode" [class.is-dragging]="orderingMode && draggedItem === item" [class.drop-target]="orderingMode && dropTarget === item" [class.is-inactive]="item.active === false" [draggable]="false" (pointerdown)="orderingMode && startDragging(item, $event)" (pointerenter)="orderingMode && setDropTarget(item)" (pointerup)="orderingMode && handlePointerUp($event, item)" (pointermove)="orderingMode && handlePointerMove($event, item)" (dragover)="$event.preventDefault(); $event.stopPropagation()"><div><strong>{{ item.name }}</strong><span>€{{ item.price.toFixed(2) }}</span><em *ngIf="item.active === false" class="inactive-label">No visible en la web</em><em *ngIf="orderingMode && dropTarget === item">Soltar aquí</em></div><div class="row-actions" *ngIf="!orderingMode"><button type="button" class="icon-button" title="Editar producto" aria-label="Editar producto" (click)="edit(item)">✎</button><button type="button" class="icon-button" [title]="item.active === false ? 'Activar producto' : 'Desactivar producto'" [attr.aria-label]="item.active === false ? 'Activar producto' : 'Desactivar producto'" (click)="toggleActive(item)">{{ item.active === false ? '◉' : '◌' }}</button><button type="button" class="icon-button delete-button" title="Borrar producto" aria-label="Borrar producto" (click)="askDelete(item)">⌫</button></div><span *ngIf="orderingMode" class="drag-handle">⠿</span></article></div></div></div></section>
+  </section>
+</main>
+<section class="admin-slogan"><span>El Peruano Jofemar</span><strong>Un rinconcito pequeño con el corazón grande.</strong><p>Auténticos sabores peruanos preparados con cariño.</p></section>
+<div class="delete-modal-backdrop" *ngIf="itemToDelete as item" (click)="cancelDelete()"><div class="delete-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()"><h2>¿Borrar producto?</h2><p>Vas a borrar <strong>{{ item.name }}</strong>. Esta acción no se puede deshacer.</p><div class="delete-modal-actions"><button type="button" (click)="cancelDelete()">Cancelar</button><button type="button" class="danger-confirm" (click)="confirmDelete()">Sí, borrar producto</button></div></div></div>
