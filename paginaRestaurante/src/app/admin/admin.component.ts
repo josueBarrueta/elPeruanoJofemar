@@ -15,6 +15,14 @@ type EditableItem = Omit<ApiMenuItem, '_id'> & { _id?: string };
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {
+  private readonly categoryOrder = [
+    'Primer plato o Entradas',
+    'Pescado y Mariscos',
+    'Carnes y Pollo',
+    'Platos Combinados',
+    'Bebidas',
+    'Postres'
+  ];
   private readonly api = inject(MenuApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   items: ApiMenuItem[] = [];
@@ -30,7 +38,7 @@ export class AdminComponent {
   itemToDelete?: ApiMenuItem;
 
   get categoryOptions(): string[] {
-    return [...new Set(this.items.map((item) => item.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    return [...new Set(this.items.map((item) => item.category).filter(Boolean))].sort((a, b) => this.compareCategories(a, b));
   }
 
   toggleCategory(category: string): void {
@@ -98,10 +106,17 @@ export class AdminComponent {
       if (!subcategories.has(subcategory)) subcategories.set(subcategory, []);
       subcategories.get(subcategory)!.push(item);
     }
-    return [...categories.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([category, subcategories]) => ({
+    return [...categories.entries()].sort(([a], [b]) => this.compareCategories(a, b)).map(([category, subcategories]) => ({
       category,
       subcategories: [...subcategories.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([name, items]) => ({ name, items }))
     }));
+  }
+
+  private compareCategories(a: string, b: string): number {
+    const aIndex = this.categoryOrder.indexOf(a);
+    const bIndex = this.categoryOrder.indexOf(b);
+    if (aIndex !== -1 || bIndex !== -1) return (aIndex === -1 ? this.categoryOrder.length : aIndex) - (bIndex === -1 ? this.categoryOrder.length : bIndex);
+    return a.localeCompare(b);
   }
 
   constructor() {
