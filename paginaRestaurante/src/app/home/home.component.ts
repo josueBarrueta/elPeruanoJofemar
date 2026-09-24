@@ -501,21 +501,21 @@ export class HomeComponent {
           isOpen: false,
           items: [
             // Cervezas en botella/lata
-            { name: 'Cuzqueña Rubia', price: 3.50, allergens: ['Gluten'] },
-            { name: 'Cuzqueña Negra', price: 3.50, allergens: ['Gluten'] },
-            { name: 'Cuzqueña Trigo', price: 3.50, allergens: ['Gluten'] },
-            { name: 'Pilsen', price: 3.50, allergens: ['Gluten'] },
-            { name: 'Heineken', price: 2.50, allergens: ['Gluten'] },
-            { name: 'Águila', price: 2.00, allergens: ['Gluten'] },
-            { name: 'Amstel', price: 2.00, allergens: ['Gluten'] },
-            { name: 'Amstel Sin Alcohol', price: 2.50, allergens: ['Gluten'] },
-            { name: 'Radler', price: 2.50, allergens: ['Gluten'] },
+            { name: 'Cuzqueña Rubia', price: 3.50, allergens: ['Gluten'], image: 'cuzquena-rubia.jpeg' },
+            { name: 'Cuzqueña Negra', price: 3.50, allergens: ['Gluten'], image: 'cuzquena-negra.jpeg' },
+            { name: 'Cuzqueña Trigo', price: 3.50, allergens: ['Gluten'], image: 'cuzquena-trigo.jpeg' },
+            { name: 'Pilsen', price: 3.50, allergens: ['Gluten'], image: 'pilsen.jpeg' },
+            { name: 'Heineken', price: 2.50, allergens: ['Gluten'], image: 'heineken.jpeg' },
+            { name: 'Águila', price: 2.00, allergens: ['Gluten'], image: 'aguila.jpeg' },
+            { name: 'Amstel', price: 2.00, allergens: ['Gluten'], image: 'amstel.jpeg' },
+            { name: 'Amstel Sin Alcohol', price: 2.50, allergens: ['Gluten'], image: 'amstel-00.jpeg' },
+            { name: 'Radler', price: 2.50, allergens: ['Gluten'], image: 'radler.jpeg' },
 
             // Formatos de cerveza de barril
-            { name: 'Caña', price: 2.00, allergens: ['Gluten'] },
-            { name: 'Doble', price: 2.50, allergens: ['Gluten'] },
-            { name: 'Tanque', price: 4.00, allergens: ['Gluten'] },
-            { name: 'Jarra de Cerveza 1L', price: 7.00, allergens: ['Gluten'] }
+            { name: 'Caña', price: 2.00, allergens: ['Gluten'], image: 'cana-cerveza.jpeg' },
+            { name: 'Doble', price: 2.50, allergens: ['Gluten'], image: 'doble-cerveza.jpeg' },
+            { name: 'Tanque', price: 4.00, allergens: ['Gluten'], image: 'tanque-cerveza.jpeg' },
+            { name: 'Jarra de Cerveza 1L', price: 7.00, allergens: ['Gluten'], image: 'jarra-cerveza.jpeg' }
           ]
         },
         {
@@ -572,15 +572,15 @@ export class HomeComponent {
           title: 'Chupitos',
           isOpen: false,
           items: [
-            { name: 'Chupito de Pisco', price: 3.00, allergens: [] },
-            { name: 'Chupito de Orujo de Hierbas', price: 1.50, allergens: [] },
-            { name: 'Chupito de Arroz', price: 1.50, allergens: [] },
-            { name: 'Chupito de Limoncello', price: 1.50, allergens: [] },
-            { name: 'Chupito de Crema de Orujo', price: 1.50, allergens: ['Lacteos'] },
-            { name: 'Chupito de Whisky', price: 2.00, allergens: [] },
-            { name: 'Chupito de Bayles', price: 2.00, allergens: [] },
-            { name: 'Chupito de Coñac', price: 2.00, allergens: [] },
-            { name: 'Chupito de Cazalla', price: 1.50, allergens: [] }
+            { name: 'Chupito de Pisco', price: 3.00, allergens: [], image: 'pisco-botella.jpeg'},
+            { name: 'Chupito de Orujo de Hierbas', price: 1.50, allergens: [], image: 'orujo-hierbas-botella.jpeg'},
+            { name: 'Chupito de Arroz', price: 1.50, allergens: [], image: 'licor-arroz-botella.jpeg'},
+            { name: 'Chupito de Limoncello', price: 1.50, allergens: [], image: 'limoncello-botella.jpeg'},
+            { name: 'Chupito de Crema de Orujo', price: 1.50, allergens: ['Lacteos'], image: 'crema-orujo-botella.jpeg'},
+            { name: 'Chupito de Whisky', price: 2.00, allergens: [], image: 'whisky-botella.jpeg'},
+            { name: 'Chupito de Bayles', price: 2.00, allergens: [], image: 'bayles-botella.jpeg'},
+            { name: 'Chupito de Coñac', price: 2.00, allergens: [], image: 'conac-botella.jpeg'},
+            { name: 'Chupito de Cazalla', price: 1.50, allergens: [], image: 'cazalla-botella.jpeg'}
           ]
         }
       ]
