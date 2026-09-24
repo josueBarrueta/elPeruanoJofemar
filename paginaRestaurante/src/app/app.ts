@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -15,11 +14,10 @@ export class AppComponent {
   isRouteTransitioning = false;
   constructor(router: Router) {
     router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.isRouteTransitioning = true;
-      }
       if (event instanceof NavigationEnd) {
         document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'));
+        // La transición se muestra una sola vez, al terminar de entrar en la nueva pantalla.
+        this.isRouteTransitioning = true;
         window.setTimeout(() => this.isRouteTransitioning = false, 1100);
       }
     });
