@@ -18,6 +18,10 @@
 
 }
 
+.site-loader.route-transition { opacity: 1; visibility: visible; animation: routeLoaderOut 1.1s ease .2s forwards; }
+.site-loader.route-transition img { opacity: 1; animation: none; }
+@keyframes routeLoaderOut { from { opacity: 1; visibility: visible; } to { opacity: 0; visibility: hidden; } }
+
 
 @keyframes siteLoaderOut {
   from {

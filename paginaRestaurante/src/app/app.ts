@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
 @Component({
@@ -12,5 +12,16 @@ import { filter } from 'rxjs';
 export class AppComponent {
   title = 'El Peruano Jofemar';
   currentYear = new Date().getFullYear();
-  constructor(router: Router) { router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'))); }
+  isRouteTransitioning = false;
+  constructor(router: Router) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isRouteTransitioning = true;
+      }
+      if (event instanceof NavigationEnd) {
+        document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'));
+        window.setTimeout(() => this.isRouteTransitioning = false, 1100);
+      }
+    });
+  }
 }
