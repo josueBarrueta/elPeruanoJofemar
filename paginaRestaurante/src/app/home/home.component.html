@@ -18,6 +18,16 @@
 
   <section id="sobre-nosotros" class="section">
     <h2>Sobre nosotros</h2>
+    <div class="about-intro">
+      <p class="about-kicker">Familia, tradición y sabor peruano</p>
+      <p>En Jofemar cocinamos como en casa: con recetas de nuestra tierra, ingredientes escogidos y mucho cariño en cada servicio.</p>
+      <a class="about-menu-link" href="#nuestra-carta" (click)="goToMenu($event)">Descubre nuestra carta</a>
+    </div>
+    <div class="about-values" aria-label="Nuestros valores">
+      <article><span>01</span><h3>Tradición</h3><p>Recetas peruanas que conservan el sabor y la esencia de nuestra tierra.</p></article>
+      <article><span>02</span><h3>Familia</h3><p>Un restaurante cercano donde cada persona es recibida como en casa.</p></article>
+      <article><span>03</span><h3>Hecho con cariño</h3><p>Platos preparados con dedicación para compartir momentos especiales.</p></article>
+    </div>
     <div class="about-faq-list">
       <div class="about-faq" *ngFor="let faq of aboutFaqs; let i = index">
         <button type="button" class="about-question" (click)="toggleAboutAnswer(i)" [attr.aria-expanded]="activeAboutQuestion === i">

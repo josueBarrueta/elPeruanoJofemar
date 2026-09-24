@@ -87,7 +87,7 @@
 #sobre-nosotros.section {
   min-height: 0;
   height: auto;
-  padding: 4rem 0 2rem;
+  padding: 2rem 0;
   
   .about-layout {
     width: min(1180px, 100%);
@@ -1328,12 +1328,37 @@
 #sobre-nosotros.section .about-faq-list {
   width: min(1000px, 100%);
   margin: 0 auto;
+  display: grid;
+  gap: 0;
+}
+
+#sobre-nosotros.section .about-intro {
+  width: min(680px, 100%);
+  margin: 0 auto 1.5rem;
+  text-align: center;
+  color: #666;
+  line-height: 1.65;
+  p { margin: 0; }
+  .about-kicker { margin-bottom: 0.35rem; color: #C72C41; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .about-menu-link { display: inline-block; margin-top: 0.7rem; color: #C72C41; font-weight: 700; text-decoration: none; border-bottom: 2px solid transparent; &:hover { border-color: #C72C41; } }
+}
+
+#sobre-nosotros.section .about-values {
+  width: min(1000px, 100%);
+  margin: 0 auto 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  article { padding: 1rem; border-top: 2px solid #C72C41; background: #fff; text-align: center; }
+  span { color: #C72C41; font-size: 0.75rem; font-weight: 700; }
+  h3 { margin: 0.3rem 0; color: #333; font-size: 1.05rem; }
+  p { margin: 0; color: #666; font-size: 0.92rem; line-height: 1.45; }
 }
 
 #sobre-nosotros.section .about-faq {
   width: 100%;
   margin: 0;
-  border-bottom: 0;
+  border: 0;
   background: #fff;
 }
 
@@ -1343,22 +1368,24 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1.1rem 1.25rem 1.5rem;
+  min-height: 76px;
+  padding: 0.95rem 1.25rem 0.75rem;
   border: 0;
   background: transparent;
   color: #333;
   font: inherit;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 600;
   text-align: center;
   cursor: pointer;
-  &:hover { background: transparent; color: #333; }
+  transition: none;
+  &:hover, &:focus-visible { background: transparent; color: #333; }
 }
 
 #sobre-nosotros.section .about-question-arrow {
   position: static;
   display: block;
-  margin-top: 0.8rem;
+  margin-top: 0.65rem;
   color: #C72C41;
   font-size: 2rem;
   line-height: 0.7;
@@ -1368,13 +1395,18 @@
 }
 
 #sobre-nosotros.section .about-answer {
-  padding: 0 1.25rem 1.1rem;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 1.25rem 1.15rem;
   color: #666;
+  text-align: center;
   line-height: 1.6;
   animation: accordionIn 0.35s ease both;
   p { margin: 0; }
 }
+
 @media (max-width: 768px) {
+  #sobre-nosotros.section .about-values { grid-template-columns: 1fr; gap: 0.65rem; }
   :host ::ng-deep .trustindex-widget iframe {
     min-height: 600px !important;
   }
