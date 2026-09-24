@@ -775,6 +775,10 @@ export class HomeComponent {
     return match?.[1] ?? `Preparación de la casa elaborada con ingredientes seleccionados y la sazón peruana de Jofemar.`;
   }
 
+  isFoodItem(item: MenuItem): boolean {
+    return !item.image || item.image.toLowerCase().endsWith('.png');
+  }
+
   trackById(_: number, item: { id: string }): string {
     return item.id;
   }

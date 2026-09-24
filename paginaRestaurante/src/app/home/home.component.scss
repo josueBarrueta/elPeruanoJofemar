@@ -929,6 +929,18 @@
     object-fit: cover;
     object-position: center;
   }
+
+  .dish-modal-food-image {
+    height: auto;
+    min-height: 0;
+    background-image: none !important;
+    &::before { display: none; }
+    .dish-modal-image {
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+    }
+  }
 }
 
 
