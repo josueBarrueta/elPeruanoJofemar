@@ -17,26 +17,27 @@ export interface ApiMenuItem {
 
 @Injectable({ providedIn: 'root' })
 export class MenuApiService {
+  private readonly apiUrl = 'https://elperuanojofemar.onrender.com/api';
   private readonly http = inject(HttpClient);
   private adminOptions() { const token = localStorage.getItem('admin_token'); return { headers: new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {}) }; }
 
   getMenu(): Observable<ApiMenuItem[]> {
-    return this.http.get<ApiMenuItem[]>('http://localhost:3000/api/menu');
+    return this.http.get<ApiMenuItem[]>(`${this.apiUrl}/menu`);
   }
 
   getAdminMenu(): Observable<ApiMenuItem[]> {
-    return this.http.get<ApiMenuItem[]>('http://localhost:3000/api/admin/menu', this.adminOptions());
+    return this.http.get<ApiMenuItem[]>(`${this.apiUrl}/admin/menu`, this.adminOptions());
   }
 
   createItem(item: Omit<ApiMenuItem, '_id'>): Observable<ApiMenuItem> {
-    return this.http.post<ApiMenuItem>('http://localhost:3000/api/admin/menu', item, this.adminOptions());
+    return this.http.post<ApiMenuItem>(`${this.apiUrl}/admin/menu`, item, this.adminOptions());
   }
 
   updateItem(id: string, item: Partial<ApiMenuItem>): Observable<ApiMenuItem> {
-    return this.http.patch<ApiMenuItem>(`http://localhost:3000/api/admin/menu/${id}`, item, this.adminOptions());
+    return this.http.patch<ApiMenuItem>(`${this.apiUrl}/admin/menu/${id}`, item, this.adminOptions());
   }
 
   deleteItem(id: string): Observable<void> {
-    return this.http.delete<void>(`http://localhost:3000/api/admin/menu/${id}`, this.adminOptions());
+    return this.http.delete<void>(`${this.apiUrl}/admin/menu/${id}`, this.adminOptions());
   }
 }
