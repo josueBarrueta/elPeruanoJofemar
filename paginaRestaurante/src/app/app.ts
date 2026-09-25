@@ -13,11 +13,15 @@ export class AppComponent {
   currentYear = new Date().getFullYear();
   isRouteTransitioning = true;
   private transitionTimer?: number;
+  private previousRoutePath: string | null = null;
   constructor(router: Router) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'));
-        // Reiniciamos una única animación al entrar en la pantalla nueva.
+        const routePath = event.urlAfterRedirects.split(/[?#]/, 1)[0];
+        if (this.previousRoutePath === routePath) return;
+        this.previousRoutePath = routePath;
+        // Animamos únicamente al cambiar de pantalla real, nunca al cambiar de hash.
         this.isRouteTransitioning = false;
         window.requestAnimationFrame(() => {
           this.isRouteTransitioning = true;
