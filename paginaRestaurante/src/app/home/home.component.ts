@@ -742,7 +742,6 @@ export class HomeComponent {
     this.selectedCategory = null;
     this.selectedParentCategory = null;
     this.showAllergens = false;
-    window.location.hash = 'nuestra-carta';
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -795,7 +794,6 @@ export class HomeComponent {
   scrollToSection(event: Event, sectionId: string): void {
     event.preventDefault();
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.history.replaceState(null, '', `#${sectionId}`);
   }
 
   getDishDescription(item: MenuItem): string {
