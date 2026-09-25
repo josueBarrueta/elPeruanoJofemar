@@ -702,14 +702,12 @@ export class HomeComponent {
   openCategory(category: MenuCategory): void {
     this.selectedCategory = category;
     this.selectedParentCategory = null;
-    window.location.hash = `carta/${category.id}`;
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   openSubcategory(category: MenuCategory, subcategory: MenuSubcategory): void {
     this.selectedParentCategory = category;
     this.selectedCategory = { ...category, title: `${category.title} · ${subcategory.title}`, items: subcategory.items, subcategories: undefined };
-    window.location.hash = `carta/${category.id}/${subcategory.id}`;
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -718,12 +716,10 @@ export class HomeComponent {
       const parent = this.selectedParentCategory;
       this.selectedCategory = parent;
       this.selectedParentCategory = null;
-      window.location.hash = `carta/${parent.id}`;
       setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       return;
     }
     this.selectedCategory = null;
-    window.history.replaceState(null, '', '#nuestra-carta');
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
