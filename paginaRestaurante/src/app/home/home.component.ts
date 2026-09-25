@@ -54,20 +54,21 @@ export class HomeComponent {
   showAllergens = false;
   activeAboutQuestion: number | null = null;
   selectedItem: MenuItem | null = null;
+  menuLoadError = false;
 
   constructor() {
-    const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
-    this.menuApi = seedMode ? null : inject(MenuApiService);
-    if (this.menuApi) {
-      this.menuApi.getMenu().subscribe({
-        next: (items) => {
-          if (items.length > 0) this.menuCategories = this.groupApiItems(items);
-        },
-        error: () => {
-          // La carta local se mantiene como respaldo mientras la API no esté disponible.
-        }
-      });
-    }
+    this.menuApi = inject(MenuApiService);
+    this.menuCategories = [];
+    this.menuApi.getMenu().subscribe({
+      next: (items) => {
+        this.menuCategories = this.groupApiItems(items);
+        this.menuLoadError = items.length === 0;
+      },
+      error: () => {
+        this.menuCategories = [];
+        this.menuLoadError = true;
+      }
+    });
   }
 
   aboutFaqs = [

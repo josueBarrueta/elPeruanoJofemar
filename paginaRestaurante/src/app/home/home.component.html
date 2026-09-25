@@ -41,7 +41,8 @@
   <section id="nuestra-carta" class="section">
     <div class="section-content">
       <h2>Nuestra carta</h2>
-      <div class="menu-accordion" *ngIf="!selectedCategory">
+      <p class="menu-load-error" *ngIf="menuLoadError">No se pudo cargar la carta. Inténtalo de nuevo en unos segundos.</p>
+      <div class="menu-accordion" *ngIf="!selectedCategory && !menuLoadError">
         <div *ngFor="let category of menuCategories; trackBy: trackById" class="menu-category">
           <div class="category-header category-link main-category-fold" (click)="openCategory(category)" role="button" tabindex="0">
             <h3>{{ category.title }}</h3>
