@@ -48,6 +48,9 @@ export class HomeComponent {
     'Bebidas',
     'Postres'
   ];
+  private readonly subcategoryOrder: Record<string, string[]> = {
+    'Bebidas': ['Refrescos', 'Cervezas', 'Vino de la Casa', 'Vinos Tintos', 'Vinos Blancos', 'Vinos Rosados', 'Cócteles Peruanos', 'Chupitos']
+  };
   private readonly menuApi: MenuApiService | null;
   selectedCategory: MenuCategory | null = null;
   selectedParentCategory: MenuCategory | null = null;
@@ -62,12 +65,14 @@ export class HomeComponent {
       this.menuApi.getMenu().subscribe({
         next: (items) => {
           if (items.length > 0) this.menuCategories = this.groupApiItems(items);
+          this.applyUrlSelection();
         },
         error: () => {
           // La carta local se mantiene como respaldo mientras la API no esté disponible.
         }
       });
     }
+    window.addEventListener('popstate', () => this.applyUrlSelection());
   }
 
   aboutFaqs = [
@@ -669,6 +674,17 @@ export class HomeComponent {
     }
 
     return [...categories.values()]
+      .map((category) => {
+        if (category.subcategories) {
+          const order = this.subcategoryOrder[category.title] || [];
+          category.subcategories.sort((a, b) => {
+            const aIndex = order.indexOf(a.title);
+            const bIndex = order.indexOf(b.title);
+            return (aIndex === -1 ? order.length : aIndex) - (bIndex === -1 ? order.length : bIndex);
+          });
+        }
+        return category;
+      })
       .sort((a, b) => this.compareCategories(a.title, b.title));
   }
 
@@ -700,12 +716,14 @@ export class HomeComponent {
   }
 
   openCategory(category: MenuCategory): void {
+    this.setMenuUrl(category.id);
     this.selectedCategory = category;
     this.selectedParentCategory = null;
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   openSubcategory(category: MenuCategory, subcategory: MenuSubcategory): void {
+    this.setMenuUrl(category.id, subcategory.id);
     this.selectedParentCategory = category;
     this.selectedCategory = { ...category, title: `${category.title} · ${subcategory.title}`, items: subcategory.items, subcategories: undefined };
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -714,11 +732,13 @@ export class HomeComponent {
   closeMenuView(): void {
     if (this.selectedParentCategory) {
       const parent = this.selectedParentCategory;
+      this.setMenuUrl(parent.id);
       this.selectedCategory = parent;
       this.selectedParentCategory = null;
       setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       return;
     }
+    this.setMenuUrl();
     this.selectedCategory = null;
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
@@ -790,6 +810,29 @@ export class HomeComponent {
   scrollToSection(event: Event, sectionId: string): void {
     event.preventDefault();
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  private setMenuUrl(categoryId?: string, subcategoryId?: string): void {
+    const path = categoryId ? `#/${categoryId}${subcategoryId ? `/${subcategoryId}` : ''}` : '#/';
+    window.history.pushState({}, '', path);
+  }
+
+  private applyUrlSelection(): void {
+    const hashPath = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
+    if (!hashPath || hashPath === 'login' || hashPath === 'admin') return;
+    const [categoryId, subcategoryId] = hashPath.split('/');
+    const category = this.menuCategories.find((entry) => entry.id === categoryId);
+    if (!category) return;
+    if (subcategoryId && category.subcategories) {
+      const subcategory = category.subcategories.find((entry) => entry.id === subcategoryId);
+      if (subcategory) {
+        this.selectedParentCategory = category;
+        this.selectedCategory = { ...category, title: `${category.title} · ${subcategory.title}`, items: subcategory.items, subcategories: undefined };
+        return;
+      }
+    }
+    this.selectedParentCategory = null;
+    this.selectedCategory = category;
   }
 
   getDishDescription(item: MenuItem): string {
