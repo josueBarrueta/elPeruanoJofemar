@@ -40,6 +40,14 @@ interface MenuCategory {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
+  private readonly categoryOrder = [
+    'Primer plato o Entradas',
+    'Pescado y Mariscos',
+    'Carnes y Pollo',
+    'Platos Combinados',
+    'Bebidas',
+    'Postres'
+  ];
   private readonly menuApi: MenuApiService | null;
   selectedCategory: MenuCategory | null = null;
   selectedParentCategory: MenuCategory | null = null;
@@ -660,7 +668,16 @@ export class HomeComponent {
       subcategory.items.push(menuItem);
     }
 
-    return [...categories.values()];
+    return [...categories.values()]
+      .sort((a, b) => this.compareCategories(a.title, b.title));
+  }
+
+  private compareCategories(a: string, b: string): number {
+    const aIndex = this.categoryOrder.indexOf(a);
+    const bIndex = this.categoryOrder.indexOf(b);
+    const normalizedA = aIndex === -1 ? this.categoryOrder.length : aIndex;
+    const normalizedB = bIndex === -1 ? this.categoryOrder.length : bIndex;
+    return normalizedA - normalizedB || a.localeCompare(b);
   }
 
   private toSlug(value: string): string {
