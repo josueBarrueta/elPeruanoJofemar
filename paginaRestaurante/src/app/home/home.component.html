@@ -2,10 +2,10 @@
   <header class="main-header">
     <nav>
       <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#sobre-nosotros">Sobre nosotros</a></li>
+        <li><a href="#inicio" (click)="scrollToSection($event, 'inicio')">Inicio</a></li>
+        <li><a href="#sobre-nosotros" (click)="scrollToSection($event, 'sobre-nosotros')">Sobre nosotros</a></li>
         <li><a href="#nuestra-carta" (click)="goToMenu($event)">Nuestra carta</a></li>
-        <li><a href="#contactanos">Contáctanos</a></li>
+        <li><a href="#contactanos" (click)="scrollToSection($event, 'contactanos')">Contáctanos</a></li>
       </ul>
     </nav>
   </header>

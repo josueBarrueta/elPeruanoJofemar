@@ -723,7 +723,7 @@ export class HomeComponent {
       return;
     }
     this.selectedCategory = null;
-    window.location.hash = 'nuestra-carta';
+    window.history.replaceState(null, '', '#nuestra-carta');
     setTimeout(() => document.getElementById('nuestra-carta')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -790,6 +790,12 @@ export class HomeComponent {
   getAllergenName(allergenId: string): string {
     const allergen = this.allergenById.get(allergenId);
     return allergen ? allergen.name : '';
+  }
+
+  scrollToSection(event: Event, sectionId: string): void {
+    event.preventDefault();
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.history.replaceState(null, '', `#${sectionId}`);
   }
 
   getDishDescription(item: MenuItem): string {
