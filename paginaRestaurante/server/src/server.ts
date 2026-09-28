@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
 import { MenuItem } from './models/menu-item.model.js';
+import { DailyMenu } from './models/daily-menu.model.js';
 
 const app = express();
 const port = Number(process.env['PORT'] ?? 3000);
@@ -34,6 +35,16 @@ app.get('/api/menu', async (_request, response) => {
     .lean();
 
   response.json(items);
+});
+
+app.get('/api/daily-menu', async (_request, response) => {
+  const menu = await DailyMenu.findOne().lean();
+  response.json(menu ?? { date: new Date().toISOString().slice(0, 10), starters: ['', '', ''], mains: ['', '', ''], dessert: '', price: '13,50€' });
+});
+
+app.put('/api/admin/daily-menu', requireAdmin, async (request, response) => {
+  const menu = await DailyMenu.findOneAndUpdate({}, { ...request.body, price: '13,50€' }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
+  response.json(menu);
 });
 
 app.get('/api/admin/menu', requireAdmin, async (_request, response) => {

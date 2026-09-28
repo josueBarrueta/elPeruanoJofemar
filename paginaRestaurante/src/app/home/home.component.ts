@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 import { ReviewsComponent } from '../reviews/reviews.component';
@@ -42,7 +42,9 @@ interface MenuCategory {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements AfterViewInit {
-  readonly dailyMenu: DailyMenu;
+  dailyMenu: DailyMenu;
+  private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly dailyMenuService = inject(DailyMenuService);
   showDailyMenuModal = false;
   private readonly categoryOrder = [
     'Primer plato o Entradas',
@@ -63,7 +65,8 @@ export class HomeComponent implements AfterViewInit {
   selectedItem: MenuItem | null = null;
 
   constructor() {
-    this.dailyMenu = inject(DailyMenuService).get();
+    this.dailyMenu = this.dailyMenuService.get();
+    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = menu; this.changeDetector.markForCheck(); }, error: () => undefined });
     this.applyRequestedMenuDefaults();
     const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
     this.menuApi = seedMode ? null : inject(MenuApiService);

@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 export interface DailyMenu {
   date: string;
@@ -12,6 +14,8 @@ const STORAGE_KEY = 'jofemar-daily-menu';
 
 @Injectable({ providedIn: 'root' })
 export class DailyMenuService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'https://elperuanojofemar.onrender.com/api';
   get(): DailyMenu {
     if (typeof localStorage === 'undefined') return this.empty();
     try {
@@ -21,6 +25,11 @@ export class DailyMenuService {
   }
 
   save(menu: DailyMenu): void { localStorage.setItem(STORAGE_KEY, JSON.stringify(menu)); }
+  loadRemote(): Observable<DailyMenu> { return this.http.get<DailyMenu>(`${this.apiUrl}/daily-menu`).pipe(tap(menu => this.save({ ...menu, price: '13,50€' }))); }
+  saveRemote(menu: DailyMenu): Observable<DailyMenu> {
+    const token = localStorage.getItem('admin_token');
+    return this.http.put<DailyMenu>(`${this.apiUrl}/admin/daily-menu`, { ...menu, price: '13,50€' }, { headers: new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {}) }).pipe(tap(saved => this.save({ ...saved, price: '13,50€' })));
+  }
 
   private empty(): DailyMenu {
     return {

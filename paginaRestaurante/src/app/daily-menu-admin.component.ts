@@ -23,5 +23,5 @@ export class DailyMenuAdminComponent {
   trackByIndex(index: number): number { return index; }
   suggestions(value: string): string[] { const query = value.trim().toLocaleLowerCase(); return query ? this.menuOptions.filter(option => option.toLocaleLowerCase().includes(query)).slice(0, 6) : []; }
   choose(type: 'starter' | 'main' | 'dessert', index: number, value: string): void { if (type === 'starter') this.menu.starters[index] = value; else if (type === 'main') this.menu.mains[index] = value; else this.menu.dessert = value; this.suggestionField = ''; }
-  save(): void { this.service.save(this.menu); this.saved = true; }
+  save(): void { this.service.saveRemote(this.menu).subscribe({ next: menu => { this.menu = menu; this.saved = true; }, error: () => { this.service.save(this.menu); this.saved = true; } }); }
 }
