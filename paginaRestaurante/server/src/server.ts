@@ -80,6 +80,18 @@ async function start(): Promise<void> {
 
   if (mongoUri) {
     await mongoose.connect(mongoUri);
+    await MenuItem.updateOne(
+      { name: 'Ceviche de pescado con chicharrón de pescado y chaufa de marisco', category: 'Platos Combinados' },
+      { $setOnInsert: {
+        name: 'Ceviche de pescado con chicharrón de pescado y chaufa de marisco',
+        category: 'Platos Combinados', subcategory: '', price: 33,
+        allergens: ['Pescado', 'Lacteos', 'Crustaceos', 'Soja', 'Gluten', 'Huevos'],
+        image: 'trio_ceviche_chicharron_chaufa.png',
+        description: 'Trío peruano que reúne ceviche de pescado, chicharrón dorado y chaufa de mariscos, acompañado de una combinación de sabores frescos, crujientes y caseros.',
+        order: 1003, active: true
+      } },
+      { upsert: true }
+    );
     console.log('Conectado a MongoDB');
   } else {
     console.log('MONGODB_URI no configurada: servidor iniciado en modo preparación');
