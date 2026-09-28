@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard] },
   { path: 'resenas', component: ReviewsComponent },
-  { path: 'menu-del-dia', component: DailyMenuAdminComponent },
+  { path: 'menu-del-dia', component: DailyMenuAdminComponent, canActivate: [authGuard] },
   { path: ':category/:subcategory', component: HomeComponent },
   { path: ':category', component: HomeComponent },
   { path: '**', redirectTo: '' }
