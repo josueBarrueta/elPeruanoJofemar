@@ -2,6 +2,7 @@
 .daily-menu-card { max-width: 1300px; margin: 0 auto 1.5rem; padding: 1.35rem; background: #fff; border: 1px solid #e9e0d9; border-radius: 18px; box-shadow: 0 12px 32px rgba(72, 39, 24, .07); }
 .daily-menu-card h2 { margin: 0; font-size: 1.35rem; } .daily-menu-card p { margin: .35rem 0 0; color: #756d67; } .save-status { color: #24724b; font-weight: 700; font-size: .85rem; }
 .daily-menu-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } .daily-menu-fields h3 { margin: 0 0 .65rem; color: #b1283f; font-size: 1rem; }
+.daily-menu-fields label { position: relative; } .daily-suggestions { display: grid; gap: .25rem; } .daily-suggestions button { width: 100%; padding: .5rem .65rem; border: 1px solid #ead5d0; border-radius: .5rem; background: #fff8f5; color: #5c514a; text-align: left; font: inherit; font-size: .85rem; cursor: pointer; }
 .daily-menu-fields label { margin-bottom: .7rem; } .daily-save { max-width: 260px; margin-top: .3rem; }
 .admin-header { display: flex; justify-content: space-between; align-items: end; gap: 2rem; max-width: 1300px; margin: 0 auto 2rem; a { color: #a92136; font-weight: 700; text-decoration: none; } h1 { margin: .35rem 0; font-size: clamp(2rem, 5vw, 3.4rem); } p { color: #756d67; margin: 0; } }
 .eyebrow { color: #b1283f; text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 800; }

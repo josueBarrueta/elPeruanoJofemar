@@ -30,6 +30,9 @@ export class AdminComponent {
   items: ApiMenuItem[] = [];
   dailyMenu: DailyMenu = this.dailyMenuService.get();
   dailyMenuStatus = '';
+  suggestionField = '';
+
+  get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
   selected: EditableItem = this.emptyItem();
   isEditing = false;
   status = 'Cargando carta…';
@@ -135,6 +138,9 @@ export class AdminComponent {
   }
 
   trackByIndex(index: number): number { return index; }
+  setSuggestionField(field: string): void { this.suggestionField = field; }
+  suggestions(value: string): string[] { const query = value.trim().toLocaleLowerCase(); return query ? this.menuOptions.filter(option => option.toLocaleLowerCase().includes(query)).slice(0, 6) : []; }
+  chooseDaily(type: 'starter' | 'main' | 'dessert', index: number, value: string): void { if (type === 'starter') this.dailyMenu.starters[index] = value; else if (type === 'main') this.dailyMenu.mains[index] = value; else this.dailyMenu.dessert = value; this.suggestionField = ''; }
 
   loadItems(): void {
     this.api.getAdminMenu().subscribe({
