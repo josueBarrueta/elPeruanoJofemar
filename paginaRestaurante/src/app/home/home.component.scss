@@ -1426,7 +1426,8 @@
 .daily-menu-anchor { position:fixed; left:0; right:0; bottom:0; width:100vw; z-index:9998; min-height:0; box-sizing:border-box; background:transparent; display:flex; justify-content:center; align-items:flex-end; pointer-events:none; }
 .daily-menu-anchor.is-open { min-height:0; background:transparent; }
 .daily-menu-tab { position:relative; z-index:10001; display:flex; align-items:center; gap:.7rem; padding:.75rem 1.35rem .65rem; border:0; border-radius:1rem 1rem 0 0; background:#b1283f; color:#fff8f5; box-shadow:0 -.35rem 1rem rgba(50,15,20,.18); font:700 1rem Georgia,serif; cursor:pointer; pointer-events:auto; transition:transform .35s ease, box-shadow .35s ease, background-color .35s ease; }
-.daily-menu-tab:hover { transform:translateY(-3px); background:#c52d46; box-shadow:0 -.55rem 1.2rem rgba(50,15,20,.25); }
+.daily-menu-tab:hover { background:#c52d46; box-shadow:0 -.55rem 1.2rem rgba(50,15,20,.25); }
+.daily-menu-tab.is-closing { opacity:0; pointer-events:none; }
 .daily-menu-tab.is-open { display:none; }
 .daily-menu-tab-arrow { display:inline-block; font-size:1.3rem; line-height:.7; transition:transform .35s ease; }
 .daily-menu-tab-arrow.open { transform:rotate(180deg); }
