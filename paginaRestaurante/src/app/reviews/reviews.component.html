@@ -1,0 +1,69 @@
+<main class="reviews-page">
+  <section class="reviews-hero" aria-labelledby="reviews-title">
+    <div class="reviews-hero__inner">
+      <span class="eyebrow">El Peruano Jofemar</span>
+      <h1 id="reviews-title">Lo que dicen nuestros clientes</h1>
+      <p>Opiniones reales de quienes han compartido nuestra mesa.</p>
+    </div>
+  </section>
+
+  <section class="reviews-shell" [class.is-expanded]="isReviewsExpanded" [class.is-collapsed]="!isReviewsExpanded" aria-label="Opiniones de clientes">
+    <div class="reviews-summary">
+      <div class="rating-cluster">
+        <div class="score-block">
+          <div class="score">{{ overallRating }}</div>
+          <div class="stars" aria-label="Valoración media de 5 estrellas">★★★★★</div>
+        </div>
+        <div class="rating-copy">
+          <strong>Valoración media</strong>
+          <span>{{ overallCount }} opiniones en Google</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews-collapsible" [class.is-collapsed]="!isReviewsExpanded">
+    <div class="carousel" aria-label="Carrusel de reseñas de 5 estrellas">
+      <div class="reviews-grid-viewport">
+        <div class="reviews-grid" [class.is-sliding]="isSliding" [style.--cards-per-view]="cardsPerView">
+          <button class="review-card" type="button" *ngFor="let review of visibleReviews" (click)="openReview(review)">
+            <header class="review-card__header">
+              <div class="avatar">{{ review.initials }}</div>
+              <div class="review-card__identity">
+                <strong>{{ shortAuthor(review.author) }}</strong>
+                <span>{{ review.date }}</span>
+              </div>
+              <span class="source">{{ review.source }}</span>
+            </header>
+            <div class="review-card__rating" [attr.aria-label]="review.rating + ' de 5 estrellas'">{{ '★'.repeat(review.rating) }}<span>{{ '★'.repeat(5 - review.rating) }}</span></div>
+            <p>{{ review.text }}</p>
+            <span class="review-card__more">Ver más…</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="carousel-hint">Pulsa una reseña para verla completa</p>
+
+    <p class="reviews-note">¿Has comido con nosotros? <a href="https://www.google.com/maps/search/?api=1&query=El+Peruano+Jofemar+Valencia" target="_blank" rel="noopener noreferrer">Déjanos tu opinión en Google</a>.</p>
+    </div>
+    <button class="reviews-toggle reviews-toggle--after" type="button" (click)="toggleReviews()" [class.is-open]="isReviewsExpanded" [attr.aria-expanded]="isReviewsExpanded" [attr.aria-label]="isReviewsExpanded ? 'Cerrar reseñas' : 'Abrir reseñas'">
+      <span class="reviews-toggle__flap" aria-hidden="true"></span>
+    </button>
+  </section>
+</main>
+
+<div class="review-modal-backdrop" *ngIf="selectedReview" (click)="closeReview()">
+  <section class="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title" (click)="$event.stopPropagation()">
+    <button class="modal-close" type="button" aria-label="Cerrar reseña" (click)="closeReview()">×</button>
+    <div class="avatar">{{ selectedReview.initials }}</div>
+    <h2 id="review-modal-title">{{ selectedReview.author }}</h2>
+    <div class="modal-meta">{{ selectedReview.date }} · {{ selectedReview.source }}</div>
+    <div class="review-card__rating" [attr.aria-label]="selectedReview.rating + ' de 5 estrellas'">★★★★★</div>
+    <div class="review-modal__details">
+      <span>Comida: {{ selectedReview.food ? '★'.repeat(selectedReview.food) : 'No puntuado' }}</span>
+      <span>Servicio: {{ selectedReview.service ? '★'.repeat(selectedReview.service) : 'No puntuado' }}</span>
+      <span>Ambiente: {{ selectedReview.atmosphere ? '★'.repeat(selectedReview.atmosphere) : 'No puntuado' }}</span>
+    </div>
+    <p>{{ selectedReview.text }}</p>
+  </section>
+</div>

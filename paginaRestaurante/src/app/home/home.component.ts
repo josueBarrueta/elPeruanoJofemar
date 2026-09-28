@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
+import { ReviewsComponent } from '../reviews/reviews.component';
 
 interface Allergen {
   id: string;
@@ -34,7 +35,7 @@ interface MenuCategory {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReviewsComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -59,6 +60,7 @@ export class HomeComponent implements AfterViewInit {
   selectedItem: MenuItem | null = null;
 
   constructor() {
+    this.applyRequestedMenuDefaults();
     const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
     this.menuApi = seedMode ? null : inject(MenuApiService);
     if (this.menuApi) {
@@ -72,7 +74,51 @@ export class HomeComponent implements AfterViewInit {
         }
       });
     }
-    window.addEventListener('popstate', () => this.applyUrlSelection());
+    if (typeof window !== 'undefined') window.addEventListener('popstate', () => this.applyUrlSelection());
+  }
+
+  private applyRequestedMenuDefaults(): void {
+    const prices: Record<string, number> = {
+      'leche de tigre': 13.5, 'causa rellena': 8.5, 'causa rellena acevichada': 14.5, 'causa acevichada': 14.5,
+      'papa rellena': 8.5, 'papa a la huancaina': 6.5, 'ocopa': 6.5, 'palta rellena': 8.5, 'tamal': 6.5, 'anticuchos': 13,
+      'ceviche de pescado': 16, 'ceviche mixto': 18.5, 'chaufa de mariscos': 15, 'jalea': 19.5, 'jalea personal': 19.5,
+      'arroz con mariscos': 16.5, 'chicharron de pescado': 14.5, 'pescado a lo macho': 16.5, 'tallarin saltado de mariscos': 16.5,
+      'chicharron de pescado con ceviche de pescado': 22.5, 'chaufa de mariscos con ceviche de pescado': 25,
+      'arroz chaufa con tallarin saltado': 22.5, 'chupe de langostino': 14.5, 'parihuela': 16.5, 'lomo saltado': 14.5,
+      'aeropuerto': 13.5, 'mostrito': 13.5, 'arroz con pollo': 13.5, 'bistec a lo pobre': 12.5, 'arroz chaufa': 12.5,
+      'pescado a la chorrillana': 12, 'arroz con pato': 16.5, 'tallarin saltado de ternera': 13.5, 'tallarin verde con bistec': 13.5,
+      'seco de ternera con frijoles y arroz': 14.5, 'super parrillada jofemar': 19.5, 'pollo broaster': 13.5,
+      'aji de gallina': 13.5, 'salchipapa': 8.5
+    };
+    const normalize = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const foodCategories = new Set(['Primer plato o Entradas', 'Pescado y Mariscos', 'Carnes y Pollo', 'Platos Combinados']);
+    const visibleFoodNames = new Set(Object.keys(prices));
+    for (const category of this.menuCategories) {
+      if (!foodCategories.has(category.title)) continue;
+      category.items = (category.items ?? []).filter((item) => visibleFoodNames.has(normalize(item.name)));
+      for (const item of category.items ?? []) {
+        const key = normalize(item.name);
+        if (prices[key] === undefined) continue;
+        item.price = prices[key];
+        if (key === 'causa acevichada') item.name = 'Causa rellena acevichada';
+      }
+      for (const subcategory of category.subcategories ?? []) {
+        subcategory.items = subcategory.items.filter((item) => visibleFoodNames.has(normalize(item.name)));
+        for (const item of subcategory.items) {
+          const key = normalize(item.name);
+          if (prices[key] !== undefined) item.price = prices[key];
+        }
+      }
+    }
+    const combined = this.menuCategories.find((category) => category.title === 'Platos Combinados');
+    if (combined?.items) {
+      const additions: MenuItem[] = [
+        { name: 'Arroz con pollo con huancaina y aji de gallina', price: 25, allergens: [], image: 'arroz_con_pollo_huancaina_aji_gallina.png' },
+        { name: 'Ceviche de pescado con huancaina y arroz con pollo', price: 22.5, allergens: ['Pescado'], image: 'trio_ceviche_huancaina_arroz_pollo.png' },
+        { name: 'Tallarines a la huancaina con lomo saltado', price: 15, allergens: ['Gluten', 'Lacteos'], image: 'tallarines_huancaina_lomo.png' }
+      ];
+      for (const addition of additions) if (!combined.items.some((item) => normalize(item.name) === normalize(addition.name))) combined.items.push(addition);
+    }
   }
 
   ngAfterViewInit(): void {

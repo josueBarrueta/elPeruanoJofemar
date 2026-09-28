@@ -1119,17 +1119,17 @@
 }
 
 // Footer principal
-.main-footer {
-  background: linear-gradient(135deg, #C72C41 0%, #9A1F2E 100%);
+.site-end {
+  background: #C72C41;
   color: white;
   padding: 3rem 1rem 1.5rem;
   text-align: center;
   width: 100%;
   margin: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 0;
   box-sizing: border-box;
 
-  .footer-content {
+  .site-end__content {
     max-width: 1200px;
     margin: 0 auto 2rem;
     display: grid;
@@ -1140,7 +1140,7 @@
     box-sizing: border-box;
     padding: 0 1rem;
 
-    .footer-section {
+    .site-end__section {
       h3 {
         font-size: 1.2rem;
         margin-bottom: 1rem;
@@ -1214,13 +1214,13 @@
         }
       }
 
-      .footer-social {
+      .site-end__social {
         display: flex;
         gap: 1rem;
         margin-top: 0.5rem;
         justify-content: center;
 
-        .footer-social-icon {
+        .site-end__social-icon {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -1270,13 +1270,13 @@
   @media (max-width: 768px) {
     padding: 2rem 1rem 1rem;
 
-    .footer-content {
+    .site-end__content {
       grid-template-columns: 1fr;
       gap: 1.5rem;
       text-align: center;
 
-      .footer-section {
-        .footer-social {
+      .site-end__section {
+        .site-end__social {
           justify-content: center;
         }
       }
@@ -1296,18 +1296,18 @@
 }
   // En dispositivos estrechos apaisados, mantener las cuatro secciones en una fila.
   @media (max-width: 900px) and (orientation: landscape) {
-    .main-footer .footer-content {
+    .site-end .site-end__content {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.75rem;
       padding: 0 0.5rem;
 
-      .footer-section {
+      .site-end__section {
         min-width: 0;
         h3 { font-size: 1rem; }
         p, .phone-numbers a { font-size: 0.78rem; }
-        .footer-social {
+        .site-end__social {
           gap: 0.5rem;
-          .footer-social-icon {
+          .site-end__social-icon {
             width: 34px;
             height: 34px;
             font-size: 1rem;

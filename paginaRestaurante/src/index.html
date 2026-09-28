@@ -11,7 +11,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-  <link rel="preconnect" href="https://cdn.trustindex.io">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
@@ -19,27 +18,5 @@
 </head>
 <body>
   <app-root></app-root>
-  <script>
-    (() => {
-      const src = 'https://cdn.trustindex.io/loader.js?df946b3821b0019aa1667b76226';
-      const moveWidget = () => {
-        const widget = document.querySelector('body > .ti-widget');
-        const target = document.querySelector('.trustindex-widget');
-        if (widget && target && widget.parentElement !== target) target.appendChild(widget);
-      };
-      const observer = new MutationObserver(() => {
-        moveWidget();
-        if (document.querySelector('.trustindex-widget > .ti-widget')) observer.disconnect();
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-      const script = document.createElement('script');
-      script.src = src;
-      script.defer = true;
-      script.async = true;
-      document.body.appendChild(script);
-      moveWidget();
-      window.setTimeout(() => observer.disconnect(), 10000);
-    })();
-  </script>
 </body>
 </html>
