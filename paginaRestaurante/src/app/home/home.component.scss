@@ -1425,12 +1425,13 @@
 }
 .daily-menu-anchor { position:fixed; left:0; right:0; bottom:0; width:100vw; z-index:9998; min-height:0; box-sizing:border-box; background:transparent; display:flex; justify-content:center; align-items:flex-end; pointer-events:none; }
 .daily-menu-anchor.is-open { min-height:0; background:transparent; }
-.daily-menu-tab { position:relative; z-index:10001; display:flex; align-items:center; gap:.7rem; padding:.75rem 1.35rem .65rem; border:0; border-radius:1rem 1rem 0 0; background:#b1283f; color:#fff8f5; box-shadow:0 -.35rem 1rem rgba(50,15,20,.18); font:700 1rem Georgia,serif; cursor:pointer; pointer-events:auto; }
+.daily-menu-tab { position:relative; z-index:10001; display:flex; align-items:center; gap:.7rem; padding:.75rem 1.35rem .65rem; border:0; border-radius:1rem 1rem 0 0; background:#b1283f; color:#fff8f5; box-shadow:0 -.35rem 1rem rgba(50,15,20,.18); font:700 1rem Georgia,serif; cursor:pointer; pointer-events:auto; transition:transform .35s ease, box-shadow .35s ease, background-color .35s ease; }
+.daily-menu-tab:hover { transform:translateY(-3px); background:#c52d46; box-shadow:0 -.55rem 1.2rem rgba(50,15,20,.25); }
 .daily-menu-tab.is-open { display:none; }
 .daily-menu-tab-arrow { display:inline-block; font-size:1.3rem; line-height:.7; transition:transform .35s ease; }
 .daily-menu-tab-arrow.open { transform:rotate(180deg); }
 .daily-menu-backdrop { position:absolute !important; left:0; right:0; bottom:100%; z-index:9999 !important; display:flex !important; align-items:flex-end !important; justify-content:center !important; box-sizing:border-box; pointer-events:none; animation:dailyMenuFade .35s ease both; }
-.daily-menu-modal { position:relative; z-index:10000; display:flex; flex-direction:column; gap:1.25rem; width:min(390px,100%); padding:2rem clamp(1.25rem,5vw,2.5rem) 2.25rem; border-radius:1.25rem 1.25rem 0 0; background:#fff8f5; box-shadow:0 -1rem 3rem rgba(30,18,15,.24); animation:dailyMenuTicketUp .6s cubic-bezier(.2,.8,.2,1) both; pointer-events:auto; }
+.daily-menu-modal { position:relative; z-index:10000; display:flex; flex-direction:column; gap:1.25rem; width:min(390px,100%); padding:2rem clamp(1.25rem,5vw,2.5rem) 2.25rem; border-radius:1.25rem 1.25rem 0 0; background:#fff8f5; box-shadow:0 -1rem 3rem rgba(30,18,15,.24); animation:dailyMenuTicketUp .72s cubic-bezier(.2,.8,.2,1) both; pointer-events:auto; }
 .daily-menu-heading h2 { margin:.2rem 0; color:#b1283f; font:700 clamp(1.7rem,4vw,2.5rem) Georgia,serif; }
 .daily-menu-heading span:last-child { color:#756963; font-size:.9rem; }
 .daily-menu-items { display:grid; grid-template-columns:1fr; gap:1rem; align-content:center; }
@@ -1442,6 +1443,6 @@
 .daily-menu-close { position:absolute; top:.55rem; right:.75rem; border:0; background:transparent; color:#7d2a38; font-size:1.8rem; line-height:1; cursor:pointer; }
 @keyframes dailyMenuFade { from { opacity:0; } to { opacity:1; } }
 @keyframes dailyMenuTicketUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
- .daily-menu-backdrop.is-closing { animation:dailyMenuFadeOut .6s ease both; } .daily-menu-backdrop.is-closing .daily-menu-modal { animation:dailyMenuTicketDown .6s cubic-bezier(.4,0,.8,.2) both; }
+ .daily-menu-backdrop.is-closing { animation:dailyMenuFadeOut .68s ease both; } .daily-menu-backdrop.is-closing .daily-menu-modal { animation:dailyMenuTicketDown .68s cubic-bezier(.4,0,.8,.2) both; }
 @keyframes dailyMenuFadeOut { from { opacity:1; } to { opacity:0; } } @keyframes dailyMenuTicketDown { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(100%); } }
 @media (max-width:700px) { .daily-menu-modal { gap:1rem; padding-bottom:3rem; } }
