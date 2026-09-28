@@ -1007,6 +1007,10 @@
   background: white;
   padding: 1.5rem 1rem 3rem;
   margin-top: 2rem;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  box-sizing: border-box;
+  overflow-anchor: none;
   
   .reviews-content {
     max-width: 100%;
@@ -1035,7 +1039,8 @@
     .google-reviews-widget {
       // El widget de SociableKIT tiene sus propios estilos
       // Intentamos eliminar bordes
-      max-width: 1200px;
+      width: 100%;
+      max-width: none;
       margin: 0 auto;
       
       // Intentar eliminar bordes del widget externo
@@ -1313,7 +1318,10 @@
 :host ::ng-deep .trustindex-widget {
   display: block;
   width: 100%;
+  max-width: none;
   overflow: hidden;
+  min-height: 0;
+  contain: layout;
 }
 :host ::ng-deep .trustindex-widget .ti-widget-container {
   margin-bottom: 0 !important;
@@ -1321,7 +1329,7 @@
 :host ::ng-deep .trustindex-widget iframe {
   display: block !important;
   width: 100% !important;
-  min-height: 540px !important;
+  min-height: 0 !important;
   border: 0 !important;
 }
 
@@ -1408,6 +1416,6 @@
 @media (max-width: 768px) {
   #sobre-nosotros.section .about-values { grid-template-columns: 1fr; gap: 0.65rem; }
   :host ::ng-deep .trustindex-widget iframe {
-    min-height: 600px !important;
+    min-height: 0 !important;
   }
 }
