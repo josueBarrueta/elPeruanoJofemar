@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { ApiMenuItem, MenuApiService } from '../menu-api.service';
+import { DailyMenu, DailyMenuService } from '../daily-menu.service';
 
 type EditableItem = Omit<ApiMenuItem, '_id'> & { _id?: string };
 
@@ -25,7 +26,10 @@ export class AdminComponent {
   ];
   private readonly api = inject(MenuApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly dailyMenuService = inject(DailyMenuService);
   items: ApiMenuItem[] = [];
+  dailyMenu: DailyMenu = this.dailyMenuService.get();
+  dailyMenuStatus = '';
   selected: EditableItem = this.emptyItem();
   isEditing = false;
   status = 'Cargando carta…';
@@ -122,6 +126,15 @@ export class AdminComponent {
   constructor() {
     this.loadItems();
   }
+
+  saveDailyMenu(): void {
+    this.dailyMenuService.saveRemote(this.dailyMenu).subscribe({
+      next: menu => { this.dailyMenu = menu; this.dailyMenuStatus = 'Menú del día guardado en MongoDB'; this.changeDetector.markForCheck(); },
+      error: () => { this.dailyMenuStatus = 'No se pudo guardar el menú del día'; this.changeDetector.markForCheck(); }
+    });
+  }
+
+  trackByIndex(index: number): number { return index; }
 
   loadItems(): void {
     this.api.getAdminMenu().subscribe({

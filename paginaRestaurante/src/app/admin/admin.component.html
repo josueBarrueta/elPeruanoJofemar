@@ -8,6 +8,14 @@
     <div class="admin-header-actions"><a href="https://josuebarrueta.github.io/elPeruanoJofemar/#/menu-del-dia">Editar menú del día</a><a href="https://josuebarrueta.github.io/elPeruanoJofemar/#/">← Volver a la web</a></div>
   </header>
 
+  <section class="daily-menu-card">
+    <div class="card-heading"><div><h2>Menú del día</h2><p>Fecha automática · Precio fijo: <strong>13,50€</strong></p></div><span class="save-status" *ngIf="dailyMenuStatus">{{ dailyMenuStatus }}</span></div>
+    <form class="daily-menu-form" (ngSubmit)="saveDailyMenu()">
+      <div class="daily-menu-fields"><div><h3>Primeros a elegir</h3><label *ngFor="let item of dailyMenu.starters; let i = index; trackBy: trackByIndex">Primero {{ i + 1 }}<input [name]="'daily-starter' + i" [(ngModel)]="dailyMenu.starters[i]" required></label></div><div><h3>Segundos a elegir</h3><label *ngFor="let item of dailyMenu.mains; let i = index; trackBy: trackByIndex">Segundo {{ i + 1 }}<input [name]="'daily-main' + i" [(ngModel)]="dailyMenu.mains[i]" required></label></div><label>Postre<input name="daily-dessert" [(ngModel)]="dailyMenu.dessert"></label></div>
+      <button class="primary daily-save" type="submit">Guardar menú del día</button>
+    </form>
+  </section>
+
   <section class="admin-layout">
     <form class="editor-card" (ngSubmit)="save()">
       <div class="card-heading"><h2>{{ isEditing ? 'Editar producto' : 'Nuevo producto' }}</h2><button type="button" class="ghost" (click)="newItem()">Limpiar</button></div>
