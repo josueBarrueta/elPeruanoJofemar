@@ -1247,6 +1247,7 @@
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     padding-top: 1.5rem;
+    padding-bottom: 3.5rem;
     margin: 0 auto;
     max-width: 1200px;
     position: relative;
@@ -1441,4 +1442,6 @@
 .daily-menu-close { position:absolute; top:.55rem; right:.75rem; border:0; background:transparent; color:#7d2a38; font-size:1.8rem; line-height:1; cursor:pointer; }
 @keyframes dailyMenuFade { from { opacity:0; } to { opacity:1; } }
 @keyframes dailyMenuTicketUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
+ .daily-menu-backdrop.is-closing { animation:dailyMenuFadeOut .6s ease both; } .daily-menu-backdrop.is-closing .daily-menu-modal { animation:dailyMenuTicketDown .6s cubic-bezier(.4,0,.8,.2) both; }
+@keyframes dailyMenuFadeOut { from { opacity:1; } to { opacity:0; } } @keyframes dailyMenuTicketDown { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(100%); } }
 @media (max-width:700px) { .daily-menu-modal { gap:1rem; padding-bottom:3rem; } }

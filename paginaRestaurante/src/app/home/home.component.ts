@@ -46,6 +46,7 @@ export class HomeComponent implements AfterViewInit {
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly dailyMenuService = inject(DailyMenuService);
   showDailyMenuModal = false;
+  dailyMenuClosing = false;
   private readonly categoryOrder = [
     'Primer plato o Entradas',
     'Pescado y Mariscos',
@@ -139,9 +140,11 @@ export class HomeComponent implements AfterViewInit {
     }
   }
 
-  openDailyMenu(): void { this.showDailyMenuModal = true; }
+  openDailyMenu(): void { this.dailyMenuClosing = false; this.showDailyMenuModal = true; }
   closeDailyMenu(): void {
     this.showDailyMenuModal = false;
+    this.dailyMenuClosing = true;
+    window.setTimeout(() => { this.dailyMenuClosing = false; }, 600);
   }
 
   aboutFaqs = [
