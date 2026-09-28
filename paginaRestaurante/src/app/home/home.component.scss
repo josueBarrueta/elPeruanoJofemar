@@ -841,7 +841,7 @@
   position: relative;
   width: min(900px, 100%);
   max-height: min(90vh, 760px);
-  overflow: auto;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(280px, 1fr) minmax(260px, 0.8fr);
   background: #fff;
@@ -914,10 +914,13 @@
 @keyframes modalIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 @media (max-width: 700px) {
-  .dish-modal { grid-template-columns: 1fr; max-height: 92vh; }
+  .dish-modal {
+    grid-template-columns: 1fr;
+    max-height: calc(100vh - 2rem);
+  }
   .dish-modal-image-wrap {
-    height: min(62vh, 500px);
-    min-height: 250px;
+    height: min(42vh, 320px);
+    min-height: 0;
     background-image: none !important;
     &::before { display: none; }
   }
