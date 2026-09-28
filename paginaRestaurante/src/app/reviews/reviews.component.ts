@@ -342,6 +342,9 @@ export class ReviewsComponent implements OnInit, OnDestroy {
   isSliding = false;
   cardsPerView = 3;
   isReviewsExpanded = false;
+  private touchStartX = 0;
+  private touchDeltaX = 0;
+  private suppressCardClick = false;
   private autoSlide?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
@@ -418,7 +421,34 @@ export class ReviewsComponent implements OnInit, OnDestroy {
     }, 380);
   }
 
+  onTouchStart(event: TouchEvent): void {
+    if (!this.isReviewsExpanded || event.touches.length !== 1) return;
+    this.touchStartX = event.touches[0].clientX;
+    this.touchDeltaX = 0;
+    this.stopAutoSlide();
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.isReviewsExpanded || event.touches.length !== 1 || !this.touchStartX) return;
+    this.touchDeltaX = event.touches[0].clientX - this.touchStartX;
+    if (Math.abs(this.touchDeltaX) > 10) this.suppressCardClick = true;
+  }
+
+  onTouchEnd(): void {
+    if (!this.isReviewsExpanded || !this.touchStartX) return;
+    const swipeDistance = this.touchDeltaX;
+    this.touchStartX = 0;
+    this.touchDeltaX = 0;
+    if (Math.abs(swipeDistance) >= 45) {
+      if (swipeDistance < 0) this.next();
+      else this.previous();
+    }
+    this.startAutoSlide();
+    window.setTimeout(() => this.suppressCardClick = false, 0);
+  }
+
   openReview(review: Review): void {
+    if (this.suppressCardClick) return;
     this.stopAutoSlide();
     this.selectedReview = review;
     this.changeDetector.markForCheck();

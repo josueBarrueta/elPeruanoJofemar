@@ -23,7 +23,7 @@
 
     <div class="reviews-collapsible" [class.is-collapsed]="!isReviewsExpanded">
     <div class="carousel" aria-label="Carrusel de reseñas de 5 estrellas">
-      <div class="reviews-grid-viewport">
+      <div class="reviews-grid-viewport" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()" (touchcancel)="onTouchEnd()">
         <div class="reviews-grid" [class.is-sliding]="isSliding" [style.--cards-per-view]="cardsPerView">
           <button class="review-card" type="button" *ngFor="let review of visibleReviews" (click)="openReview(review)">
             <header class="review-card__header">

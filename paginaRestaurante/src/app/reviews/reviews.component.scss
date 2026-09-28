@@ -33,7 +33,7 @@ h1 { margin: .75rem 0 .8rem; font-family: Georgia, serif; font-size: clamp(2.1re
 .reviews-toolbar button { border: 1px solid #d7cec2; border-radius: 99px; padding: .55rem 1rem; background: #fff; color: #4e463f; cursor: pointer; font: inherit; }
 .reviews-toolbar button.active, .reviews-toolbar button:hover { border-color: #183f31; background: #183f31; color: #fff; }
 .carousel { display: flex; align-items: center; gap: .75rem; width: 100%; min-width: 0; }
-.reviews-grid-viewport { flex: 1 1 auto; width: 100%; min-width: 0; overflow: hidden; padding-top: 1.5rem; }
+.reviews-grid-viewport { flex: 1 1 auto; width: 100%; min-width: 0; overflow: hidden; padding-top: 1.5rem; touch-action: pan-y; }
 .reviews-grid { display: grid; grid-template-columns: repeat(var(--cards-per-view), minmax(0, 1fr)); gap: 1rem; width: 100%; transition: opacity .42s ease, transform .42s ease; will-change: opacity, transform; }
 .reviews-grid.is-sliding { transform: scale(.985); opacity: 0; }
 .carousel-control { display: grid; place-items: center; flex: 0 0 auto; width: 2rem; height: 2.5rem; padding: 0; border: 0; background: transparent; color: var(--brand); font-size: 2.6rem; line-height: 1; cursor: pointer; transition: transform .2s ease, color .2s ease; }
