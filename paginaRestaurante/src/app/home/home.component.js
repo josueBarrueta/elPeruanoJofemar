@@ -158,12 +158,6 @@ let HomeComponent = (() => {
                         allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
                         image: 'leche-de-tigre-mejorada.png'
                     },
-                    {
-                        name: 'Aguacate relleno',
-                        price: 7.00,
-                        allergens: [],
-                        image: 'aguacate-relleno-mejorada.png'
-                    }
                 ]
             },
             {

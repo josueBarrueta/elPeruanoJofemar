@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 
@@ -39,7 +39,7 @@ interface MenuCategory {
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomeComponent {
+export class HomeComponent implements AfterViewInit {
   private readonly categoryOrder = [
     'Primer plato o Entradas',
     'Pescado y Mariscos',
@@ -73,6 +73,17 @@ export class HomeComponent {
       });
     }
     window.addEventListener('popstate', () => this.applyUrlSelection());
+  }
+
+  ngAfterViewInit(): void {
+    // La portada no debe recuperar la posición anterior del navegador.
+    // El widget de reseñas carga de forma asíncrona y puede provocar
+    // que el navegador conserve accidentalmente el scroll cerca del pie.
+    if (window.location.hash === '#/' || window.location.hash === '') {
+      window.history.scrollRestoration = 'manual';
+      window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 0);
+      window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 250);
+    }
   }
 
   aboutFaqs = [
@@ -173,12 +184,6 @@ export class HomeComponent {
           allergens: ['Pescado', 'Crustaceos', 'Moluscos'],
           image: 'leche-de-tigre-mejorada.png'
         },
-        {
-          name: 'Aguacate relleno',
-          price: 7.00,
-          allergens: [],
-          image: 'aguacate-relleno-mejorada.png'
-        }
       ]
     },
     {
