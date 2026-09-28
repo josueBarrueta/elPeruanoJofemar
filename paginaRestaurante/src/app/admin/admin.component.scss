@@ -1,4 +1,4 @@
-.admin-shell { min-height: 100vh; background: #f7f4f0; padding: 2rem clamp(1rem, 5vw, 5rem); color: #2f2d2b; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; }
+.admin-shell { min-height: 100vh; width: 100%; box-sizing: border-box; background: #f7f4f0; padding: 2rem clamp(1rem, 5vw, 5rem); color: #2f2d2b; max-width: none; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; }
 .admin-shell > * { max-width: none; }
 .daily-menu-card { grid-column: 1; max-width: none; margin: 0; padding: 1.5rem clamp(1rem, 4vw, 2rem); background: #fffaf7; border: 1px solid #e9e0d9; border-radius: 18px; box-shadow: 0 12px 32px rgba(72, 39, 24, .07); }
 .daily-menu-card h2 { margin: 0; font-size: 1.35rem; } .daily-menu-card p { margin: .35rem 0 0; color: #756d67; } .save-status { color: #24724b; font-weight: 700; font-size: .85rem; }
