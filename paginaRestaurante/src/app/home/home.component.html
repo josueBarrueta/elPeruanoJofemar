@@ -186,6 +186,19 @@
     </div>
   </section>
 
+  <div class="daily-menu-anchor" [class.is-open]="showDailyMenuModal">
+    <button class="daily-menu-tab" [class.is-open]="showDailyMenuModal" type="button" (click)="openDailyMenu()" [attr.aria-expanded]="showDailyMenuModal">
+      <span>Menú del día</span><span class="daily-menu-tab-arrow" [class.open]="showDailyMenuModal">⌃</span>
+    </button>
+    <div class="daily-menu-backdrop" *ngIf="showDailyMenuModal" (click)="closeDailyMenu()">
+      <section class="daily-menu-modal" role="dialog" aria-modal="true" aria-labelledby="daily-menu-title" (click)="$event.stopPropagation()">
+        <button class="daily-menu-close" type="button" aria-label="Cerrar menú del día" (click)="closeDailyMenu()">×</button>
+        <div class="daily-menu-heading"><span class="eyebrow">Hoy en Jofemar</span><h2 id="daily-menu-title">Menú del día</h2><span *ngIf="dailyMenu.date">{{ dailyMenu.date | date:'d MMMM' }}</span></div>
+        <div class="daily-menu-items"><div><strong>Primeros a elegir</strong><span *ngFor="let item of dailyMenu.starters">{{ item || '—' }}</span></div><div><strong>Segundos a elegir</strong><span *ngFor="let item of dailyMenu.mains">{{ item || '—' }}</span></div><div *ngIf="dailyMenu.dessert"><strong>Postre</strong><span>{{ dailyMenu.dessert }}</span></div><div class="daily-menu-price"><strong>Precio</strong><span>{{ dailyMenu.price }}</span></div></div>
+      </section>
+    </div>
+  </div>
+
   <!-- Sección de reseñas propias -->
   <app-reviews id="resenas"></app-reviews>
 

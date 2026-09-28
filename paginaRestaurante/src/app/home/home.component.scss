@@ -1422,3 +1422,23 @@
     min-height: 0 !important;
   }
 }
+.daily-menu-anchor { position:fixed; left:0; right:0; bottom:0; width:100vw; z-index:9998; min-height:0; box-sizing:border-box; background:transparent; display:flex; justify-content:center; align-items:flex-end; pointer-events:none; }
+.daily-menu-anchor.is-open { min-height:0; background:transparent; }
+.daily-menu-tab { position:relative; z-index:10001; display:flex; align-items:center; gap:.7rem; padding:.75rem 1.35rem .65rem; border:0; border-radius:1rem 1rem 0 0; background:#b1283f; color:#fff8f5; box-shadow:0 -.35rem 1rem rgba(50,15,20,.18); font:700 1rem Georgia,serif; cursor:pointer; pointer-events:auto; }
+.daily-menu-tab.is-open { display:none; }
+.daily-menu-tab-arrow { display:inline-block; font-size:1.3rem; line-height:.7; transition:transform .35s ease; }
+.daily-menu-tab-arrow.open { transform:rotate(180deg); }
+.daily-menu-backdrop { position:absolute !important; left:0; right:0; bottom:100%; z-index:9999 !important; display:flex !important; align-items:flex-end !important; justify-content:center !important; box-sizing:border-box; pointer-events:none; animation:dailyMenuFade .35s ease both; }
+.daily-menu-modal { position:relative; z-index:10000; display:flex; flex-direction:column; gap:1.25rem; width:min(390px,100%); padding:2rem clamp(1.25rem,5vw,2.5rem) 2.25rem; border-radius:1.25rem 1.25rem 0 0; background:#fff8f5; box-shadow:0 -1rem 3rem rgba(30,18,15,.24); animation:dailyMenuTicketUp .6s cubic-bezier(.2,.8,.2,1) both; pointer-events:auto; }
+.daily-menu-heading h2 { margin:.2rem 0; color:#b1283f; font:700 clamp(1.7rem,4vw,2.5rem) Georgia,serif; }
+.daily-menu-heading span:last-child { color:#756963; font-size:.9rem; }
+.daily-menu-items { display:grid; grid-template-columns:1fr; gap:1rem; align-content:center; }
+.daily-menu-items div { display:grid; gap:.25rem; }
+.daily-menu-items strong { color:#b1283f; font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; }
+.daily-menu-items span { color:#403631; line-height:1.35; }
+.daily-menu-items .daily-menu-price { justify-items:end; text-align:right; margin-top:.35rem; }
+.daily-menu-items .daily-menu-price span { color:#b1283f; font:700 2rem Georgia,serif; line-height:1; }
+.daily-menu-close { position:absolute; top:.55rem; right:.75rem; border:0; background:transparent; color:#7d2a38; font-size:1.8rem; line-height:1; cursor:pointer; }
+@keyframes dailyMenuFade { from { opacity:0; } to { opacity:1; } }
+@keyframes dailyMenuTicketUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:700px) { .daily-menu-modal { gap:1rem; padding-bottom:3rem; } }

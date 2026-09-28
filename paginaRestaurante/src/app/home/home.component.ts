@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, inject } from '@angu
 import { CommonModule } from '@angular/common';
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 import { ReviewsComponent } from '../reviews/reviews.component';
+import { DailyMenu, DailyMenuService } from '../daily-menu.service';
 
 interface Allergen {
   id: string;
@@ -41,6 +42,8 @@ interface MenuCategory {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements AfterViewInit {
+  readonly dailyMenu: DailyMenu;
+  showDailyMenuModal = false;
   private readonly categoryOrder = [
     'Primer plato o Entradas',
     'Pescado y Mariscos',
@@ -60,6 +63,7 @@ export class HomeComponent implements AfterViewInit {
   selectedItem: MenuItem | null = null;
 
   constructor() {
+    this.dailyMenu = inject(DailyMenuService).get();
     this.applyRequestedMenuDefaults();
     const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
     this.menuApi = seedMode ? null : inject(MenuApiService);
@@ -130,6 +134,11 @@ export class HomeComponent implements AfterViewInit {
       window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 0);
       window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 250);
     }
+  }
+
+  openDailyMenu(): void { this.showDailyMenuModal = true; }
+  closeDailyMenu(): void {
+    this.showDailyMenuModal = false;
   }
 
   aboutFaqs = [
