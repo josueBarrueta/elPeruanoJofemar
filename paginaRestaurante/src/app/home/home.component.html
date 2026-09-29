@@ -152,11 +152,13 @@
       <div class="dish-modal-backdrop" *ngIf="selectedItem as item" (click)="closeDish()">
         <article class="dish-modal" role="dialog" aria-modal="true" [attr.aria-label]="item.name" (click)="$event.stopPropagation()">
           <button class="dish-modal-close" type="button" aria-label="Cerrar" (click)="closeDish()">×</button>
-          <div class="dish-modal-image-wrap" [style.backgroundImage]="'url(' + getImageSource(item.image) + ')'">
+          <div class="dish-modal-image-wrap" [class.is-unavailable]="item.active === false" [style.backgroundImage]="'url(' + getImageSource(item.image) + ')'">
             <img class="dish-modal-image" [src]="getImageSource(item.image)" [alt]="item.name">
+            <span class="unavailable-ribbon modal-unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
           </div>
           <div class="dish-modal-content">
             <h3>{{ item.name }}</h3>
+            <p class="modal-unavailable-label" *ngIf="item.active === false">PLATO NO DISPONIBLE</p>
            <p class="dish-modal-description">{{ getDishDescription(item) }}</p>
             <p class="dish-modal-price">€{{ item.price.toFixed(2) }}</p>
             <div class="dish-modal-allergens">
