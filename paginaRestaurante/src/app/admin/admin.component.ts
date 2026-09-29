@@ -37,6 +37,7 @@ export class AdminComponent {
   suggestionField = '';
   categoryMenuOpen = false;
   subcategoryMenuOpen = false;
+  showProductPreview = false;
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
   selected: EditableItem = this.emptyItem();
@@ -191,6 +192,7 @@ export class AdminComponent {
     this.selected = { ...item, allergens: [...item.allergens] };
     this.isEditing = true;
     this.itemStatus = '';
+    this.showProductPreview = true;
   }
 
   save(): void {
