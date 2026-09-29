@@ -16,6 +16,7 @@ interface MenuItem {
   price: number;
   allergens: string[]; // Array de IDs de alérgenos
   image?: string; // Imagen opcional del plato
+  imagePosition?: string;
   description?: string;
   active?: boolean;
 }

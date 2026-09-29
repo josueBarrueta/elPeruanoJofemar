@@ -54,7 +54,7 @@
                 <div class="menu-item">
                   <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
                   <div class="item-image">
-                    <img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
+                    <img [src]="getImageSource(item.image)" [style.object-position]="item.imagePosition || '50% 50%'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                   </div>
                   <div class="item-info">
                     <h4>{{ item.name }}</h4>
@@ -89,7 +89,7 @@
                       <div class="menu-item">
                         <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
                         <div class="item-image">
-                          <img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
+                          <img [src]="getImageSource(item.image)" [style.object-position]="item.imagePosition || '50% 50%'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                         </div>
                         <div class="item-info">
                           <h4>{{ item.name }}</h4>
@@ -138,7 +138,7 @@
           <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" [class.is-unavailable]="item.active === false" (click)="openDish(item)" role="button" tabindex="0">
             <div class="menu-item">
               <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
-              <div class="item-image"><img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async"></div>
+              <div class="item-image"><img [src]="getImageSource(item.image)" [style.object-position]="item.imagePosition || '50% 50%'" [alt]="item.name" class="dish-image" loading="lazy" decoding="async"></div>
               <div class="item-info"><h4>{{ item.name }}</h4><span class="price">€{{ item.price.toFixed(2) }}</span></div>
               <div class="allergens-container">
                 <div class="allergens" *ngIf="item.allergens?.length"><img *ngFor="let allergenId of item.allergens" [src]="'assets/images/' + getAllergenImage(allergenId)" [alt]="getAllergenName(allergenId)" class="allergen-icon" [title]="getAllergenName(allergenId)"></div>
@@ -153,7 +153,7 @@
         <article class="dish-modal" role="dialog" aria-modal="true" [attr.aria-label]="item.name" (click)="$event.stopPropagation()">
           <button class="dish-modal-close" type="button" aria-label="Cerrar" (click)="closeDish()">×</button>
           <div class="dish-modal-image-wrap" [class.is-unavailable]="item.active === false" [style.backgroundImage]="'url(' + getImageSource(item.image) + ')'">
-            <img class="dish-modal-image" [src]="getImageSource(item.image)" [alt]="item.name">
+            <img class="dish-modal-image" [src]="getImageSource(item.image)" [style.object-position]="item.imagePosition || '50% 50%'" [alt]="item.name">
             <span class="unavailable-ribbon modal-unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
           </div>
           <div class="dish-modal-content">

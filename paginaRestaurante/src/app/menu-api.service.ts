@@ -10,6 +10,7 @@ export interface ApiMenuItem {
   price: number;
   allergens: string[];
   image?: string;
+  imagePosition?: string;
   description?: string;
   order: number;
   active?: boolean;

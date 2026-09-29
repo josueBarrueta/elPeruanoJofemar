@@ -38,6 +38,10 @@ export class AdminComponent {
   categoryMenuOpen = false;
   subcategoryMenuOpen = false;
   showProductPreview = false;
+  imageAdjustOpen = false;
+  imagePosition = '50% 50%';
+  imagePositionX = 50;
+  imagePositionY = 50;
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
   selected: EditableItem = this.emptyItem();
@@ -137,7 +141,7 @@ export class AdminComponent {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => { this.selected.image = String(reader.result); this.itemStatus = ''; this.changeDetector.markForCheck(); };
+    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageAdjustOpen = true; this.itemStatus = ''; this.changeDetector.markForCheck(); };
     reader.readAsDataURL(file);
   }
 
@@ -197,6 +201,10 @@ export class AdminComponent {
     this.selected = { ...item, allergens: [...item.allergens] };
     this.isEditing = true;
     this.itemStatus = '';
+    this.imagePosition = item.imagePosition || '50% 50%';
+    const [x, y] = this.imagePosition.split('%').map(value => Number(value.trim()));
+    this.imagePositionX = Number.isFinite(x) ? x : 50;
+    this.imagePositionY = Number.isFinite(y) ? y : 50;
     this.showProductPreview = true;
   }
 
@@ -210,6 +218,7 @@ export class AdminComponent {
       price: Number(this.selected.price),
       allergens: [...(this.selected.allergens || [])],
       image: this.selected.image?.trim() || '',
+      imagePosition: this.imagePosition,
       description: this.selected.description?.trim() || '',
       active: this.isEditing ? this.selected.active !== false : true
     };
