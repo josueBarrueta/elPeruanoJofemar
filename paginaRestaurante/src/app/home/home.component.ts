@@ -43,6 +43,7 @@ interface MenuCategory {
 })
 export class HomeComponent implements AfterViewInit {
   dailyMenu: DailyMenu;
+  readonly todayDate = new Date();
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly dailyMenuService = inject(DailyMenuService);
   showDailyMenuModal = false;
@@ -67,7 +68,7 @@ export class HomeComponent implements AfterViewInit {
 
   constructor() {
     this.dailyMenu = this.dailyMenuService.get();
-    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = menu; this.changeDetector.markForCheck(); }, error: () => undefined });
+    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = { ...menu, date: this.todayDate.toISOString().slice(0, 10) }; this.changeDetector.markForCheck(); }, error: () => undefined });
     this.applyRequestedMenuDefaults();
     const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
     this.menuApi = seedMode ? null : inject(MenuApiService);
