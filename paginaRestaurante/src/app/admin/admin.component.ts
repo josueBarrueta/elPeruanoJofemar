@@ -185,6 +185,7 @@ export class AdminComponent {
   }
 
   save(): void {
+    const wasEditing = this.isEditing && !!this.selected._id;
     const item = {
       ...this.selected,
       name: this.selected.name.trim(),
@@ -200,11 +201,11 @@ export class AdminComponent {
       this.itemStatus = 'Completa el nombre, la categoría y un precio válido.';
       return;
     }
-    const request = this.isEditing && this.selected._id
+    const request = wasEditing && this.selected._id
       ? this.api.updateItem(this.selected._id, item)
       : this.api.createItem(item);
     request.subscribe({
-      next: () => { this.status = 'Carta actualizada correctamente'; this.loadItems(); this.newItem(); this.itemStatus = 'Plato publicado en MongoDB y disponible en la carta pública.'; this.changeDetector.markForCheck(); },
+      next: () => { this.status = 'Carta actualizada correctamente'; this.loadItems(); this.newItem(); this.itemStatus = wasEditing ? 'Plato actualizado en MongoDB y en la carta pública.' : 'Plato publicado en MongoDB y disponible en la carta pública.'; this.changeDetector.markForCheck(); },
       error: () => { this.itemStatus = 'No se pudo publicar el plato en MongoDB.'; this.changeDetector.markForCheck(); }
     });
   }
