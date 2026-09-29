@@ -187,8 +187,8 @@
   </section>
 
   <div class="daily-menu-anchor" [class.is-open]="showDailyMenuModal">
-    <button class="daily-menu-tab" [class.is-open]="showDailyMenuModal" [class.is-closing]="dailyMenuClosing" type="button" (click)="openDailyMenu()" [attr.aria-expanded]="showDailyMenuModal">
-      <span>Menú del día</span><span class="daily-menu-tab-arrow" [class.open]="showDailyMenuModal">⌃</span>
+    <button class="daily-menu-tab" [class.is-open]="showDailyMenuModal" type="button" (click)="openDailyMenu()" [attr.aria-expanded]="showDailyMenuModal">
+      <span>Menú del día</span>
     </button>
     <div class="daily-menu-backdrop" [class.is-closing]="dailyMenuClosing" *ngIf="showDailyMenuModal || dailyMenuClosing" (click)="closeDailyMenu()">
       <section class="daily-menu-modal" role="dialog" aria-modal="true" aria-labelledby="daily-menu-title" (click)="$event.stopPropagation()">
