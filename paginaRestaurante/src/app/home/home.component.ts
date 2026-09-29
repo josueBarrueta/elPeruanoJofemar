@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { retry } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 import { ReviewsComponent } from '../reviews/reviews.component';
@@ -74,7 +75,7 @@ export class HomeComponent implements AfterViewInit {
     const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
     this.menuApi = seedMode ? null : inject(MenuApiService);
     if (this.menuApi) {
-      this.menuApi.getMenu().subscribe({
+      this.menuApi.getMenu().pipe(retry({ count: 3, delay: 1800 })).subscribe({
         next: (items) => {
           if (items.length > 0) this.menuCategories = this.groupApiItems(items);
           this.applyUrlSelection();
