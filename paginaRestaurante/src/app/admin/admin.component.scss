@@ -112,8 +112,6 @@ button { border: 0; border-radius: 9px; padding: .65rem .8rem; font: inherit; fo
 .preview-product-footer { display: flex; justify-content: space-between; align-items: end; gap: .5rem; margin-top: .75rem; padding-top: .65rem; border-top: 1px dashed #decfc8; }
 .preview-product-footer strong { color: #b1283f; font-family: Georgia, serif; font-size: 1.15rem; white-space: nowrap; }
 .preview-product-footer span { color: #756d67; font-size: .65rem; text-align: right; }
-.image-adjust-button { justify-self: start; padding: .45rem .65rem; color: #a92136; background: #f8e9ec; font-size: .78rem; }
-.image-adjust-backdrop { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 1rem; background: rgba(47,31,28,.58); }
 .image-adjust-modal { width: min(700px, 100%); max-height: 90vh; overflow: auto; padding: 1.3rem; border-radius: 18px; background: #fffaf7; box-shadow: 0 20px 70px rgba(47,31,28,.3); }
 .compact-adjust { width: min(480px, 100%); }
 .adjust-help { margin: -.5rem 0 1rem; color: #756d67; font-size: .85rem; }

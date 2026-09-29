@@ -38,7 +38,6 @@ export class AdminComponent {
   categoryMenuOpen = false;
   subcategoryMenuOpen = false;
   showProductPreview = false;
-  imageAdjustOpen = false;
   imagePosition = '50% 50%';
   imagePositionX = 50;
   imagePositionY = 50;
@@ -143,7 +142,7 @@ export class AdminComponent {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageZoom = 1; this.imageAdjustOpen = true; this.itemStatus = ''; this.changeDetector.markForCheck(); };
+    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageZoom = 1; this.itemStatus = ''; this.changeDetector.markForCheck(); };
     reader.readAsDataURL(file);
   }
 
