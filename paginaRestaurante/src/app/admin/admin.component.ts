@@ -24,6 +24,9 @@ export class AdminComponent {
     'Bebidas',
     'Postres'
   ];
+  private readonly publicSubcategories: Record<string, string[]> = {
+    Bebidas: ['Refrescos', 'Cervezas', 'Vino de la Casa', 'Vinos Tintos', 'Vinos Blancos', 'Vinos Rosados', 'Cócteles Peruanos', 'Chupitos']
+  };
   private readonly api = inject(MenuApiService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly dailyMenuService = inject(DailyMenuService);
@@ -46,7 +49,7 @@ export class AdminComponent {
   itemToDelete?: ApiMenuItem;
 
   get categoryOptions(): string[] {
-    return [...new Set(this.items.map((item) => item.category).filter(Boolean))].sort((a, b) => this.compareCategories(a, b));
+    return [...new Set([...this.categoryOrder, ...this.items.map((item) => item.category).filter(Boolean)])].sort((a, b) => this.compareCategories(a, b));
   }
 
   toggleCategory(category: string): void {
@@ -85,10 +88,14 @@ export class AdminComponent {
   continueOrdering(): void { this.showOrderExitModal = false; }
 
   get subcategoryOptions(): string[] {
-    const values = this.items
+    const values = [
+      ...(this.publicSubcategories[this.selected.category] || []),
+      ...this.items
       .filter((item) => !this.selected.category || item.category === this.selected.category)
       .map((item) => item.subcategory)
-      .filter((subcategory): subcategory is string => Boolean(subcategory));
+      .filter((subcategory): subcategory is string => Boolean(subcategory))
+    ];
+    
     if (this.selected.subcategory && !values.includes(this.selected.subcategory)) values.push(this.selected.subcategory);
     return [...new Set(values)].sort((a, b) => a.localeCompare(b));
   }
