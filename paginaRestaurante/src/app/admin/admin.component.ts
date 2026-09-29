@@ -141,6 +141,11 @@ export class AdminComponent {
     reader.readAsDataURL(file);
   }
 
+  getPreviewImageSource(image?: string): string {
+    if (!image) return '';
+    return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
+  }
+
   get groupedItems(): { category: string; subcategories: { name: string; items: ApiMenuItem[] }[] }[] {
     const categories = new Map<string, Map<string, ApiMenuItem[]>>();
     for (const item of this.items) {
