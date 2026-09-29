@@ -42,6 +42,7 @@ export class AdminComponent {
   imagePosition = '50% 50%';
   imagePositionX = 50;
   imagePositionY = 50;
+  imageZoom = 1;
   private imageDragStart?: { x: number; y: number; positionX: number; positionY: number };
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
@@ -142,7 +143,7 @@ export class AdminComponent {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageAdjustOpen = true; this.itemStatus = ''; this.changeDetector.markForCheck(); };
+    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageZoom = 1; this.imageAdjustOpen = true; this.itemStatus = ''; this.changeDetector.markForCheck(); };
     reader.readAsDataURL(file);
   }
 
@@ -224,6 +225,7 @@ export class AdminComponent {
     const [x, y] = this.imagePosition.split('%').map(value => Number(value.trim()));
     this.imagePositionX = Number.isFinite(x) ? x : 50;
     this.imagePositionY = Number.isFinite(y) ? y : 50;
+    this.imageZoom = item.imageZoom || 1;
     this.showProductPreview = true;
   }
 
@@ -238,6 +240,7 @@ export class AdminComponent {
       allergens: [...(this.selected.allergens || [])],
       image: this.selected.image?.trim() || '',
       imagePosition: this.imagePosition,
+      imageZoom: this.imageZoom,
       description: this.selected.description?.trim() || '',
       active: this.isEditing ? this.selected.active !== false : true
     };

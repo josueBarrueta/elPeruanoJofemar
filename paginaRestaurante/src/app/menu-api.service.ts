@@ -11,6 +11,7 @@ export interface ApiMenuItem {
   allergens: string[];
   image?: string;
   imagePosition?: string;
+  imageZoom?: number;
   description?: string;
   order: number;
   active?: boolean;
