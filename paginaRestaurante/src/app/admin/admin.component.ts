@@ -35,6 +35,8 @@ export class AdminComponent {
   dailyMenuStatus = '';
   itemStatus = '';
   suggestionField = '';
+  categoryMenuOpen = false;
+  subcategoryMenuOpen = false;
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
   selected: EditableItem = this.emptyItem();
@@ -51,6 +53,9 @@ export class AdminComponent {
   get categoryOptions(): string[] {
     return [...new Set([...this.categoryOrder, ...this.items.map((item) => item.category).filter(Boolean)])].sort((a, b) => this.compareCategories(a, b));
   }
+
+  chooseCategory(category: string): void { this.selected.category = category; this.selected.subcategory = ''; this.categoryMenuOpen = false; this.subcategoryMenuOpen = false; }
+  chooseSubcategory(subcategory: string): void { this.selected.subcategory = subcategory; this.subcategoryMenuOpen = false; }
 
   toggleCategory(category: string): void {
     if (this.openCategories.has(category)) this.openCategories.delete(category);

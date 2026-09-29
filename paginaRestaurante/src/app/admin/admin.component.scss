@@ -20,6 +20,19 @@
 .card-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; h2 { margin: 0; font-size: 1.35rem; } } .heading-actions { display: flex; gap: .45rem; align-items: center; } .ordering-help { margin: -.6rem 0 1rem; color: #756d67; font-size: .82rem; }
 label { display: grid; gap: .4rem; margin-bottom: 1rem; color: #625b56; font-size: .85rem; font-weight: 700; }
 input, textarea, select { width: 100%; box-sizing: border-box; border: 1px solid #ded5ce; border-radius: 10px; padding: .75rem .8rem; font: inherit; color: #302b28; background: #fffdfb; }
+select { appearance: none; cursor: pointer; padding-right: 2.5rem; background-color: #fffdfb; background-image: linear-gradient(45deg, transparent 50%, #b1283f 50%), linear-gradient(135deg, #b1283f 50%, transparent 50%); background-position: calc(100% - 1.15rem) 50%, calc(100% - .8rem) 50%; background-size: .4rem .4rem, .4rem .4rem; background-repeat: no-repeat; }
+select:focus { outline: 2px solid rgba(177, 40, 63, .2); border-color: #b1283f; }
+.custom-select { position: relative; }
+.select-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; border: 1px solid #ded5ce; border-radius: 10px; padding: .75rem .8rem; background: #fffdfb; color: #302b28; text-align: left; font-weight: 400; }
+.select-trigger .pi { color: #b1283f; font-size: .75rem; transition: transform .2s ease; }
+.select-trigger .pi.is-open { transform: rotate(180deg); }
+.select-trigger:disabled { color: #9a918b; cursor: not-allowed; opacity: .75; }
+.select-trigger:disabled .pi { color: #b8aaa4; }
+.select-options { position: absolute; left: 0; top: calc(100% + .3rem); z-index: 30; display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; box-sizing: border-box; gap: .2rem; padding: .35rem; border: 1px solid #ead5d0; border-radius: 10px; background: #fffaf7; box-shadow: 0 12px 25px rgba(72, 39, 24, .16); }
+.select-options button { display: block; width: 100%; box-sizing: border-box; padding: .55rem .65rem; border-radius: 7px; background: transparent; color: #4f4540; text-align: left; font-weight: 600; white-space: normal; }
+.select-options button:hover { background: #f8e9ec; color: #a92136; }
+input[type="file"] { padding: .45rem; color: #756d67; cursor: pointer; }
+input[type="file"]::file-selector-button { margin-right: .7rem; padding: .5rem .75rem; border: 0; border-radius: 7px; background: #f8e9ec; color: #a92136; font: inherit; font-weight: 700; cursor: pointer; }
 .field-help { color: #756d67; font-size: .75rem; font-weight: 400; }
 input:focus, textarea:focus { outline: 2px solid rgba(177, 40, 63, .2); border-color: #b1283f; }
 .allergen-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; padding: .65rem; border: 1px solid #ded5ce; border-radius: 10px; background: #fffdfb; }
