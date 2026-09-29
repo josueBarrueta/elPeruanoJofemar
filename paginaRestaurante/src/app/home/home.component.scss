@@ -668,6 +668,10 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   }
 }
+.menu-card.is-unavailable { position: relative; }
+.menu-card.is-unavailable .dish-image { filter: grayscale(1); opacity: .62; }
+.menu-card.is-unavailable .item-info { opacity: .68; }
+.unavailable-ribbon { position: absolute; top: 42%; left: 50%; z-index: 2; transform: translate(-50%, -50%) rotate(-8deg); width: max-content; max-width: 90%; padding: .55rem .75rem; border: 2px solid #333; background: rgba(255,255,255,.9); color: #333; font-size: .78rem; font-weight: 900; letter-spacing: .06em; text-align: center; box-shadow: 0 .15rem .5rem rgba(0,0,0,.18); }
 
 .allergens-toggle {
   display: flex;

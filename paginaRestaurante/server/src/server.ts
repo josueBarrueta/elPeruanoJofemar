@@ -30,7 +30,7 @@ app.get('/api/menu', async (_request, response) => {
     return;
   }
 
-  const items = await MenuItem.find({ active: true })
+  const items = await MenuItem.find()
     .sort({ category: 1, subcategory: 1, order: 1 })
     .lean();
 

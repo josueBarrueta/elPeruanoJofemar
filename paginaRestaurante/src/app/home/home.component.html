@@ -50,8 +50,9 @@
           <div class="category-content" [class.open]="category.isOpen">
             <!-- Mostrar items directos si existen -->
             <div class="menu-cards" *ngIf="category.items">
-              <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
+              <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" [class.is-unavailable]="item.active === false" (click)="openDish(item)" role="button" tabindex="0">
                 <div class="menu-item">
+                  <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
                   <div class="item-image">
                     <img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                   </div>
@@ -84,8 +85,9 @@
                 </div>
                 <div class="category-content" [class.open]="subcategory.isOpen">
                   <div class="menu-cards">
-                    <div *ngFor="let item of subcategory.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
+                    <div *ngFor="let item of subcategory.items; trackBy: trackByName" class="menu-card" [class.is-unavailable]="item.active === false" (click)="openDish(item)" role="button" tabindex="0">
                       <div class="menu-item">
+                        <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
                         <div class="item-image">
                           <img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async">
                         </div>
@@ -133,8 +135,9 @@
           </div>
         </div>
         <div class="menu-cards" *ngIf="category.items">
-          <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" (click)="openDish(item)" role="button" tabindex="0">
+          <div *ngFor="let item of category.items; trackBy: trackByName" class="menu-card" [class.is-unavailable]="item.active === false" (click)="openDish(item)" role="button" tabindex="0">
             <div class="menu-item">
+              <span class="unavailable-ribbon" *ngIf="item.active === false">PLATO NO DISPONIBLE</span>
               <div class="item-image"><img [src]="getImageSource(item.image)" [alt]="item.name" class="dish-image" loading="lazy" decoding="async"></div>
               <div class="item-info"><h4>{{ item.name }}</h4><span class="price">€{{ item.price.toFixed(2) }}</span></div>
               <div class="allergens-container">

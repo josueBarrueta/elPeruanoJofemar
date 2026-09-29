@@ -17,6 +17,7 @@ interface MenuItem {
   allergens: string[]; // Array de IDs de alérgenos
   image?: string; // Imagen opcional del plato
   description?: string;
+  active?: boolean;
 }
 
 interface MenuSubcategory {
@@ -723,7 +724,8 @@ export class HomeComponent implements AfterViewInit {
         price: item.price,
         allergens: item.allergens,
         image: item.image,
-        description: item.description
+        description: item.description,
+        active: item.active !== false
       };
 
       if (!item.subcategory) {
