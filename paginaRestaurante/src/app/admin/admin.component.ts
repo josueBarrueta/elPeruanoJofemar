@@ -132,7 +132,7 @@ export class AdminComponent {
 
   saveDailyMenu(): void {
     this.dailyMenuService.saveRemote({ ...this.dailyMenu, dessert: '' }).subscribe({
-      next: menu => { this.dailyMenu = menu; this.dailyMenuStatus = 'Menú del día guardado en MongoDB'; this.changeDetector.markForCheck(); },
+      next: menu => { this.dailyMenu = menu; this.dailyMenuStatus = 'Publicado en la base de datos de MongoDB y actualizado en la página.'; this.changeDetector.markForCheck(); },
       error: () => { this.dailyMenuStatus = 'No se pudo guardar el menú del día'; this.changeDetector.markForCheck(); }
     });
   }
