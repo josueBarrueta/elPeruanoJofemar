@@ -44,6 +44,7 @@ interface MenuCategory {
 export class HomeComponent implements AfterViewInit {
   dailyMenu: DailyMenu;
   readonly todayDate = new Date();
+  readonly todayDateLabel = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(this.todayDate);
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly dailyMenuService = inject(DailyMenuService);
   showDailyMenuModal = false;

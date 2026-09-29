@@ -1429,13 +1429,16 @@
 .daily-menu-tab:hover { background:#c52d46; box-shadow:0 -.55rem 1.2rem rgba(50,15,20,.25); }
 .daily-menu-tab.is-open { display:none; }
 .daily-menu-backdrop { position:fixed !important; inset:0; z-index:9999 !important; display:flex !important; align-items:flex-end !important; justify-content:center !important; box-sizing:border-box; pointer-events:none; animation:dailyMenuFade .35s ease both; }
-.daily-menu-modal { position:relative; z-index:10000; display:flex; flex-direction:column; gap:1.25rem; width:min(390px,100%); padding:2rem clamp(1.25rem,5vw,2.5rem) 2.25rem; border-radius:1.25rem 1.25rem 0 0; background:#fff8f5; box-shadow:0 -1rem 3rem rgba(30,18,15,.24); animation:dailyMenuTicketUp .72s cubic-bezier(.2,.8,.2,1) both; pointer-events:auto; }
+.daily-menu-modal { position:relative; z-index:10000; display:flex; flex-direction:column; gap:1.25rem; width:min(390px,100%); min-height:72vh; box-sizing:border-box; padding:2.25rem clamp(1.25rem,5vw,2.5rem) 2rem; border-radius:1.25rem 1.25rem 0 0; background:#fff8f5; box-shadow:0 -1rem 3rem rgba(30,18,15,.24); animation:dailyMenuTicketUp .72s cubic-bezier(.2,.8,.2,1) both; pointer-events:auto; }
 .daily-menu-heading h2 { margin:.2rem 0; color:#b1283f; font:700 clamp(1.7rem,4vw,2.5rem) Georgia,serif; }
 .daily-menu-heading span:last-child { color:#756963; font-size:.9rem; }
 .daily-menu-items { display:grid; grid-template-columns:1fr; gap:1rem; align-content:center; }
 .daily-menu-items div { display:grid; gap:.25rem; }
+.daily-menu-separator { display:block !important; width:100%; height:1px; margin:.15rem 0; border-top:2px dotted #d7b9ae; }
 .daily-menu-items strong { color:#b1283f; font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; }
 .daily-menu-items span { color:#403631; line-height:1.35; }
+.daily-menu-includes { text-align:center; }
+.daily-menu-includes span { font-size:.95rem; font-style:italic; }
 .daily-menu-items .daily-menu-price { justify-items:end; text-align:right; margin-top:.35rem; }
 .daily-menu-items .daily-menu-price span { color:#b1283f; font:700 2rem Georgia,serif; line-height:1; }
 .daily-menu-close { position:absolute; top:.55rem; right:.75rem; border:0; background:transparent; color:#7d2a38; font-size:1.8rem; line-height:1; cursor:pointer; }

@@ -193,8 +193,8 @@
     <div class="daily-menu-backdrop" [class.is-closing]="dailyMenuClosing" *ngIf="showDailyMenuModal || dailyMenuClosing" (click)="closeDailyMenu()">
       <section class="daily-menu-modal" role="dialog" aria-modal="true" aria-labelledby="daily-menu-title" (click)="$event.stopPropagation()">
         <button class="daily-menu-close" type="button" aria-label="Cerrar menú del día" (click)="closeDailyMenu()">×</button>
-        <div class="daily-menu-heading"><span class="eyebrow">Hoy en Jofemar</span><h2 id="daily-menu-title">Menú del día</h2><span>{{ todayDate | date:'d MMMM y' }}</span></div>
-        <div class="daily-menu-items"><div><strong>Primeros a elegir</strong><span *ngFor="let item of dailyMenu.starters">{{ item || '—' }}</span></div><div><strong>Segundos a elegir</strong><span *ngFor="let item of dailyMenu.mains">{{ item || '—' }}</span></div><div *ngIf="dailyMenu.dessert"><strong>Postre</strong><span>{{ dailyMenu.dessert }}</span></div><div class="daily-menu-price"><strong>Precio</strong><span>{{ dailyMenu.price }}</span></div></div>
+        <div class="daily-menu-heading"><span class="eyebrow">Hoy en Jofemar</span><h2 id="daily-menu-title">Menú del día</h2><span>{{ todayDateLabel }}</span></div>
+        <div class="daily-menu-items"><div><strong>Primeros a elegir</strong><span *ngFor="let item of dailyMenu.starters">{{ item || '—' }}</span></div><div class="daily-menu-separator" aria-hidden="true"></div><div><strong>Segundos a elegir</strong><span *ngFor="let item of dailyMenu.mains">{{ item || '—' }}</span></div><div class="daily-menu-separator" aria-hidden="true"></div><div class="daily-menu-includes"><strong>Incluye</strong><span>1 bebida + postre o café</span></div><div class="daily-menu-separator" aria-hidden="true"></div><div class="daily-menu-price"><strong>Precio</strong><span>{{ dailyMenu.price }}</span></div></div>
       </section>
     </div>
   </div>
