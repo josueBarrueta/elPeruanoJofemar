@@ -913,6 +913,11 @@ export class HomeComponent implements AfterViewInit {
     return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
   }
 
+  getImageTransform(item: MenuItem): string {
+    const [x, y] = (item.imagePosition || '50% 50%').split('%').map(value => Number(value.trim()));
+    return `translate(${(50 - (Number.isFinite(x) ? x : 50)) * .7}%, ${(50 - (Number.isFinite(y) ? y : 50)) * .7}%) scale(${item.imageZoom || 1})`;
+  }
+
   getDishDescription(item: MenuItem): string {
     if (item.description) return item.description;
 

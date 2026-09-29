@@ -152,6 +152,12 @@ export class AdminComponent {
     return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
   }
 
+  getAdjustImageTransform(): string {
+    const offsetX = (50 - this.imagePositionX) * 0.7;
+    const offsetY = (50 - this.imagePositionY) * 0.7;
+    return `translate(${offsetX}%, ${offsetY}%) scale(${this.imageZoom})`;
+  }
+
   startImagePan(event: PointerEvent): void {
     event.preventDefault();
     this.imageDragStart = { x: event.clientX, y: event.clientY, positionX: this.imagePositionX, positionY: this.imagePositionY };
