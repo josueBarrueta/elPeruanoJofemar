@@ -10,6 +10,7 @@
 .daily-menu-includes-admin { margin: 0; padding-top: .8rem; border-top: 1px dashed #decfc8; color: #756d67; text-align: center; font-size: .9rem; font-style: italic; }
 .daily-menu-fields > div:last-child { border-bottom: 0; }
 .daily-menu-status { display: block; margin: .8rem 0 0; text-align: center; line-height: 1.35; }
+.editor-status { display: block; margin: 0 0 .75rem; line-height: 1.35; }
 .admin-header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin: 0 0 .5rem; a { color: #a92136; font-weight: 700; text-decoration: none; } h1 { margin: .35rem 0; font-size: clamp(2rem, 5vw, 3.4rem); } p { color: #756d67; margin: 0; } }
 .eyebrow { color: #b1283f; text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 800; }
 .admin-layout { display: contents; }
@@ -19,6 +20,7 @@
 .card-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; h2 { margin: 0; font-size: 1.35rem; } } .heading-actions { display: flex; gap: .45rem; align-items: center; } .ordering-help { margin: -.6rem 0 1rem; color: #756d67; font-size: .82rem; }
 label { display: grid; gap: .4rem; margin-bottom: 1rem; color: #625b56; font-size: .85rem; font-weight: 700; }
 input, textarea, select { width: 100%; box-sizing: border-box; border: 1px solid #ded5ce; border-radius: 10px; padding: .75rem .8rem; font: inherit; color: #302b28; background: #fffdfb; }
+.field-help { color: #756d67; font-size: .75rem; font-weight: 400; }
 input:focus, textarea:focus { outline: 2px solid rgba(177, 40, 63, .2); border-color: #b1283f; }
 .allergen-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; padding: .65rem; border: 1px solid #ded5ce; border-radius: 10px; background: #fffdfb; }
 .allergen-option { display: flex; align-items: center; gap: .45rem; margin: 0; color: #625b56; font-size: .8rem; font-weight: 600; cursor: pointer; }

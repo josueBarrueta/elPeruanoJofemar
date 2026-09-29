@@ -30,6 +30,7 @@ export class AdminComponent {
   items: ApiMenuItem[] = [];
   dailyMenu: DailyMenu = this.dailyMenuService.get();
   dailyMenuStatus = '';
+  itemStatus = '';
   suggestionField = '';
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
@@ -104,6 +105,20 @@ export class AdminComponent {
     this.selected.allergens = [...current];
   }
 
+  selectImage(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.itemStatus = 'Selecciona un archivo de imagen válido.';
+      input.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => { this.selected.image = String(reader.result); this.itemStatus = ''; this.changeDetector.markForCheck(); };
+    reader.readAsDataURL(file);
+  }
+
   get groupedItems(): { category: string; subcategories: { name: string; items: ApiMenuItem[] }[] }[] {
     const categories = new Map<string, Map<string, ApiMenuItem[]>>();
     for (const item of this.items) {
@@ -149,20 +164,36 @@ export class AdminComponent {
     });
   }
 
-  newItem(): void { this.selected = { ...this.emptyItem(), order: this.items.length ? Math.max(...this.items.map((item) => item.order)) + 1 : 0 }; this.isEditing = false; }
+  newItem(): void { this.selected = { ...this.emptyItem(), order: this.items.length ? Math.max(...this.items.map((item) => item.order)) + 1 : 0 }; this.isEditing = false; this.itemStatus = ''; }
 
   edit(item: ApiMenuItem): void {
     this.selected = { ...item, allergens: [...item.allergens] };
     this.isEditing = true;
+    this.itemStatus = '';
   }
 
   save(): void {
+    const item = {
+      ...this.selected,
+      name: this.selected.name.trim(),
+      category: this.selected.category.trim(),
+      subcategory: this.selected.subcategory?.trim() || '',
+      price: Number(this.selected.price),
+      allergens: [...(this.selected.allergens || [])],
+      image: this.selected.image?.trim() || '',
+      description: this.selected.description?.trim() || '',
+      active: this.isEditing ? this.selected.active !== false : true
+    };
+    if (!item.name || !item.category || !Number.isFinite(item.price) || item.price < 0) {
+      this.itemStatus = 'Completa el nombre, la categoría y un precio válido.';
+      return;
+    }
     const request = this.isEditing && this.selected._id
-      ? this.api.updateItem(this.selected._id, this.selected)
-      : this.api.createItem(this.selected);
+      ? this.api.updateItem(this.selected._id, item)
+      : this.api.createItem(item);
     request.subscribe({
-      next: () => { this.status = 'Guardado correctamente en MongoDB'; this.loadItems(); this.newItem(); },
-      error: () => { this.status = 'No se pudo guardar el producto'; }
+      next: () => { this.status = 'Carta actualizada correctamente'; this.loadItems(); this.newItem(); this.itemStatus = 'Plato publicado en MongoDB y disponible en la carta pública.'; this.changeDetector.markForCheck(); },
+      error: () => { this.itemStatus = 'No se pudo publicar el plato en MongoDB.'; this.changeDetector.markForCheck(); }
     });
   }
 

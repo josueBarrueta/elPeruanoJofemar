@@ -903,6 +903,11 @@ export class HomeComponent implements AfterViewInit {
     this.selectedCategory = category;
   }
 
+  getImageSource(image?: string): string {
+    if (!image) return 'assets/images/peru-flag.png';
+    return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
+  }
+
   getDishDescription(item: MenuItem): string {
     if (item.description) return item.description;
 

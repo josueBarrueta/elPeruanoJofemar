@@ -22,9 +22,10 @@
       <label>Nombre<input name="name" [(ngModel)]="selected.name" required></label>
       <div class="form-grid"><label>Categoría<select name="category" [(ngModel)]="selected.category" required><option *ngFor="let category of categoryOptions" [value]="category">{{ category }}</option></select></label><label>Subcategoría<select name="subcategory" [(ngModel)]="selected.subcategory"><option value="">Sin subcategoría</option><option *ngFor="let subcategory of subcategoryOptions" [value]="subcategory">{{ subcategory }}</option></select></label></div>
       <label>Precio (€)<input type="number" step="0.01" name="price" [(ngModel)]="selected.price" required></label>
-      <label>Imagen<input name="image" [(ngModel)]="selected.image" placeholder="ceviche_mixto.png"></label>
+      <label>Imagen<input type="file" name="image" accept="image/*" (change)="selectImage($event)"><small class="field-help">Solo imágenes. Si no eliges una, se usará la imagen predeterminada.</small></label>
       <label>Alérgenos<div class="allergen-options"><label class="allergen-option" *ngFor="let allergen of allergenOptions"><input type="checkbox" [checked]="selected.allergens.includes(allergen)" (change)="toggleAllergen(allergen, $any($event.target).checked)"><span>{{ allergen }}</span></label></div></label>
       <label>Descripción<textarea name="description" rows="3" [(ngModel)]="selected.description"></textarea></label>
+      <span class="save-status editor-status" *ngIf="itemStatus">{{ itemStatus }}</span>
       <button class="primary" type="submit">{{ isEditing ? 'Guardar cambios' : 'Añadir a la carta' }}</button>
     </form>
 
