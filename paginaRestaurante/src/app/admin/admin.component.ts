@@ -42,6 +42,7 @@ export class AdminComponent {
   imagePosition = '50% 50%';
   imagePositionX = 50;
   imagePositionY = 50;
+  private imageDragStart?: { x: number; y: number; positionX: number; positionY: number };
 
   get menuOptions(): string[] { return [...new Set(this.items.map(item => item.name).filter(Boolean))].sort((a, b) => a.localeCompare(b)); }
   selected: EditableItem = this.emptyItem();
@@ -149,6 +150,24 @@ export class AdminComponent {
     if (!image) return '';
     return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
   }
+
+  startImagePan(event: PointerEvent): void {
+    event.preventDefault();
+    this.imageDragStart = { x: event.clientX, y: event.clientY, positionX: this.imagePositionX, positionY: this.imagePositionY };
+    (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+  }
+
+  moveImagePan(event: PointerEvent): void {
+    if (!this.imageDragStart) return;
+    const nextX = this.imageDragStart.positionX - (event.clientX - this.imageDragStart.x) / 3;
+    const nextY = this.imageDragStart.positionY - (event.clientY - this.imageDragStart.y) / 3;
+    this.imagePositionX = Math.max(0, Math.min(100, nextX));
+    this.imagePositionY = Math.max(0, Math.min(100, nextY));
+    this.imagePosition = `${this.imagePositionX}% ${this.imagePositionY}%`;
+    this.changeDetector.markForCheck();
+  }
+
+  endImagePan(): void { this.imageDragStart = undefined; }
 
   get groupedItems(): { category: string; subcategories: { name: string; items: ApiMenuItem[] }[] }[] {
     const categories = new Map<string, Map<string, ApiMenuItem[]>>();
