@@ -43,7 +43,8 @@ app.get('/api/daily-menu', async (_request, response) => {
 });
 
 app.put('/api/admin/daily-menu', requireAdmin, async (request, response) => {
-  const menu = await DailyMenu.findOneAndUpdate({}, { ...request.body, price: '13,50€' }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
+  const { dessert: _dessert, ...menuData } = request.body ?? {};
+  const menu = await DailyMenu.findOneAndUpdate({}, { $set: { ...menuData, price: '13,50€' }, $unset: { dessert: 1 } }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
   response.json(menu);
 });
 

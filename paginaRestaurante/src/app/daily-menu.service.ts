@@ -20,7 +20,7 @@ export class DailyMenuService {
     if (typeof localStorage === 'undefined') return this.empty();
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      return { ...this.empty(), ...saved, starters: saved.starters ?? [saved.starter ?? '', '', ''], mains: saved.mains ?? [saved.main ?? '', '', ''], price: '13,50€' };
+      return { ...this.empty(), ...saved, dessert: '', starters: saved.starters ?? [saved.starter ?? '', '', ''], mains: saved.mains ?? [saved.main ?? '', '', ''], price: '13,50€' };
     } catch { return this.empty(); }
   }
 
@@ -28,7 +28,7 @@ export class DailyMenuService {
   loadRemote(): Observable<DailyMenu> { return this.http.get<DailyMenu>(`${this.apiUrl}/daily-menu`).pipe(tap(menu => this.save({ ...menu, price: '13,50€' }))); }
   saveRemote(menu: DailyMenu): Observable<DailyMenu> {
     const token = localStorage.getItem('admin_token');
-    return this.http.put<DailyMenu>(`${this.apiUrl}/admin/daily-menu`, { ...menu, price: '13,50€' }, { headers: new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {}) }).pipe(tap(saved => this.save({ ...saved, price: '13,50€' })));
+    return this.http.put<DailyMenu>(`${this.apiUrl}/admin/daily-menu`, { ...menu, dessert: '', price: '13,50€' }, { headers: new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {}) }).pipe(tap(saved => this.save({ ...saved, dessert: '', price: '13,50€' })));
   }
 
   private empty(): DailyMenu {
@@ -36,7 +36,7 @@ export class DailyMenuService {
       date: new Date().toISOString().slice(0, 10),
       starters: ['Causa rellena', '', ''],
       mains: ['Seco de pollo', '', ''],
-      dessert: 'Arroz con leche',
+      dessert: '',
       price: '13,50€'
     };
   }

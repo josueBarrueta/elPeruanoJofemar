@@ -131,7 +131,7 @@ export class AdminComponent {
   }
 
   saveDailyMenu(): void {
-    this.dailyMenuService.saveRemote(this.dailyMenu).subscribe({
+    this.dailyMenuService.saveRemote({ ...this.dailyMenu, dessert: '' }).subscribe({
       next: menu => { this.dailyMenu = menu; this.dailyMenuStatus = 'Menú del día guardado en MongoDB'; this.changeDetector.markForCheck(); },
       error: () => { this.dailyMenuStatus = 'No se pudo guardar el menú del día'; this.changeDetector.markForCheck(); }
     });
@@ -140,7 +140,7 @@ export class AdminComponent {
   trackByIndex(index: number): number { return index; }
   setSuggestionField(field: string): void { this.suggestionField = field; }
   suggestions(value: string): string[] { const query = value.trim().toLocaleLowerCase(); return query ? this.menuOptions.filter(option => option.toLocaleLowerCase().includes(query)).slice(0, 6) : []; }
-  chooseDaily(type: 'starter' | 'main' | 'dessert', index: number, value: string): void { if (type === 'starter') this.dailyMenu.starters[index] = value; else if (type === 'main') this.dailyMenu.mains[index] = value; else this.dailyMenu.dessert = value; this.suggestionField = ''; }
+  chooseDaily(type: 'starter' | 'main', index: number, value: string): void { if (type === 'starter') this.dailyMenu.starters[index] = value; else this.dailyMenu.mains[index] = value; this.suggestionField = ''; }
 
   loadItems(): void {
     this.api.getAdminMenu().subscribe({
