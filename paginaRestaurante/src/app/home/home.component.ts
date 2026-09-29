@@ -915,7 +915,9 @@ export class HomeComponent implements AfterViewInit {
 
   getImageTransform(item: MenuItem): string {
     const [x, y] = (item.imagePosition || '50% 50%').split('%').map(value => Number(value.trim()));
-    return `translate(${(50 - (Number.isFinite(x) ? x : 50)) * .7}%, ${(50 - (Number.isFinite(y) ? y : 50)) * .7}%) scale(${item.imageZoom || 1})`;
+    const zoom = item.imageZoom || 1;
+    const availablePan = Math.max(0, zoom - 1) * 50;
+    return `translate(${((50 - (Number.isFinite(x) ? x : 50)) / 50) * availablePan}%, ${((50 - (Number.isFinite(y) ? y : 50)) / 50) * availablePan}%) scale(${zoom})`;
   }
 
   getDishDescription(item: MenuItem): string {

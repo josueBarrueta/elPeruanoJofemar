@@ -153,8 +153,9 @@ export class AdminComponent {
   }
 
   getAdjustImageTransform(): string {
-    const offsetX = (50 - this.imagePositionX) * 0.7;
-    const offsetY = (50 - this.imagePositionY) * 0.7;
+    const availablePan = Math.max(0, this.imageZoom - 1) * 50;
+    const offsetX = ((50 - this.imagePositionX) / 50) * availablePan;
+    const offsetY = ((50 - this.imagePositionY) / 50) * availablePan;
     return `translate(${offsetX}%, ${offsetY}%) scale(${this.imageZoom})`;
   }
 
