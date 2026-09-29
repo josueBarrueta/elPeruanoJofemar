@@ -87,4 +87,9 @@ button { border: 0; border-radius: 9px; padding: .65rem .8rem; font: inherit; fo
 .icon-button[title="Activar producto"]::before { content: '\e966'; font-family: 'primeicons'; font-size: .82rem; line-height: 1; }
 .row-actions { position: relative; z-index: 4; pointer-events: auto; }
 .row-actions button { position: relative; z-index: 5; pointer-events: auto; touch-action: manipulation; }
+.subcategory-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: .55rem 0 .35rem; padding: .55rem .65rem; border: 1px solid #eadfd8; border-radius: 8px; background: #fff8f5; color: #756d67; text-align: left; }
+.subcategory-toggle h4 { margin: 0; font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; }
+.subcategory-toggle span { color: #9b6d75; font-size: .75rem; font-weight: 600; }
+.subcategory-toggle h4::before { content: '▸'; display: inline-block; margin-right: .45rem; color: #b1283f; transition: transform .2s ease; }
+.subcategory-toggle.is-open h4::before { transform: rotate(90deg); }
 @media (max-width: 560px) { .row-actions { gap: .25rem; } .icon-button { width: 2rem; height: 2rem; } .delete-modal-actions { flex-direction: column-reverse; } .delete-modal-actions button { width: 100%; } }

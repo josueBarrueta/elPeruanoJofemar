@@ -48,6 +48,7 @@ export class AdminComponent {
   draggedItem?: ApiMenuItem;
   dropTarget?: ApiMenuItem;
   openCategories = new Set<string>();
+  openSubcategories = new Set<string>();
   itemToDelete?: ApiMenuItem;
 
   get categoryOptions(): string[] {
@@ -61,6 +62,14 @@ export class AdminComponent {
     if (this.openCategories.has(category)) this.openCategories.delete(category);
     else this.openCategories.add(category);
     this.changeDetector.markForCheck();
+  }
+
+  subcategoryKey(category: string, subcategory: string): string { return `${category}::${subcategory}`; }
+
+  toggleSubcategory(category: string, subcategory: string): void {
+    const key = this.subcategoryKey(category, subcategory);
+    if (this.openSubcategories.has(key)) this.openSubcategories.delete(key);
+    else this.openSubcategories.add(key);
   }
 
   toggleOrderingMode(): void {
