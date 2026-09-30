@@ -41,6 +41,13 @@
   <section id="nuestra-carta" class="section">
     <div class="section-content">
       <h2>Nuestra carta</h2>
+      <div class="menu-status" *ngIf="menuLoading" role="status" aria-live="polite">
+        <span class="menu-status-spinner" aria-hidden="true"></span>
+        <p>Estamos actualizando nuestra carta…</p>
+      </div>
+      <div class="menu-status menu-status-error" *ngIf="!menuLoading && menuLoadError" role="alert">
+        <p>Estamos actualizando nuestra carta. Vuelve a intentarlo en unos instantes.</p>
+      </div>
       <div class="menu-accordion" *ngIf="!selectedCategory">
         <div *ngFor="let category of menuCategories; trackBy: trackById" class="menu-category">
           <div class="category-header category-link main-category-fold" (click)="openCategory(category)" role="button" tabindex="0">

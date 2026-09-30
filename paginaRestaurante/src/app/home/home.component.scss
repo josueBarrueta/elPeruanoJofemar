@@ -428,6 +428,12 @@
     }
   }
 
+  .menu-status { display: grid; justify-items: center; gap: .75rem; min-height: 9rem; margin: 1rem 0; padding: 2rem 1rem; border: 1px solid #eadfd8; border-radius: 1rem; background: #fffaf7; color: #6b3d32; text-align: center; }
+  .menu-status p { margin: 0; font-weight: 700; }
+  .menu-status-error { color: #a92136; }
+  .menu-status-spinner { width: 2rem; height: 2rem; border: 3px solid #ead5d0; border-top-color: #b1283f; border-radius: 50%; animation: menu-status-spin .8s linear infinite; }
+  @keyframes menu-status-spin { to { transform: rotate(360deg); } }
+
   .menu-accordion {
     width: 100%;
     margin: 0 auto;
