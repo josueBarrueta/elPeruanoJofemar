@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "tsx src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
-    "seed": "tsx src/seed.ts"
+    "build": "tsc"
   },
   "dependencies": {
     "cors": "^2.8.5",

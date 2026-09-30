@@ -76,8 +76,7 @@ export class HomeComponent implements AfterViewInit {
   constructor() {
     this.dailyMenu = this.dailyMenuService.get();
     this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = { ...menu, date: this.todayDate.toISOString().slice(0, 10) }; this.changeDetector.markForCheck(); }, error: () => undefined });
-    const seedMode = (globalThis as { __JOFEMAR_SEED__?: boolean }).__JOFEMAR_SEED__ === true;
-    this.menuApi = seedMode ? null : inject(MenuApiService);
+    this.menuApi = inject(MenuApiService);
     this.menuLoading = true;
     if (this.menuApi) {
       this.menuApi.getMenu().pipe(retry({ count: 3, delay: 1800 })).subscribe({
