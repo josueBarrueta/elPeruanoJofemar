@@ -42,6 +42,7 @@ jobs:
           mkdir pages-artifact
           output_dir="$(dirname "$(find dist -type f -name index.html -print -quit)")"
           cp -a "$output_dir"/. pages-artifact/
+          cp pages-artifact/index.html pages-artifact/404.html
 
       - name: Subir la web a GitHub Pages
         uses: actions/upload-pages-artifact@v3
