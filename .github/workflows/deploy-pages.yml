@@ -34,7 +34,7 @@ jobs:
 
       - name: Generar la web
         working-directory: paginaRestaurante
-        run: npm run build -- --base-href /elPeruanoJofemar/
+        run: npm run build -- --base-href /
 
       - name: Preparar los archivos publicados
         working-directory: paginaRestaurante
