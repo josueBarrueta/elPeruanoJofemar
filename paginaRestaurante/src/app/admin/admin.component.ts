@@ -263,7 +263,19 @@ export class AdminComponent {
       ? this.api.updateItem(this.selected._id, update)
       : this.api.createItem(item);
     request.subscribe({
-      next: () => { this.status = 'Carta actualizada correctamente'; this.loadItems(); this.newItem(); this.itemStatus = wasEditing ? 'Plato actualizado en MongoDB y en la carta pública.' : 'Plato publicado en MongoDB y disponible en la carta pública.'; this.changeDetector.markForCheck(); },
+      next: (savedItem) => {
+        this.status = 'Carta actualizada correctamente';
+        if (wasEditing && savedItem._id) {
+          // Keep the current list position after editing. Reloading the whole
+          // list here lets equal order values (especially zero) reshuffle in
+          // MongoDB before the user has explicitly saved a new order.
+          const index = this.items.findIndex((entry) => entry._id === savedItem._id);
+          if (index >= 0) this.items[index] = { ...this.items[index], ...savedItem };
+        }
+        this.newItem();
+        this.itemStatus = wasEditing ? 'Plato actualizado en MongoDB y en la carta pública.' : 'Plato publicado en MongoDB y disponible en la carta pública.';
+        this.changeDetector.markForCheck();
+      },
       error: () => { this.itemStatus = 'No se pudo publicar el plato en MongoDB.'; this.changeDetector.markForCheck(); }
     });
   }
@@ -365,7 +377,9 @@ export class AdminComponent {
   }
 
   saveOrder(): void {
-    const requests = this.items.filter((item) => item._id).map((item, index) => this.api.updateItem(item._id!, { order: index }));
+    const requests = this.groupedItems.flatMap((category) => category.subcategories.flatMap((subcategory) =>
+      subcategory.items.filter((item) => item._id).map((item, index) => this.api.updateItem(item._id!, { order: index }))
+    ));
     forkJoin(requests).subscribe({
       next: () => { this.orderingMode = false; this.orderDirty = false; this.showOrderExitModal = false; this.status = 'Orden guardado correctamente en MongoDB'; this.loadItems(); },
       error: () => { this.status = 'No se pudo guardar el orden'; }
