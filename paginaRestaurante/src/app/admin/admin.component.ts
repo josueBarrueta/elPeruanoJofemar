@@ -254,11 +254,15 @@ export class AdminComponent {
       this.itemStatus = 'Completa el nombre, la categoría y un precio válido.';
       return;
     }
-    // Editing the product data must not rewrite its position. The order is
-    // managed exclusively by the ordering controls; sending a stale/duplicate
-    // value here can make MongoDB place the edited item at an arbitrary point.
+    // Persist the item's current position instead of reusing a stale value
+    // (often zero). This gives every edited item a deterministic place in its
+    // category and keeps it movable in both directions afterwards.
+    if (wasEditing && this.selected._id) {
+      const currentGroup = this.items.filter((entry) => entry.category === item.category && (entry.subcategory || '') === (item.subcategory || ''));
+      const currentIndex = currentGroup.findIndex((entry) => entry._id === this.selected._id);
+      item.order = currentIndex >= 0 ? currentIndex : currentGroup.length;
+    }
     const update: Partial<ApiMenuItem> = { ...item };
-    if (wasEditing) delete update.order;
     const request = wasEditing && this.selected._id
       ? this.api.updateItem(this.selected._id, update)
       : this.api.createItem(item);
