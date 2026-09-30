@@ -254,8 +254,13 @@ export class AdminComponent {
       this.itemStatus = 'Completa el nombre, la categoría y un precio válido.';
       return;
     }
+    // Editing the product data must not rewrite its position. The order is
+    // managed exclusively by the ordering controls; sending a stale/duplicate
+    // value here can make MongoDB place the edited item at an arbitrary point.
+    const update: Partial<ApiMenuItem> = { ...item };
+    if (wasEditing) delete update.order;
     const request = wasEditing && this.selected._id
-      ? this.api.updateItem(this.selected._id, item)
+      ? this.api.updateItem(this.selected._id, update)
       : this.api.createItem(item);
     request.subscribe({
       next: () => { this.status = 'Carta actualizada correctamente'; this.loadItems(); this.newItem(); this.itemStatus = wasEditing ? 'Plato actualizado en MongoDB y en la carta pública.' : 'Plato publicado en MongoDB y disponible en la carta pública.'; this.changeDetector.markForCheck(); },
