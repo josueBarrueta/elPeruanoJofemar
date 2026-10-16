@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { forkJoin } from 'rxjs';
+import { DragScrollDirective } from './drag-scroll.directive';
 import { TableOrdersComponent } from './table-orders.component';
 import { ReservationsComponent } from './reservations.component';
 import { FinanceComponent } from './finance.component';
@@ -16,7 +17,7 @@ type EditableItem = Omit<ApiMenuItem, '_id'> & { _id?: string };
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, FinanceComponent, ReservationsComponent, TableOrdersComponent],
+  imports: [CommonModule, FormsModule, RouterLink, DragScrollDirective, FinanceComponent, ReservationsComponent, TableOrdersComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

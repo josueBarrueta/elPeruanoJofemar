@@ -42,3 +42,8 @@ app-admin [contenteditable='true'] * {
 app-admin img {
   -webkit-user-drag: none;
 }
+
+/* El cursor indica que el panel se puede agarrar para desplazarlo. */
+app-admin .admin-shell { cursor: grab; }
+app-admin .drag-scrolling,
+app-admin .drag-scrolling * { cursor: grabbing !important; }

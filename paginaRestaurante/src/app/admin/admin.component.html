@@ -1,4 +1,4 @@
-<main class="admin-shell" [class.sidebar-collapsed]="sidebarCollapsed">
+<main appDragScroll class="admin-shell" [class.sidebar-collapsed]="sidebarCollapsed">
   <aside class="dashboard-sidebar" [class.menu-open]="mobileMenuOpen" (pointerenter)="expandSidebar($event)" (focusin)="expandSidebar()" (keydown.escape)="mobileMenuOpen = false">
     <div class="sidebar-header">
       <a class="dashboard-brand" routerLink="/" aria-label="El Peruano Jofemar"><img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar"><span class="compact-brand" aria-hidden="true">J</span></a>

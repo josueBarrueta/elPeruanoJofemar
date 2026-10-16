@@ -73,3 +73,24 @@ article.product { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap
 .product-controls button { width: 56px; min-width: 56px; min-height: 56px; padding: .5rem; color: #b1283f; background: #f8e9ec; font-size: 1.5rem; }
 .product-count { min-width: 2ch; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 @media(max-width:380px) { article.product { grid-template-columns: 1fr; } .product-controls { justify-content: flex-end; } }
+
+/* En escritorio aprovechamos el ancho disponible sin reducir los controles táctiles. */
+@media (min-width: 900px) {
+  :host { max-width: none; justify-self: stretch; }
+  .tables-panel { padding: 1.5rem; }
+  .tables-panel > .panel-heading { display: flex; }
+  .tables-panel > .panel-heading > button { width: auto; min-width: 190px; }
+  .toolbar { display: flex; justify-content: space-between; }
+  .fixed-tables { grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 1rem; }
+  .table-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .table-tile strong { font-size: 1.15rem; }
+  .order-dialog { width: min(1000px, calc(100vw - 4rem)); height: auto; max-height: calc(100dvh - 4rem); margin: auto; padding: 1.5rem 1.5rem 0; border-radius: 20px; }
+  .order-dialog > form { min-height: 0; }
+  .table-picker { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .guest-row { justify-content: flex-start; gap: 2rem; }
+  .editor-tabs { max-width: 520px; }
+  .product-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+  .order-footer { margin-top: 1rem; display: flex; }
+  .order-footer > div:first-child { gap: 2rem; }
+  .footer-actions { min-width: 280px; }
+}
