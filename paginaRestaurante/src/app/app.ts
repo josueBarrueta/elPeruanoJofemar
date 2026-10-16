@@ -1,3 +1,4 @@
+import { SeoService } from './seo.service';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 
@@ -14,13 +15,14 @@ export class AppComponent {
   isRouteTransitioning = true;
   private transitionTimer?: number;
   private previousRoutePath: string | null = null;
-  constructor(router: Router) {
+  constructor(router: Router, seo: SeoService) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         document.body.classList.toggle('admin-route', event.urlAfterRedirects.startsWith('/admin'));
         const routePath = event.urlAfterRedirects.split(/[?#]/, 1)[0];
         if (this.previousRoutePath === routePath) return;
         this.previousRoutePath = routePath;
+        seo.update(routePath);
         // Animamos únicamente al cambiar de pantalla real, nunca al cambiar de hash.
         this.isRouteTransitioning = false;
         window.requestAnimationFrame(() => {
