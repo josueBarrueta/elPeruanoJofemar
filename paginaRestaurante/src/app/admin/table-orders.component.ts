@@ -25,6 +25,7 @@ export class TableOrdersComponent {
   formError = '';
   closeError = '';
   message = '';
+  productPage = 0;
   query = '';
   category = '';
   selected?: TableOrder;
@@ -40,6 +41,16 @@ export class TableOrdersComponent {
     const search = this.query.trim().toLocaleLowerCase('es');
     return this.menu.filter(item => item._id && item.active !== false && (!this.category || item.category === this.category) && (!search || item.name.toLocaleLowerCase('es').includes(search)));
   }
+  get pageSize() {
+    if (window.innerWidth < 900) return window.innerHeight < 800 ? 2 : 4;
+    return window.innerHeight < 850 ? 4 : 8;
+  }
+  get productPages() { return Math.max(1, Math.ceil(this.products.length / this.pageSize)); }
+  get visibleProducts() {
+    const page = Math.min(this.productPage, this.productPages - 1);
+    return this.products.slice(page * this.pageSize, (page + 1) * this.pageSize);
+  }
+  get currentProductPage() { return Math.min(this.productPage, this.productPages - 1); }
   get totalCents() { return this.draft.lines.reduce((total, line) => total + line.unitPriceCents * (Number(line.quantity) || 0), 0); }
   get guests() { return this.orders.reduce((total, order) => total + order.guests, 0); }
   changeView(view: 'open' | 'closed') { if (this.loading || this.saving) return; this.view = view; this.load(); }
@@ -62,6 +73,7 @@ export class TableOrdersComponent {
     this.draft = order ? { tableName: order.tableName, guests: order.guests, notes: order.notes, lines: order.lines.map(line => ({ ...line })) } : { ...this.empty(), tableName };
     this.pickingTable = !order && !tableName;
     this.editorTab = order?.lines.length ? 'order' : 'products'; this.addedMessage = '';
+    this.productPage = 0;
     this.original = JSON.stringify(this.draft); this.query = ''; this.category = ''; this.formError = ''; this.message = '';
     this.editor?.nativeElement.showModal();
   }

@@ -94,3 +94,43 @@ article.product { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap
   .order-footer > div:first-child { gap: 2rem; }
   .footer-actions { min-width: 280px; }
 }
+
+/* Tarjetas compactas y páginas cortas en lugar de una lista de toda la carta. */
+.product-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+article.product { aspect-ratio: 1; grid-template-columns: 1fr; grid-template-rows: 1fr auto; gap: .4rem; padding: .65rem; align-items: stretch; }
+.product-info { display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.product-info > strong { font-size: .9rem; line-height: 1.25; }
+.product-info small { display: none; }
+.product-price { margin-top: .4rem; font-size: .9rem; }
+.product-controls { justify-content: center; gap: .3rem; }
+.product-controls button { min-width: 44px; width: 44px; min-height: 44px; padding: .25rem; }
+.product-pagination { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .75rem; margin-top: .75rem; }
+.product-pagination span { text-align: center; font-variant-numeric: tabular-nums; }
+.product-pagination button { padding: .5rem; font-size: .9rem; }
+@media (min-width: 900px) {
+  .order-dialog { width: min(1280px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 1rem 1rem 0; }
+  .order-dialog .intro { margin: .5rem 0; }
+  .table-fields { display: flex; justify-content: space-between; align-items: center; padding-bottom: .5rem; }
+  .table-fields > div:first-child { flex: 1; }
+  .table-picker { grid-template-columns: repeat(6, minmax(0,1fr)); }
+  .table-picker button { min-height: 48px; }
+  .chosen-table-row { justify-content: flex-start; }
+  .editor-tabs { margin-top: .5rem; }
+  .order-workspace { margin-top: .5rem; }
+  .catalog > h3 { display: none; }
+  .catalog > label { display: flex; align-items: center; gap: 1rem; margin-bottom: .5rem; }
+  .catalog > label input { flex: 1; }
+  .category-buttons { padding-bottom: .25rem; }
+  .category-buttons button { min-height: 44px; max-width: none; }
+  .added-message { margin: 0; min-height: 1.25rem; }
+  .product-list { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  article.product { aspect-ratio: 1; max-height: 220px; }
+  .product-info > strong { font-size: 1rem; }
+  .product-pagination { margin-top: .5rem; }
+  .product-pagination button { min-height: 44px; }
+  .order-footer { margin-top: .5rem; padding-top: .5rem; }
+}
+@media (min-width: 900px) {
+  .product-list { grid-template-columns: repeat(4, minmax(0, 200px)); justify-content: center; }
+  article.product { max-height: none; }
+}
