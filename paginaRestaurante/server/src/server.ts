@@ -2,7 +2,7 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
-import crypto from 'node:crypto';
+import { createAdminAuth } from './auth/admin-auth.js';
 import { TableOrder } from './models/table-order.model.js';
 import { invoiceIssuance } from './routes/invoice-issuance.js';
 import { InvoiceCounter, InvoiceIssueEvent } from './models/invoice-counter.model.js';
@@ -20,11 +20,8 @@ const port = Number(process.env['PORT'] ?? 3000);
 
 app.use(cors());
 app.use(express.json({ limit: '8mb' }));
-const adminEmail = process.env['ADMIN_EMAIL'];
-const adminPassword = process.env['ADMIN_PASSWORD'];
-const adminToken = crypto.randomBytes(32).toString('hex');
-const requireAdmin = (request: express.Request, response: express.Response, next: express.NextFunction) => { if (request.headers.authorization === `Bearer ${adminToken}`) next(); else response.status(401).json({ message: 'Acceso no autorizado.' }); };
-app.post('/api/auth/login', (request, response) => { if (adminEmail && adminPassword && request.body?.email === adminEmail && request.body?.password === adminPassword) response.json({ token: adminToken }); else response.status(401).json({ message: 'Credenciales incorrectas.' }); });
+const { router: adminAuth, requireAdmin } = createAdminAuth(process.env['ADMIN_EMAIL'], process.env['ADMIN_PASSWORD']);
+app.use('/api/auth', adminAuth);
 
 app.get('/api/health', (_request, response) => {
   response.json({

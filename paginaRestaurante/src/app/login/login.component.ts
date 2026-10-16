@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../auth.service';
 
@@ -16,7 +16,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
   email = '';
   password = '';
-  error = '';
+  error = inject(ActivatedRoute).snapshot.queryParamMap.get('session') === 'invalid' ? 'La sesión ya no es válida. Vuelve a entrar para continuar.' : '';
   showPassword = false;
   loading = false;
 
