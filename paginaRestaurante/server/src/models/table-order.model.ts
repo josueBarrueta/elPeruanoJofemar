@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 const lineSchema = new Schema({
   productId: { type: String, required: true }, name: { type: String, required: true },
   unitPriceCents: { type: Number, required: true, min: 0 }, quantity: { type: Number, required: true, min: 1 },
+  taxRate: { type: Number, min: 0, max: 100, default: null },
   notes: { type: String, default: '', maxlength: 300 }
 }, { _id: false });
 const tableOrderSchema = new Schema({
@@ -11,6 +12,7 @@ const tableOrderSchema = new Schema({
   notes: { type: String, default: '', maxlength: 1000 },
   lines: { type: [lineSchema], default: [] }, totalCents: { type: Number, default: 0, min: 0 },
   status: { type: String, enum: ['open', 'closed'], default: 'open', required: true },
+  payment: { type: new Schema({ method: { type: String, enum: ['cash', 'card', 'mixed'], required: true }, cashCents: Number, cardCents: Number, tenderedCents: Number, changeCents: Number, paidAt: Date }, { _id: false }), default: undefined },
   closedAt: { type: Date }, revision: { type: Number, default: 0, required: true }
 }, { timestamps: true });
 // Una sola comanda abierta por mesa, incluso si dos tablets la abren a la vez.

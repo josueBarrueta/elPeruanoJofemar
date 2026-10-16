@@ -44,3 +44,11 @@ test('requires a revision for updates to prevent overwriting another tablet', ()
   assert.equal(orderVersion(0), 0);
   assert.equal(orderVersion(3), 3);
 });
+test('tax snapshots come from the catalog and stay fixed when catalog taxes change',()=>{
+ const lines=orderInput(draft).lines;
+ const first=priceOrder(lines,[{...products[0],taxRate:10}]);
+ assert.equal(first.lines[0].taxRate,10);
+ const updated=priceOrder(lines,[{...products[0],taxRate:21}],first.lines);
+ assert.equal(updated.lines[0].taxRate,10);
+ assert.equal(priceOrder(lines,products).lines[0].taxRate,null);
+});

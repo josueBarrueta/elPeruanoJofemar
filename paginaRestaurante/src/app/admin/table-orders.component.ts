@@ -28,6 +28,8 @@ export class TableOrdersComponent {
   error = '';
   formError = '';
   closeError = '';
+  payment = { method: 'cash' as 'cash'|'card'|'mixed', tendered: 0, cash: 0 };
+  printAfterPayment = true;
   message = '';
   productPage = 0;
   query = '';
@@ -93,7 +95,7 @@ export class TableOrdersComponent {
     this.addedMessage = item.name + ' añadido a la comanda.';
     const line = this.draft.lines.find(line => line.productId === item._id);
     if (line) { if (line.quantity < 1000) line.quantity++; }
-    else if (this.draft.lines.length < 100) this.draft.lines.push({ productId: item._id, name: item.name, unitPriceCents: Math.round(item.price * 100), quantity: 1, notes: '' });
+    else if (this.draft.lines.length < 100) this.draft.lines.push({ productId: item._id, name: item.name, unitPriceCents: Math.round(item.price * 100), quantity: 1, notes: '', taxRate: item.taxRate ?? null });
   }
   subtract(item: ApiMenuItem) {
     const index = this.draft.lines.findIndex(line => line.productId === item._id);
@@ -104,13 +106,36 @@ export class TableOrdersComponent {
   }
   adjust(line: TableOrderLine, delta: number) { line.quantity = Math.min(1000, Math.max(1, (Number(line.quantity) || 1) + delta)); }
   remove(index: number) { this.draft.lines.splice(index, 1); }
-  save() {
+  save(action: 'save'|'account'|'checkout' = 'save') {
     if (this.saving || this.readonly) return;
     this.saving = true; this.formError = '';
+    // Guarda antes de imprimir o cobrar para no usar un total desactualizado.
     this.api.save(this.draft, this.selected).subscribe({
-      next: () => { this.saving = false; this.editor?.nativeElement.close(); this.view = 'open'; this.message = 'Comanda guardada correctamente.'; this.load(); },
+      next: order => {
+        this.saving = false; this.selected = order;
+        this.draft = { tableName: order.tableName, guests: order.guests, notes: order.notes, lines: order.lines.map(line => ({...line})) };
+        this.original = JSON.stringify(this.draft);
+        const wasHistory = this.view === 'closed'; this.view = 'open';
+        this.orders = wasHistory ? [order] : [order, ...this.orders.filter(row => row._id !== order._id)];
+        if (wasHistory && action !== 'save') this.load();
+        if (action === 'account') this.showReceipt(order);
+        else if (action === 'checkout') this.askClose(order);
+        else { this.editor?.nativeElement.close(); this.view = 'open'; this.message = 'Comanda guardada correctamente.'; this.load(); }
+        this.changes.markForCheck();
+      },
       error: response => { this.saving = false; this.formError = response.error?.message || 'No se pudo guardar. Tus cambios siguen en el formulario.'; this.changes.markForCheck(); }
     });
+  }
+  get changeCents() { return Math.max(0, Math.round((this.payment.tendered || 0) * 100) - (this.closing?.totalCents || 0)); }
+  get cardPartCents() { return Math.max(0, (this.closing?.totalCents || 0) - Math.round((this.payment.cash || 0) * 100)); }
+  get paymentValid() {
+    if (!this.closing?.lines.length) return true;
+    const total = this.closing.totalCents;
+    if (total <= 0) return false;
+    if (this.payment.method === 'card') return true;
+    if (this.payment.method === 'cash') return Number.isFinite(this.payment.tendered) && Math.round(this.payment.tendered * 100) >= total;
+    const cash = Math.round(this.payment.cash * 100);
+    return Number.isFinite(this.payment.cash) && cash > 0 && cash < total;
   }
   showReceipt(order: TableOrder) {
     this.finance.settings().subscribe({
@@ -120,14 +145,14 @@ export class TableOrdersComponent {
   }
   askClose(order: TableOrder) {
     this.returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
-    this.closing = order; this.closeError = ''; this.closeDialog?.nativeElement.showModal();
+    this.closing = order; this.closeError = ''; this.payment = {method:'cash',tendered:order.totalCents / 100,cash:0}; this.printAfterPayment = true; this.closeDialog?.nativeElement.showModal();
   }
   cancelClose(event?: Event) { event?.preventDefault(); if (!this.saving) this.closeDialog?.nativeElement.close(); }
   confirmClose() {
-    if (this.saving || !this.closing) return;
+    if (this.saving || !this.closing || !this.paymentValid) return;
     this.saving = true; this.closeError = '';
-    this.api.close(this.closing).subscribe({
-      next: () => { this.saving = false; this.closeDialog?.nativeElement.close(); this.message = 'Mesa cerrada. La comanda está en el historial.'; this.load(); },
+    this.api.close(this.closing, this.payment).subscribe({
+      next: order => { this.saving = false; this.closeDialog?.nativeElement.close(); this.editor?.nativeElement.close(); this.message = order.payment ? 'Cobro registrado y mesa liberada.' : 'Mesa vacía liberada.'; this.load(); if (this.printAfterPayment && order.lines.length) this.showReceipt(order); },
       error: response => { this.saving = false; this.closeError = response.error?.message || 'No se pudo cerrar la mesa. Vuelve a intentarlo.'; this.changes.markForCheck(); }
     });
   }

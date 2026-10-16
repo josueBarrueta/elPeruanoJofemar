@@ -23,7 +23,12 @@ export function invoiceInput(body) {
         return fail('El importe supera el límite permitido.');
     return { clientName: text(body.clientName, 'cliente', 200, true), clientTaxId: text(body.clientTaxId, 'NIF del cliente', 40), clientAddress: text(body.clientAddress, 'domicilio del cliente', 500), date: date(body.date), notes: text(body.notes, 'notas', 2000), lines, subtotalCents, taxCents, totalCents: subtotalCents + taxCents };
 }
-export function expenseInput(body) { if (!body)
-    return fail('Gasto no válido.'); return { supplier: text(body.supplier, 'proveedor', 200, true), description: text(body.description, 'concepto', 500, true), category: text(body.category, 'categoría', 80, true), date: date(body.date), totalCents: Math.round(number(body.total, 'importe', 0.01, 10000000) * 100), reference: text(body.reference, 'referencia', 100), paid: body.paid === true }; }
+export function expenseInput(body) {
+    if (!body)
+        return fail('Gasto no válido.');
+    const totalCents = Math.round(number(body.total, 'importe', 0.01, 10000000) * 100);
+    const taxCents = body.taxAmount == null ? null : Math.round(number(body.taxAmount, 'cuota de IVA', 0, totalCents / 100) * 100);
+    return { supplier: text(body.supplier, 'proveedor', 200, true), description: text(body.description, 'concepto', 500, true), category: text(body.category, 'categoría', 80, true), date: date(body.date), totalCents, taxCents, reference: text(body.reference, 'referencia', 100), paid: body.paid === true };
+}
 export function settingsInput(body) { const result = {}; for (const field of ['legalName', 'taxId', 'address', 'email', 'phone', 'invoiceSeries', 'currentBillingSystem'])
     result[field] = text(body?.[field], field, field === 'address' ? 500 : 200); return result; }

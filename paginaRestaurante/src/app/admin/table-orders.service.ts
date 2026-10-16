@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth.service';
-export interface TableOrderLine { productId: string; name: string; unitPriceCents: number; quantity: number; notes: string; }
+export interface TableOrderLine { productId: string; name: string; unitPriceCents: number; quantity: number; notes: string; taxRate?: number | null; }
 export interface TableOrder {
   _id: string; tableName: string; guests: number; notes: string; lines: TableOrderLine[];
+  payment?: {method:'cash'|'card'|'mixed';cashCents:number;cardCents:number;tenderedCents:number;changeCents:number;paidAt:string};
   totalCents: number; status: 'open' | 'closed'; revision: number; createdAt: string; closedAt?: string;
 }
 export interface TableOrderDraft { tableName: string; guests: number; notes: string; lines: TableOrderLine[]; }
@@ -19,5 +20,5 @@ export class TableOrdersService {
     return order ? this.http.put<TableOrder>(`${this.url}/${order._id}`, { ...body, revision: order.revision }, this.options())
       : this.http.post<TableOrder>(this.url, body, this.options());
   }
-  close(order: TableOrder) { return this.http.post<TableOrder>(`${this.url}/${order._id}/close`, { revision: order.revision }, this.options()); }
+  close(order: TableOrder, payment?: {method:'cash'|'card'|'mixed';tendered:number;cash:number}) { return this.http.post<TableOrder>(`${this.url}/${order._id}/checkout`, { revision: order.revision, payment }, this.options()); }
 }

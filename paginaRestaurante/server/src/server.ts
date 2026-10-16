@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
 import { TableOrder } from './models/table-order.model.js';
+import { expenseAttachment } from './models/expense-attachment.js';
 import { receiptRange, receiptInvoiceInput } from './models/receipt-validation.js';
 import { tableOrders } from './routes/table-orders.js';
 import { Reservation, reservationInput } from './models/reservation.model.js';
@@ -109,12 +110,19 @@ app.use('/api/admin/reservations', reservations);
 const finance = express.Router();
 finance.use(requireAdmin);
 finance.use((_req,res,next)=>{if(mongoose.connection.readyState!==1){res.status(503).json({message:'Base de datos no disponible.'});return;}next();});
+finance.post('/menu-tax', async (req, res) => {
+  const category = typeof req.body?.category === 'string' ? req.body.category.trim() : '';
+  const rate = req.body?.taxRate;
+  if (category.length > 100 || typeof rate !== 'number' || !Number.isFinite(rate) || rate < 0 || rate > 100) throw new FinanceInputError('Selecciona una categoría y un tipo de IVA válido.');
+  const result = await MenuItem.updateMany(category ? { category } : {}, { $set: { taxRate: rate } }, { runValidators: true });
+  res.json({ updated: result.matchedCount });
+});
 finance.get('/settings',async(_req,res)=>{res.json(await FinanceSettings.findById('restaurant').lean() ?? {});});
 finance.put('/settings',async(req,res)=>{res.json(await FinanceSettings.findByIdAndUpdate('restaurant',{$set:settingsInput(req.body)},{upsert:true,new:true,runValidators:true}).lean());});
 // Las comandas cerradas son la fuente única del recibo y de los ingresos registrados.
 finance.get('/receipts', async (req, res) => {
   const { start, end } = receiptRange(req.query['from'], req.query['to']);
-  const rows = await TableOrder.find({ status: 'closed', closedAt: { $exists: true }, $expr: { $and: [
+  const rows = await TableOrder.find({ status: 'closed', 'lines.0': { $exists: true }, closedAt: { $exists: true }, $expr: { $and: [
     { $gte: [{ $dateToString: { date: '$closedAt', format: '%Y-%m-%d', timezone: 'Europe/Madrid' } }, start] },
     { $lte: [{ $dateToString: { date: '$closedAt', format: '%Y-%m-%d', timezone: 'Europe/Madrid' } }, end] }
   ] } }).sort({ closedAt: -1 }).lean();
@@ -132,9 +140,18 @@ finance.post('/receipts/:id/invoice', async (req, res) => {
 finance.get('/invoices',async(_req,res)=>{res.json(await InvoiceDraft.find().sort({date:-1,createdAt:-1}).lean());});
 finance.post('/invoices',async(req,res)=>{res.status(201).json(await InvoiceDraft.create(invoiceInput(req.body)));});
 finance.put('/invoices/:id',async(req,res)=>{if(!mongoose.isValidObjectId(req.params.id)){res.status(400).json({message:'Identificador no válido.'});return;}if(await InvoiceDraft.exists({_id:req.params.id,sourceOrderId:{$exists:true}})){res.status(409).json({message:'Modifica esta factura desde su recibo para conservar los importes originales.'});return;}const doc=await InvoiceDraft.findByIdAndUpdate(req.params.id,{$set:invoiceInput(req.body)},{new:true,runValidators:true});if(!doc){res.status(404).json({message:'Borrador no encontrado.'});return;}res.json(doc);});
+finance.get('/expenses/:id/attachment', async(req,res)=>{
+ if(!mongoose.isValidObjectId(req.params.id))throw new FinanceInputError('Identificador no válido.');
+ const expense=await Expense.findById(req.params.id).select('+attachment').lean();
+ if(!expense?.attachment?.data){res.status(404).json({message:'Justificante no encontrado.'});return;}
+ res.setHeader('Content-Type',expense.attachment.mimeType||'application/octet-stream');
+ res.setHeader('Content-Disposition',"attachment; filename*=UTF-8''"+encodeURIComponent(expense.attachmentName||'justificante'));
+ res.setHeader('X-Content-Type-Options','nosniff');
+ res.send(Buffer.from(expense.attachment.data,'base64'));
+});
 finance.get('/expenses',async(_req,res)=>{res.json(await Expense.find().sort({date:-1,createdAt:-1}).lean());});
-finance.post('/expenses',async(req,res)=>{res.status(201).json(await Expense.create(expenseInput(req.body)));});
-finance.put('/expenses/:id',async(req,res)=>{if(!mongoose.isValidObjectId(req.params.id)){res.status(400).json({message:'Identificador no válido.'});return;}const doc=await Expense.findByIdAndUpdate(req.params.id,{$set:expenseInput(req.body)},{new:true,runValidators:true});if(!doc){res.status(404).json({message:'Gasto no encontrado.'});return;}res.json(doc);});
+finance.post('/expenses',async(req,res)=>{const expense=await Expense.create({...expenseInput(req.body),...expenseAttachment(req.body)});const {attachment:_attachment,...result}=expense.toObject();res.status(201).json(result);});
+finance.put('/expenses/:id',async(req,res)=>{if(!mongoose.isValidObjectId(req.params.id)){res.status(400).json({message:'Identificador no válido.'});return;}const doc=await Expense.findByIdAndUpdate(req.params.id,{$set:{...expenseInput(req.body),...expenseAttachment(req.body)}},{new:true,runValidators:true});if(!doc){res.status(404).json({message:'Gasto no encontrado.'});return;}res.json(doc);});
 finance.patch('/:kind/:id/archive',async(req,res)=>{if(!['invoices','expenses'].includes(req.params.kind)||!mongoose.isValidObjectId(req.params.id)||typeof req.body?.archived!=='boolean'){res.status(400).json({message:'Solicitud no válida.'});return;}const doc=req.params.kind==='invoices'?await InvoiceDraft.findByIdAndUpdate(req.params.id,{$set:{archived:req.body.archived}},{new:true}):await Expense.findByIdAndUpdate(req.params.id,{$set:{archived:req.body.archived}},{new:true});if(!doc){res.status(404).json({message:'Registro no encontrado.'});return;}res.json(doc);});
 finance.use((error:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{if(error&&typeof error==='object'&&'code' in error&&error.code===11000){res.status(409).json({message:'El recibo ya tiene una factura. Actualiza los datos e inténtalo de nuevo.'});return;}if(error instanceof FinanceInputError||error instanceof mongoose.Error.ValidationError){res.status(400).json({message:error.message});return;}console.error('Error de gestión financiera',error instanceof Error?error.name:'Error');res.status(500).json({message:'No se pudo completar la operación. Vuelve a intentarlo.'});});
 app.use('/api/admin/finance',finance);

@@ -134,3 +134,11 @@ article.product { aspect-ratio: 1; grid-template-columns: 1fr; grid-template-row
   .product-list { grid-template-columns: repeat(4, minmax(0, 200px)); justify-content: center; }
   article.product { max-height: none; }
 }
+.payment-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin: 1rem 0; }
+.payment-methods button { padding: .6rem .3rem; }
+.payment-methods .selected { background: #b1283f; color: white; }
+.checkout-total { font-size: 1.3rem; }
+.print-checkbox { display: flex; align-items: center; gap: .75rem; margin: 1rem 0; }
+.print-checkbox input { width: 24px; min-height: 24px; accent-color: #b1283f; }
+.order-footer .footer-actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
+@media(min-width:900px) { .order-footer { flex-wrap: wrap; } .order-footer .footer-actions { display: flex; flex-wrap: wrap; } }

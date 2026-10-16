@@ -27,11 +27,11 @@ export function priceOrder(lines, products, previous = []) {
     const priced = lines.map(line => {
         const saved = previous.find(row => row.productId === line.productId);
         if (saved)
-            return { ...line, name: saved.name, unitPriceCents: saved.unitPriceCents };
+            return { ...line, name: saved.name, unitPriceCents: saved.unitPriceCents, taxRate: saved.taxRate ?? null };
         const product = products.find(row => String(row._id) === line.productId && row.active !== false);
         if (!product || !Number.isFinite(product.price) || product.price < 0 || product.price > 1000000)
             throw new OrderInputError('Un producto ya no está disponible. Actualiza la carta antes de añadirlo.');
-        return { ...line, name: product.name, unitPriceCents: Math.round(product.price * 100) };
+        return { ...line, name: product.name, unitPriceCents: Math.round(product.price * 100), taxRate: product.taxRate ?? null };
     });
     const totalCents = priced.reduce((total, line) => total + line.unitPriceCents * line.quantity, 0);
     if (!Number.isSafeInteger(totalCents))

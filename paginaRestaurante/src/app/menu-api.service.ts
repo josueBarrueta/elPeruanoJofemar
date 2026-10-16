@@ -8,6 +8,7 @@ export interface ApiMenuItem {
   category: string;
   subcategory?: string;
   price: number;
+  taxRate?: number | null;
   allergens: string[];
   image?: string;
   imagePosition?: string;

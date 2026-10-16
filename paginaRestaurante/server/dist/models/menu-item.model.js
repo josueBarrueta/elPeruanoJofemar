@@ -4,6 +4,7 @@ const menuItemSchema = new Schema({
     category: { type: String, required: true, trim: true, index: true },
     subcategory: { type: String, trim: true },
     price: { type: Number, required: true, min: 0 },
+    taxRate: { type: Number, min: 0, max: 100, default: null },
     allergens: { type: [String], default: [] },
     image: { type: String, trim: true },
     imagePosition: { type: String, trim: true, default: '50% 50%' },

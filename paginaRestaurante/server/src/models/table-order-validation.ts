@@ -1,6 +1,6 @@
 export class OrderInputError extends Error {}
-export interface OrderLine { productId: string; name: string; unitPriceCents: number; quantity: number; notes: string; }
-export interface ProductSnapshot { _id: unknown; name: string; price: number; active?: boolean; }
+export interface OrderLine { productId: string; name: string; unitPriceCents: number; quantity: number; notes: string; taxRate?: number | null; }
+export interface ProductSnapshot { _id: unknown; name: string; price: number; active?: boolean; taxRate?: number | null; }
 const text = (value: unknown, max: number, required = false): string => {
   if (typeof value !== 'string' || value.trim().length > max || (required && !value.trim())) throw new OrderInputError('Revisa los campos de la comanda.');
   return value.trim();
@@ -23,10 +23,10 @@ export function orderInput(body: unknown) {
 export function priceOrder(lines: ReturnType<typeof orderInput>['lines'], products: ProductSnapshot[], previous: OrderLine[] = []) {
   const priced = lines.map(line => {
     const saved = previous.find(row => row.productId === line.productId);
-    if (saved) return { ...line, name: saved.name, unitPriceCents: saved.unitPriceCents };
+    if (saved) return { ...line, name: saved.name, unitPriceCents: saved.unitPriceCents, taxRate: saved.taxRate ?? null };
     const product = products.find(row => String(row._id) === line.productId && row.active !== false);
     if (!product || !Number.isFinite(product.price) || product.price < 0 || product.price > 1000000) throw new OrderInputError('Un producto ya no está disponible. Actualiza la carta antes de añadirlo.');
-    return { ...line, name: product.name, unitPriceCents: Math.round(product.price * 100) };
+    return { ...line, name: product.name, unitPriceCents: Math.round(product.price * 100), taxRate: product.taxRate ?? null };
   });
   const totalCents = priced.reduce((total, line) => total + line.unitPriceCents * line.quantity, 0);
   if (!Number.isSafeInteger(totalCents)) throw new OrderInputError('El importe de la comanda es demasiado alto.');
