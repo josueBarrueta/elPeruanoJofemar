@@ -101,19 +101,19 @@
 @media(max-width:850px) { .testimonial-grid { columns:2; column-gap:16px; }.testimonial-grid figure { margin-bottom:16px; } }
 @media(max-width:600px) { .testimonial-grid { columns:1; }.reviews-count { margin-top:20px; } }
 
-/* Carrusel adaptable: tres tarjetas, dos o una según el espacio disponible. */
+/* Carrusel adaptable: tres tarjetas en escritorio y tablet, una en móvil. */
 .testimonial-grid { display:grid; columns:auto; grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:calc((100% - 44px)/3); gap:22px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scrollbar-width:thin; scrollbar-color:#caa68d #e8ddce; padding-bottom:18px; align-items:start; }
 .testimonial-grid figure { margin:0; min-width:0; scroll-snap-align:start; }
 .review-navigation { display:flex; gap:10px; flex-shrink:0; }
 .review-navigation button { width:42px; height:42px; border:1px solid #d7c4af; border-radius:50%; background:transparent; color:var(--red); display:grid; place-items:center; font-size:13px; }
 .review-navigation button:hover { background:#e9dac9; }
-@media(max-width:850px) { .testimonial-grid { columns:auto; grid-auto-columns:calc((100% - 16px)/2); gap:16px; }.testimonial-grid figure{margin:0;} }
+@media(max-width:850px) { .testimonial-grid { columns:auto; grid-auto-columns:calc((100% - 32px)/3); gap:16px; }.testimonial-grid figure{margin:0;} }
 @media(max-width:600px) { .testimonial-grid { columns:auto; grid-auto-columns:100%; }.review-navigation { margin-top:24px; }.testimonial-grid figure{margin:0;} }
 
 /* Reseñas como pequeñas notas de nuestros clientes. */
 .testimonials-section { background:#f4eee5; position:relative; }
 .testimonials-section .section-heading { align-items:flex-end; }
-.testimonial-grid { align-items:stretch; padding:5px 2px 22px; scrollbar-width:none; }
+.testimonial-grid { align-items:stretch; padding:5px 0 22px; scrollbar-width:none; }
 .testimonial-grid::-webkit-scrollbar { display:none; }
 .testimonial-grid figure { display:flex; flex-direction:column; position:relative; padding:25px 27px 22px; border:1px solid #e8ddce; border-radius:14px; background:#fffdf8; box-shadow:0 5px 16px #5d3a1c05; transition:border-color .2s,box-shadow .2s; }
 .testimonial-grid figure:hover { border-color:#d2ad97; box-shadow:0 8px 22px #5d3a1c0b; }
@@ -142,7 +142,7 @@
 .review-full-dialog blockquote { margin:24px 0 28px; font:400 22px/1.65 Georgia,serif; color:#695445; }
 .review-dialog-done { display:flex; gap:15px; align-items:center; padding:15px 0 0; border:0; border-top:1px solid #e8daca; background:transparent; color:var(--red); width:100%; font-size:10px; }
 @media(max-width:850px) { .testimonial-grid figure { padding:23px; } }
-@media(max-width:600px) { .testimonial-grid { grid-auto-columns:calc(100% - 24px); gap:16px; }.testimonial-grid figure { padding:24px; }.testimonial-grid blockquote { height:160px; font-size:20px; }.review-full-dialog { padding:30px 25px; }.review-full-dialog blockquote { font-size:20px; }.review-full-person h2 { font-size:23px; } }
+@media(max-width:600px) { .testimonial-grid { grid-auto-columns:100%; gap:16px; }.testimonial-grid figure { padding:24px; }.testimonial-grid blockquote { height:160px; font-size:20px; }.review-full-dialog { padding:30px 25px; }.review-full-dialog blockquote { font-size:20px; }.review-full-person h2 { font-size:23px; } }
 @media(prefers-reduced-motion:reduce) { .testimonial-grid figure { transition:none; } }
 
 /* Enlaces sin subrayados ni flechas decorativas. */
@@ -169,3 +169,5 @@
 .category-image img{display:block}
 .daily-copy>.daily-schedule{color:#fff4e8;font-weight:600;max-width:350px}
 .welcome-schedule{font-size:12px;line-height:1.7;text-align:center;color:var(--wine);margin:0 0 20px;font-weight:600}
+
+@media(min-width:601px) and (max-width:850px){.testimonial-grid figure{padding:18px 14px}.testimonial-grid blockquote{font-size:17px;height:136px}.review-stars{font-size:11px;letter-spacing:1px}.testimonial-grid figcaption{gap:7px}.review-avatar{width:30px;height:30px}.review-source-mark{padding-left:0;font-size:13px}}
