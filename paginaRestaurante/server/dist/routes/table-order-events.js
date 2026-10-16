@@ -1,18 +1,24 @@
-const clients = new Set();
-export function notifyTableOrdersChanged() {
-    for (const client of clients) {
-        // Disconnect slow clients rather than accumulating data in memory.
-        if (!client.write('event: tables\ndata: changed\n\n'))
-            client.end();
+export function createLiveEvents() {
+    const clients = new Set();
+    function notify() {
+        for (const client of clients) {
+            // Disconnect slow clients rather than accumulating data in memory.
+            if (!client.write('event: tables\ndata: changed\n\n'))
+                client.end();
+        }
     }
+    function events(_req, res) {
+        res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no' });
+        res.flushHeaders();
+        clients.add(res);
+        res.write('event: tables\ndata: connected\n\n');
+        const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 15000);
+        // Renew periodically through authentication; reconnect also reloads missed changes.
+        const renew = setTimeout(() => res.end(), 240000);
+        res.on('close', () => { clients.delete(res); clearInterval(heartbeat); clearTimeout(renew); });
+    }
+    return { notify, events };
 }
-export function tableOrderEvents(req, res) {
-    res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', 'X-Accel-Buffering': 'no' });
-    res.flushHeaders();
-    clients.add(res);
-    res.write('event: tables\ndata: connected\n\n');
-    const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 15000);
-    // Renew periodically through authentication; reconnect also reloads missed changes.
-    const renew = setTimeout(() => res.end(), 240000);
-    res.on('close', () => { clients.delete(res); clearInterval(heartbeat); clearTimeout(renew); });
-}
+const tables = createLiveEvents();
+export const notifyTableOrdersChanged = tables.notify;
+export const tableOrderEvents = tables.events;

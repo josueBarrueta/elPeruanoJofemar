@@ -1,3 +1,4 @@
+import { createLiveEvents } from './routes/table-order-events.js';
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
@@ -86,11 +87,13 @@ app.use('/api/admin/table-orders', requireAdmin, tableOrders);
 
 // Las reservas manuales solo están disponibles para administración.
 const reservations = express.Router();
+const reservationEvents = createLiveEvents();
 reservations.use(requireAdmin);
 reservations.use((_req, res, next) => {
   if (mongoose.connection.readyState !== 1) { res.status(503).json({ message: 'Base de datos no disponible.' }); return; }
   next();
 });
+reservations.get('/events', reservationEvents.events);
 reservations.get('/', async (_req, res) => {
   res.json(await Reservation.find().sort({ date: 1, time: 1, createdAt: 1 }).lean());
 });
@@ -98,7 +101,24 @@ reservations.post('/', async (req, res) => {
   let input;
   try { input = reservationInput(req.body); }
   catch (error) { res.status(400).json({ message: error instanceof Error ? error.message : 'Reserva no válida.' }); return; }
-  res.status(201).json(await Reservation.create(input));
+  const reservation = await Reservation.create(input);
+  reservationEvents.notify();
+  res.status(201).json(reservation);
+});
+reservations.put('/:id', async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) { res.status(400).json({ message: 'Reserva no válida.' }); return; }
+  let input;
+  try { input = reservationInput(req.body); }
+  catch (error) { res.status(400).json({ message: error instanceof Error ? error.message : 'Reserva no válida.' }); return; }
+  const revision = req.body?.revision;
+  if (!Number.isSafeInteger(revision) || revision < 0) { res.status(400).json({ message: 'Versión de reserva no válida.' }); return; }
+  const version = revision === 0 ? { $or: [{ revision: 0 }, { revision: { $exists: false } }] } : { revision };
+  const reservation = await Reservation.findOneAndUpdate({ _id: req.params.id, ...version }, {
+    $set: input, $inc: { revision: 1 }
+  }, { new: true, runValidators: true }).lean();
+  if (!reservation) { res.status(409).json({ message: 'Otro camarero ha cambiado esta reserva. Cierra el formulario y vuelve a abrirla para ver los datos actuales.' }); return; }
+  reservationEvents.notify();
+  res.json(reservation);
 });
 reservations.use((_error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(500).json({ message: 'No se pudo completar la operación. Vuelve a intentarlo.' });

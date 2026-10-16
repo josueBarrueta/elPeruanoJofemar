@@ -6,3 +6,20 @@ button,input { font: inherit; } button { min-height: 44px; border: 0; border-rad
 .empty { text-align: center; padding: 3rem 1rem; } .empty i { font-size: 2rem; color: #b1283f; } .empty h3 { margin-bottom: .5rem; } .empty p { margin-top: 0; } .table-wrap { overflow-x: auto; } table { width: 100%; border-collapse: collapse; text-align: left; } th { color: #756d67; font-size: .8rem; background: #faf7f4; } th,td { padding: 1rem; border-bottom: 1px solid #eee6df; } td { overflow-wrap: anywhere; } .success { color: #28633e; } .error { color: #a92136; }
 dialog { width: min(500px, calc(100vw - 3rem)); max-height: calc(100dvh - 3rem); overflow: auto; padding: 1.75rem; box-sizing: border-box; border: 1px solid #e9e0d9; border-radius: 20px; color: #302b28; box-shadow: 0 24px 80px #302b2833; } dialog::backdrop { background: #211c1966; } .eyebrow { display: block; color: #b1283f; font-size: .7rem; letter-spacing: .12em; margin-bottom: .5rem; font-weight: 800; } .intro { font-size: .9rem; } fieldset { border: 0; margin: 1.5rem 0; padding: 0; display: grid; gap: 1rem; min-width: 0; } .date-time { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } .actions { display: flex; justify-content: end; gap: .75rem; }
 @media(max-width: 600px) { .heading { align-items: start; flex-wrap: wrap; } .heading > .primary { width: 100%; } .toolbar span { margin-left: 0; } .reservations-card { padding: 1rem; } th,td { padding: .75rem .5rem; } dialog { padding: 1.25rem; } .date-time { grid-template-columns: 1fr; } }
+
+.reservation-status { display: inline-block; padding: .4rem .6rem; border-radius: 8px; background: #fff1d8; color: #785315; font-size: .85rem; }
+.reservation-status.confirmed { background: #e7f4eb; color: #28633e; }
+.reservation-status.cancelled { background: #f8e9ec; color: #a92136; }
+.reservation-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+select { font: inherit; width: 100%; box-sizing: border-box; min-height: 48px; padding: .75rem; border: 1px solid #ded5ce; border-radius: 10px; background: #fffdfb; }
+@media(max-width: 600px) {
+  table, tbody, tr, td { display: block; }
+  thead { display: none; }
+  tbody { display: grid; gap: 1rem; }
+  tbody tr { border: 1px solid #eee6df; border-radius: 12px; padding: .75rem; }
+  td { border: 0; padding: .3rem 0; }
+  td:nth-child(3) { font-weight: 700; }
+  td:nth-child(4)::before { content: 'Comensales: '; }
+  .reservation-actions { margin-top: .5rem; }
+  .reservation-actions button { flex: 1 1 auto; }
+}
