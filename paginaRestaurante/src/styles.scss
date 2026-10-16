@@ -5,3 +5,6 @@ body:has(.admin-shell) .reviews-section { display: none !important; }
 body.admin-route #resenas, body:has(.admin-shell) #resenas { display: none !important; }
 
 /* You can add global styles to this file, and also import other style files */
+
+/* El acceso privado se extiende hasta los bordes de la ventana. */
+body:has(app-login), body:has(app-admin) { margin: 0; }

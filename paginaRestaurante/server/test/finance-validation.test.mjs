@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+const source=await readFile(new URL('../src/models/finance-validation.ts',import.meta.url),'utf8');
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ES2022}}).outputText;
+const {invoiceInput,expenseInput,settingsInput,date}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const draft={clientName:'Cliente',date:'2026-10-16',lines:[{description:'Menús',quantity:3,unitPrice:12.27,taxRate:10}]};
+test('server calculates totals and ignores injected totals and invoice numbers',()=>{const result=invoiceInput({...draft,totalCents:1,number:'INV001',status:'issued'});assert.equal(result.subtotalCents,3681);assert.equal(result.taxCents,368);assert.equal(result.totalCents,4049);assert.equal(result.number,undefined);assert.equal(result.status,undefined);});
+test('tax is rounded per line and multiple tax rates add correctly',()=>{const result=invoiceInput({...draft,lines:[{description:'A',quantity:1,unitPrice:0.05,taxRate:10},{description:'B',quantity:2,unitPrice:10,taxRate:21}]});assert.equal(result.totalCents,2426);});
+test('invalid and impossible dates are rejected',()=>{for(const input of ['2026-02-30','2026-99-01','no','2026-2-01'])assert.throws(()=>date(input));assert.equal(date('2024-02-29'),'2024-02-29');});
+test('negative prices, nonnumeric fields, empty concepts and excessive amounts rejected',()=>{for(const line of [{quantity:0},{quantity:'2'},{unitPrice:-1},{taxRate:101},{description:''},{quantity:NaN},{unitPrice:1000001}])assert.throws(()=>invoiceInput({...draft,lines:[{...draft.lines[0],...line}]}));assert.throws(()=>invoiceInput({...draft,lines:[]}));});
+test('expenses use cents and whitelist fields',()=>{const result=expenseInput({supplier:' Proveedor ',description:'Compra',category:'Materia prima',date:'2026-10-16',total:13.50,paid:true,archived:true,$set:{totalCents:0}});assert.equal(result.totalCents,1350);assert.equal(result.supplier,'Proveedor');assert.equal(result.archived,undefined);assert.equal(result.paid,true);assert.throws(()=>expenseInput({...result,total:-1}));});
+test('configuration remains optional and rejects objects and oversized input',()=>{assert.equal(settingsInput({}).legalName,'');assert.throws(()=>settingsInput({legalName:{$gt:''}}));assert.throws(()=>settingsInput({taxId:'x'.repeat(201)}));assert.deepEqual(Object.keys(settingsInput({token:'private'})).sort(),['address','currentBillingSystem','email','invoiceSeries','legalName','phone','taxId'].sort());});

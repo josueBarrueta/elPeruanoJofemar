@@ -1,14 +1,40 @@
-<main class="admin-shell">
-  <header class="admin-header">
-    <div>
-      <span class="eyebrow">Panel privado</span>
-      <h1>Administrar carta</h1>
-      <p>{{ status }}</p>
+<main class="admin-shell" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="dashboard-sidebar" [class.menu-open]="mobileMenuOpen" (pointerenter)="expandSidebar($event)" (focusin)="expandSidebar()" (keydown.escape)="mobileMenuOpen = false">
+    <div class="sidebar-header">
+      <a class="dashboard-brand" routerLink="/" aria-label="El Peruano Jofemar"><img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar"><span class="compact-brand" aria-hidden="true">J</span></a>
+      <button class="mobile-menu-toggle" type="button" aria-controls="admin-navigation" [attr.aria-expanded]="mobileMenuOpen" (click)="mobileMenuOpen = !mobileMenuOpen"><i class="pi" [class.pi-bars]="!mobileMenuOpen" [class.pi-times]="mobileMenuOpen" aria-hidden="true"></i>{{ mobileMenuOpen ? 'Cerrar' : 'Menú' }}</button>
     </div>
-    <a href="https://josuebarrueta.github.io/elPeruanoJofemar/#/">← Volver a la web</a>
-  </header>
-
-  <section class="daily-menu-card">
+    <div class="sidebar-navigation" id="admin-navigation">
+      <nav aria-label="Apartados de administración">
+        <div class="nav-group" [class.group-open]="openNavGroup === 'restaurant'">
+          <p class="desktop-group-label">RESTAURANTE</p>
+          <button class="group-toggle" type="button" [attr.aria-expanded]="openNavGroup === 'restaurant'" aria-controls="nav-group-restaurant" (click)="toggleNavGroup('restaurant')">Restaurante<i class="pi pi-chevron-down" aria-hidden="true"></i></button>
+          <div class="group-links" id="nav-group-restaurant">
+        <button type="button" aria-label="Menú del Día" title="Menú del Día" [class.active]="activeSection === 'daily'" [attr.aria-current]="activeSection === 'daily' ? 'page' : null" (click)="selectSection('daily')"><i class="pi pi-calendar" aria-hidden="true"></i><span class="nav-text">Menú del Día</span></button>
+        <button type="button" aria-label="Carta" title="Carta" [class.active]="activeSection === 'menu'" [attr.aria-current]="activeSection === 'menu' ? 'page' : null" (click)="selectSection('menu')"><i class="pi pi-book" aria-hidden="true"></i><span class="nav-text">Carta</span><span class="nav-count">{{ items.length }}</span></button>
+          </div>
+        </div>
+        <div class="nav-group" [class.group-open]="openNavGroup === 'management'">
+          <p class="desktop-group-label">GESTIÓN</p>
+          <button class="group-toggle" type="button" [attr.aria-expanded]="openNavGroup === 'management'" aria-controls="nav-group-management" (click)="toggleNavGroup('management')">Gestión<i class="pi pi-chevron-down" aria-hidden="true"></i></button>
+          <div class="group-links" id="nav-group-management">
+        <button type="button" aria-label="Facturas" title="Facturas" [class.active]="activeSection === 'invoices'" [attr.aria-current]="activeSection === 'invoices' ? 'page' : null" (click)="selectSection('invoices')"><i class="pi pi-file" aria-hidden="true"></i><span class="nav-text">Facturas</span></button>
+        <button type="button" aria-label="Gastos" title="Gastos" [class.active]="activeSection === 'expenses'" [attr.aria-current]="activeSection === 'expenses' ? 'page' : null" (click)="selectSection('expenses')"><i class="pi pi-wallet" aria-hidden="true"></i><span class="nav-text">Gastos</span></button>
+        <button type="button" aria-label="Informes" title="Informes" [class.active]="activeSection === 'reports'" [attr.aria-current]="activeSection === 'reports' ? 'page' : null" (click)="selectSection('reports')"><i class="pi pi-chart-bar" aria-hidden="true"></i><span class="nav-text">Informes</span></button>
+          </div>
+        </div>
+        <div class="nav-group" [class.group-open]="openNavGroup === 'settings'"><p class="desktop-group-label">RESTAURANTE · AJUSTES</p><button class="group-toggle" type="button" [attr.aria-expanded]="openNavGroup === 'settings'" aria-controls="nav-group-settings" (click)="toggleNavGroup('settings')">Ajustes<i class="pi pi-chevron-down" aria-hidden="true"></i></button><div class="group-links" id="nav-group-settings"><button type="button" aria-label="Configuración" title="Configuración" [class.active]="activeSection === 'settings'" (click)="selectSection('settings')"><i class="pi pi-cog" aria-hidden="true"></i><span class="nav-text">Configuración</span></button></div></div>
+      </nav>
+      <div class="sidebar-bottom"><a routerLink="/" aria-label="Ver la web" title="Ver la web"><i class="pi pi-external-link" aria-hidden="true"></i><span class="nav-text">Ver la web</span></a><button type="button" (click)="logout()" aria-label="Cerrar sesión" title="Cerrar sesión"><i class="pi pi-sign-out" aria-hidden="true"></i><span class="nav-text">Cerrar sesión</span></button></div>
+    </div>
+  </aside>
+  <div class="dashboard-workspace" (click)="sidebarCollapsed = true">
+    <div class="dashboard-content">
+      <header class="admin-header"><div><span class="eyebrow">PANEL DE CONTROL</span><h1>{{ sectionTitle }}</h1><p>{{ sectionDescription }}</p></div><span class="dashboard-date"><i class="pi pi-calendar" aria-hidden="true"></i>{{ today | date:'dd/MM/yyyy' }}</span></header>
+      <section *ngIf="activeSection === 'daily' || activeSection === 'menu'" class="dashboard-stats" aria-label="Resumen del restaurante"><article><span class="stat-icon"><i class="pi pi-book" aria-hidden="true"></i></span><div><span>Productos en carta</span><strong>{{ items.length }}</strong></div></article><article><span class="stat-icon green"><i class="pi pi-check-circle" aria-hidden="true"></i></span><div><span>Disponibles</span><strong>{{ activeCount }}</strong></div></article><article><span class="stat-icon gold"><i class="pi pi-th-large" aria-hidden="true"></i></span><div><span>Categorías</span><strong>{{ categoryCount }}</strong></div></article></section>
+      <app-finance *ngIf="activeSection === 'invoices' || activeSection === 'expenses' || activeSection === 'reports' || activeSection === 'settings'" [section]="activeSection"></app-finance>
+      <p class="dashboard-status" role="status" *ngIf="activeSection === 'menu'">{{ status }}</p>
+  <section class="daily-menu-card" [hidden]="activeSection !== 'daily'">
     <div class="card-heading"><div><h2>Menú del día</h2><p>Fecha automática · Precio fijo: <strong>13,50€</strong></p></div></div>
     <form class="daily-menu-form" (ngSubmit)="saveDailyMenu()">
       <div class="daily-menu-fields"><div><h3>Primeros a elegir</h3><label *ngFor="let item of dailyMenu.starters; let i = index; trackBy: trackByIndex">Primero {{ i + 1 }}<input [name]="'daily-starter' + i" [(ngModel)]="dailyMenu.starters[i]" (focus)="setSuggestionField('starter' + i)" required><span class="daily-suggestions" *ngIf="suggestionField === 'starter' + i"><button type="button" *ngFor="let option of suggestions(dailyMenu.starters[i])" (click)="chooseDaily('starter', i, option)">{{ option }}</button></span></label></div><div><h3>Segundos a elegir</h3><label *ngFor="let item of dailyMenu.mains; let i = index; trackBy: trackByIndex">Segundo {{ i + 1 }}<input [name]="'daily-main' + i" [(ngModel)]="dailyMenu.mains[i]" (focus)="setSuggestionField('main' + i)" required><span class="daily-suggestions" *ngIf="suggestionField === 'main' + i"><button type="button" *ngFor="let option of suggestions(dailyMenu.mains[i])" (click)="chooseDaily('main', i, option)">{{ option }}</button></span></label></div></div>
@@ -16,7 +42,7 @@
     </form>
   </section>
 
-  <section class="admin-layout">
+  <section class="admin-layout" [hidden]="activeSection !== 'menu'">
     <form class="editor-card" (ngSubmit)="save()">
       <div class="card-heading"><h2>{{ isEditing ? 'Editar producto' : 'Nuevo producto' }}</h2><div class="editor-heading-actions"><button type="button" class="preview-toggle" [class.is-active]="showProductPreview" (click)="showProductPreview = !showProductPreview"><i class="pi pi-eye" aria-hidden="true"></i>{{ showProductPreview ? 'Ocultar vista' : 'Vista previa' }}</button><button type="button" class="ghost" (mousedown)="$event.preventDefault(); $event.stopPropagation(); newItem()" (click)="$event.stopPropagation(); newItem()">Limpiar</button></div></div>
       <label>Nombre<input name="name" [(ngModel)]="selected.name" required></label>
@@ -38,6 +64,7 @@
 
 <section class="list-card"><div class="card-heading"><h2>Productos</h2><div class="heading-actions"><button type="button" (click)="toggleOrderingMode()">{{ orderingMode ? 'Cancelar' : 'Ordenar productos' }}</button><button *ngIf="orderingMode" class="primary small" type="button" (click)="saveOrder()">Guardar orden</button><button *ngIf="!orderingMode" class="primary small" type="button" (click)="newItem()">+ Nuevo</button></div></div><p class="ordering-help" *ngIf="orderingMode">Mantén pulsado un producto y arrástralo arriba o abajo dentro de su misma subcategoría.</p><div class="items-list" [class.is-ordering]="orderingMode"><div class="category-group" *ngFor="let group of groupedItems"><button type="button" class="category-toggle" [class.is-open]="openCategories.has(group.category)" (click)="toggleCategory(group.category)">{{ group.category }} <span>{{ group.subcategories.length }} subcategorías</span></button><div class="subcategory-group" [hidden]="!openCategories.has(group.category)" *ngFor="let subcategory of group.subcategories"><button type="button" class="subcategory-toggle" [class.is-open]="openSubcategories.has(subcategoryKey(group.category, subcategory.name))" (click)="toggleSubcategory(group.category, subcategory.name)"><h4>{{ subcategory.name }}</h4><span>{{ subcategory.items.length }} productos</span></button><div [hidden]="!openSubcategories.has(subcategoryKey(group.category, subcategory.name))"><article *ngFor="let item of subcategory.items" [class.is-draggable]="orderingMode" [class.is-dragging]="orderingMode && draggedItem === item" [class.drop-target]="orderingMode && dropTarget === item" [class.is-inactive]="item.active === false" [draggable]="false" (pointerdown)="orderingMode && startDragging(item, $event)" (pointerenter)="orderingMode && setDropTarget(item)" (pointerup)="orderingMode && handlePointerUp($event, item)" (pointermove)="orderingMode && handlePointerMove($event, item)" (dragover)="$event.preventDefault(); $event.stopPropagation()"><div><strong>{{ item.name }}</strong><span>€{{ item.price.toFixed(2) }}</span><em *ngIf="item.active === false" class="inactive-label">No visible en la web</em><em *ngIf="orderingMode && dropTarget === item">Soltar aquí</em></div><div class="row-actions" *ngIf="!orderingMode" (pointerdown)="$event.stopPropagation()"><button type="button" class="icon-button" title="Editar producto" aria-label="Editar producto" (mousedown)="$event.preventDefault(); $event.stopPropagation(); edit(item)" (click)="$event.stopPropagation(); edit(item)">✎</button><button type="button" class="icon-button" [title]="item.active === false ? 'Activar producto' : 'Desactivar producto'" [attr.aria-label]="item.active === false ? 'Activar producto' : 'Desactivar producto'" (mousedown)="$event.preventDefault(); $event.stopPropagation(); toggleActive(item)" (click)="$event.stopPropagation(); toggleActive(item)">{{ item.active === false ? '◉' : '◌' }}</button><button type="button" class="icon-button delete-button" title="Borrar producto" aria-label="Borrar producto" (mousedown)="$event.preventDefault(); $event.stopPropagation(); askDelete(item)" (click)="$event.stopPropagation(); askDelete(item)">⌫</button></div><span *ngIf="orderingMode" class="drag-handle">⠿</span></article></div></div></div></div></section>
   </section>
+    </div>
+  </div>
 </main>
-<section class="admin-slogan"><span>El Peruano Jofemar</span><strong>Un rinconcito pequeño con el corazón grande.</strong><p>Auténticos sabores peruanos preparados con cariño.</p></section>
 <div class="delete-modal-backdrop" *ngIf="itemToDelete as item" (click)="cancelDelete()"><div class="delete-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()"><h2>¿Borrar producto?</h2><p>Vas a borrar <strong>{{ item.name }}</strong>. Esta acción no se puede deshacer.</p><div class="delete-modal-actions"><button type="button" (click)="cancelDelete()">Cancelar</button><button type="button" class="danger-confirm" (click)="confirmDelete()">Sí, borrar producto</button></div></div></div>

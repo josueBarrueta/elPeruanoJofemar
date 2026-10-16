@@ -1,0 +1,49 @@
+<main class="login-shell">
+  <section class="login-layout" aria-labelledby="login-title">
+    <aside class="brand-panel">
+      <a routerLink="/" class="brand-link" aria-label="Ir a la web de El Peruano Jofemar">
+        <img src="assets/images/logo-elperuanojofemar.png" alt="El Peruano Jofemar" class="brand-logo">
+      </a>
+      <div class="brand-copy">
+        <span class="eyebrow">El Peruano Jofemar</span>
+        <h2>El sabor de siempre.<br>Todo a tu manera.</h2>
+        <p>Tu carta, tus platos y el menú de cada día, en un mismo lugar.</p>
+      </div>
+      <div class="brand-footer"><span class="brand-line"></span>Hecho con tradición. Servido con cariño.</div>
+    </aside>
+
+    <div class="form-panel">
+      <a routerLink="/" class="back-link"><i class="pi pi-arrow-left" aria-hidden="true"></i> Volver a la web</a>
+      <div class="form-content">
+        <span class="access-badge"><i class="pi pi-lock" aria-hidden="true"></i> Área privada</span>
+        <h1 id="login-title">Bienvenido<br>de nuevo.</h1>
+        <p class="intro">Accede para gestionar tu restaurante.</p>
+
+        <form #loginForm="ngForm" (ngSubmit)="loginForm.valid && login()" [attr.aria-busy]="loading">
+          <label for="login-email">Correo electrónico</label>
+          <div class="input-wrap">
+            <i class="pi pi-envelope field-icon" aria-hidden="true"></i>
+            <input id="login-email" type="email" name="email" [(ngModel)]="email" required email autocomplete="username" placeholder="tu@correo.com" [readOnly]="loading">
+          </div>
+
+          <label for="login-password">Contraseña</label>
+          <div class="input-wrap">
+            <i class="pi pi-lock field-icon" aria-hidden="true"></i>
+            <input id="login-password" [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" required autocomplete="current-password" placeholder="Introduce tu contraseña" [readOnly]="loading">
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'" [attr.aria-pressed]="showPassword">
+              <i class="pi" [class.pi-eye]="!showPassword" [class.pi-eye-slash]="showPassword" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <p class="error-message" [hidden]="!error" role="alert">{{ error }}</p>
+          <button class="submit-button" type="submit" [disabled]="loading || loginForm.invalid">
+            <span>{{ loading ? 'Accediendo…' : 'Entrar al panel' }}</span>
+            <i class="pi" [class.pi-arrow-right]="!loading" [class.pi-spinner]="loading" [class.pi-spin]="loading" aria-hidden="true"></i>
+          </button>
+        </form>
+        <p class="private-note"><i class="pi pi-shield" aria-hidden="true"></i> Acceso exclusivo para el equipo de Jofemar</p>
+      </div>
+      <span class="form-footer">Un pequeño espacio para cuidar cada detalle.</span>
+    </div>
+  </section>
+</main>

@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../auth.service';
 import { forkJoin } from 'rxjs';
+import { FinanceComponent } from './finance.component';
+type AdminSection = 'daily' | 'menu' | 'invoices' | 'expenses' | 'reports' | 'settings';
 import { ApiMenuItem, MenuApiService } from '../menu-api.service';
 import { DailyMenu, DailyMenuService } from '../daily-menu.service';
 
@@ -10,12 +14,48 @@ type EditableItem = Omit<ApiMenuItem, '_id'> & { _id?: string };
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink, FinanceComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {
+  activeSection: AdminSection = 'daily';
+  get sectionTitle(): string { return {daily:'Menú del Día',menu:'Tu carta, a tu gusto.',invoices:'Facturas',expenses:'Gastos',reports:'Informes',settings:'Configuración'}[this.activeSection]; }
+  get sectionDescription(): string { return {daily:'Prepara las opciones de hoy y compártelas con tus clientes.',menu:'Gestiona tus productos, sus precios y su disponibilidad.',invoices:'Tus facturas, claras y organizadas.',expenses:'Cada gasto, en su lugar.',reports:'Los números de tu restaurante, de un vistazo.',settings:'Los datos fiscales y de contacto de tu restaurante.'}[this.activeSection]; }
+  sidebarCollapsed = false;
+  mobileMenuOpen = false;
+  openNavGroup: 'restaurant' | 'management' | 'settings' | null = null;
+  toggleNavGroup(group: 'restaurant' | 'management' | 'settings'): void { this.openNavGroup = this.openNavGroup === group ? null : group; }
+  private readonly element = inject(ElementRef<HTMLElement>);
+
+  expandSidebar(event?: PointerEvent): void {
+    if ((!event || event.pointerType === 'mouse') && window.matchMedia('(min-width: 761px)').matches) {
+      this.sidebarCollapsed = false;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  collapseOutside(event: MouseEvent): void {
+    if (window.matchMedia('(min-width: 761px)').matches && event.target instanceof Node &&
+        !this.element.nativeElement.querySelector('.dashboard-sidebar')?.contains(event.target)) {
+      this.sidebarCollapsed = true;
+    }
+  }
+
+  selectSection(section: AdminSection): void {
+    this.activeSection = section;
+    this.mobileMenuOpen = false;
+    this.openNavGroup = null;
+  }
+
+  readonly today = new Date();
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  get activeCount(): number { return this.items.filter(item => item.active !== false).length; }
+  get categoryCount(): number { return new Set(this.items.map(item => item.category)).size; }
+  logout(): void { this.auth.logout(); this.router.navigate(['/login']); }
+
   private readonly categoryOrder = [
     'Primer plato o Entradas',
     'Pescado y Mariscos',
@@ -200,6 +240,10 @@ export class AdminComponent {
 
   constructor() {
     this.loadItems();
+    this.dailyMenuService.loadRemote().subscribe({
+      next: menu => { this.dailyMenu = menu; this.changeDetector.markForCheck(); },
+      error: () => { this.dailyMenuStatus = 'No se pudo cargar el menú guardado. Revisa la conexión antes de publicar.'; this.changeDetector.markForCheck(); }
+    });
   }
 
   saveDailyMenu(): void {
