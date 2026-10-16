@@ -1,8 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { retry } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { LOCALE_ID } from '@angular/core';
+registerLocaleData(localeEs);
 import { MenuApiService, ApiMenuItem } from '../menu-api.service';
-import { ReviewsComponent } from '../reviews/reviews.component';
+import { REVIEWS } from '../reviews/reviews.data';
+import { HERO_ASSETS } from './hero-assets';
 import { DailyMenu, DailyMenuService } from '../daily-menu.service';
 
 interface Allergen {
@@ -39,13 +43,106 @@ interface MenuCategory {
 
 @Component({
   selector: 'app-home',
+  providers: [{provide: LOCALE_ID, useValue: 'es-ES'}],
   standalone: true,
-  imports: [CommonModule, ReviewsComponent],
+  imports: [CommonModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements AfterViewInit {
+  private readonly heroSelections = [
+    {name:'Papa a la huancaína',description:'Patatas con la cremosa salsa peruana de ají amarillo y queso.'},
+    {name:'Anticuchos',description:'Brochetas marinadas y hechas a la parrilla, con todo el sabor peruano.'},
+    {name:'Tamal',description:'Masa de maíz sazonada, envuelta en hoja y cocinada con cariño.'},
+    {name:'Chupe de langostino',description:'Una sopa cremosa y reconfortante con langostinos al estilo peruano.'},
+    {name:'Ceviche mixto',description:'Pescado y mariscos marinados en cítricos, con un toque de ají.'},
+    {name:'Jalea personal',description:'Pescado y mariscos dorados y crujientes, para disfrutar cada bocado.'},
+    {name:'Tallarines a la huancaína con lomo al jugo',description:'Tallarines con salsa huancaína y lomo jugoso: una combinación irresistible.'},
+    {name:'Tallarín saltado de ternera',description:'Tallarines salteados con ternera, verduras y el sabor de la cocina chifa.'}
+  ];
+  heroSlides: Array<{name:string;image:string;imageMobile?:string;description:string;imagePosition:string;imageZoom:number}> = HERO_ASSETS.map(asset=>({...asset,description:this.heroSelections.find(selection=>selection.name===asset.name)?.description || ''}));
+  private viewDestroyed = false;
+  private readonly heroImagesReady = new Set<string>();
+  onHeroImageLoad(image:string): void { this.heroImagesReady.add(image); }
+  private async updateHeroSlides(items:ApiMenuItem[]): Promise<void> {
+    const slides = await Promise.all(this.heroSelections.map(async selection => {
+      const item = items.find(item => this.normalized(item.name) === this.normalized(selection.name) && item.active !== false && item.image);
+      if(!item?.image)return null;
+      const asset=HERO_ASSETS.find(asset=>asset.name===selection.name);
+      let optimized=false;
+      if(asset){
+        try {
+          const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(item.image));
+          const hash=Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');
+          optimized=hash===asset.sourceHash;
+        }catch { /* Si no se puede verificar, mostrar siempre la imagen vigente de la API. */ }
+      }
+      return {...selection,image:optimized && asset?asset.image:item.image,imageMobile:optimized && asset?asset.imageMobile:undefined,imagePosition:item.imagePosition || '50% 50%',imageZoom:item.imageZoom || 1};
+    }));
+    if(this.viewDestroyed)return;
+    const currentName=this.heroSlides[this.heroSlide]?.name;
+    const storyName=this.heroSlides[this.storySlide]?.name;
+    this.heroSlides=slides.filter((slide):slide is NonNullable<typeof slide>=>slide!==null);
+    this.heroSlide=Math.max(0,this.heroSlides.findIndex(slide=>slide.name===currentName));
+    this.storySlide=Math.max(0,this.heroSlides.findIndex(slide=>slide.name===storyName));
+    this.changeDetector.markForCheck();
+  }
+  heroSlide = 0;
+  storySlide = HERO_ASSETS.length - 1;
+  private readonly destroyRef = inject(DestroyRef);
+  mobileNavOpen = false;
+  dailyMenuLoaded = false;
+  @ViewChild('dailyDialog') private dailyDialog?: ElementRef<HTMLDialogElement>;
+  private viewReady = false;
+  private autoMenuOpened = false;
+  private welcomeDelayElapsed = false;
+  private maybeOpenDailyMenu(): void {
+    if(this.viewReady && this.welcomeDelayElapsed && this.dailyMenuLoaded && !this.autoMenuOpened){
+      this.autoMenuOpened = true;
+      this.openDailyMenu();
+    }
+  }
+
+  readonly currentYear = new Date().getFullYear();
+  readonly testimonials = REVIEWS;
+  selectedTestimonial: (typeof REVIEWS)[number] | null = null;
+  @ViewChild('reviewDialog') private reviewDialog?: ElementRef<HTMLDialogElement>;
+  openReview(review: (typeof REVIEWS)[number]): void {
+    this.selectedTestimonial=review;
+    this.reviewDialog?.nativeElement.showModal();
+    document.body.classList.add('modal-open');
+  }
+  closeReview(): void { this.reviewDialog?.nativeElement.close(); this.onReviewClosed(); }
+  onReviewClosed(): void {
+    this.selectedTestimonial=null;
+    if(!this.showDailyMenuModal && !this.selectedItem)document.body.classList.remove('modal-open');
+    this.changeDetector.markForCheck();
+  }
+  onReviewDialogClick(event:MouseEvent): void {
+    const dialog=this.reviewDialog?.nativeElement;
+    if(event.target!==dialog || !dialog)return;
+    const bounds=dialog.getBoundingClientRect();
+    if(event.clientX<bounds.left || event.clientX>bounds.right || event.clientY<bounds.top || event.clientY>bounds.bottom)this.closeReview();
+  }
+
+  get featuredDishes(): MenuItem[] {
+    const all = this.menuCategories.flatMap(category => [...(category.items || []), ...(category.subcategories || []).flatMap(sub => sub.items)]).filter(item => item.active !== false && item.image);
+    const preferred = ['lomo saltado', 'ceviche de pescado', 'aji de gallina', 'arroz con mariscos'];
+    const selected: MenuItem[] = [];
+    for(const name of preferred){const item=all.find(item=>this.normalized(item.name)===name);if(item)selected.push(item);}
+    for(const item of all){if(selected.length>=4)break;if(!selected.includes(item))selected.push(item);}
+    return selected;
+  }
+  private normalized(value:string){return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  categoryImage(category: MenuCategory): string {
+    const items = [...(category.items || []), ...(category.subcategories || []).flatMap(sub=>sub.items)].filter(item=>item.image && item.active!==false);
+    const preferred:Record<string,string>={'Primer plato o Entradas':'causa','Pescado y Mariscos':'ceviche de pescado','Carnes y Pollo':'lomo saltado','Platos Combinados':'ceviche','Bebidas':'pisco sour','Postres':'tarta'};
+    const first = items.find(item=>this.normalized(item.name).includes(preferred[category.title] || '---')) || items[0];
+    return this.getImageSource(first?.image);
+  }
+  get dailyHasOptions(): boolean { return this.dailyMenu.starters.some(item => item.trim()) && this.dailyMenu.mains.some(item => item.trim()); }
+  get publishedMenuDate(): string { const date=new Date(this.dailyMenu.date+'T12:00:00');return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long'}).format(date):''; }
   dailyMenu: DailyMenu;
   readonly todayDate = new Date();
   readonly todayDateLabel = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(this.todayDate);
@@ -74,14 +171,30 @@ export class HomeComponent implements AfterViewInit {
   menuLoadError = false;
 
   constructor() {
+    const slideshow = window.setInterval(() => {
+      if(this.heroSlides.length > 1 && document.visibilityState === 'visible' && !this.showDailyMenuModal && !this.selectedTestimonial){
+        const previous=(this.storySlide - 1 + this.heroSlides.length) % this.heroSlides.length;
+        if(this.heroImagesReady.has(this.heroSlides[previous].image)){
+          this.storySlide=previous;
+          this.changeDetector.markForCheck();
+        }
+        const next=(this.heroSlide + 1) % this.heroSlides.length;
+        if(this.heroImagesReady.has(this.heroSlides[next].image)){
+          this.heroSlide=next;
+          this.changeDetector.markForCheck();
+        }
+      }
+    },2500);
+    this.destroyRef.onDestroy(() => { this.viewDestroyed=true; window.clearInterval(slideshow); document.body.classList.remove('modal-open'); });
     this.dailyMenu = this.dailyMenuService.get();
-    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = { ...menu, date: this.todayDate.toISOString().slice(0, 10) }; this.changeDetector.markForCheck(); }, error: () => undefined });
+    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = menu; this.dailyMenuLoaded = true; this.maybeOpenDailyMenu(); this.changeDetector.markForCheck(); }, error: () => undefined });
     this.menuApi = inject(MenuApiService);
     this.menuLoading = true;
     if (this.menuApi) {
       this.menuApi.getMenu().pipe(retry({ count: 3, delay: 1800 })).subscribe({
         next: (items) => {
           this.menuCategories = this.groupApiItems(items);
+          void this.updateHeroSlides(items);
           this.menuLoading = false;
           this.menuLoadError = false;
           this.applyUrlSelection();
@@ -98,6 +211,13 @@ export class HomeComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.viewReady = true;
+    const welcomeTimer = window.setTimeout(() => {
+      this.welcomeDelayElapsed = true;
+      this.maybeOpenDailyMenu();
+      this.changeDetector.markForCheck();
+    }, 3000);
+    this.destroyRef.onDestroy(() => window.clearTimeout(welcomeTimer));
     if (window.location.hash === '#/' || window.location.hash === '') {
       window.history.scrollRestoration = 'manual';
       window.setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 0);
@@ -132,11 +252,23 @@ export class HomeComponent implements AfterViewInit {
     { question: '¿Qué representa Jofemar hoy?', answer: 'Después de varios años de éxito y reconocimiento, seguimos creciendo como punto de encuentro para los amantes de la auténtica gastronomía peruana en Valencia. En Jofemar, cada plato cuenta una historia, cada ingrediente es una herencia y cada cliente es parte de nuestra familia.' }
   ];
 
-  openDailyMenu(): void { this.dailyMenuClosing = false; this.showDailyMenuModal = true; }
-  closeDailyMenu(): void {
-    this.showDailyMenuModal = false;
-    this.dailyMenuClosing = true;
-    window.setTimeout(() => { this.dailyMenuClosing = false; }, 600);
+  openDailyMenu(): void {
+    const dialog=this.dailyDialog?.nativeElement;
+    if(!dialog || dialog.open)return;
+    this.showDailyMenuModal=true;
+    dialog.showModal();
+    document.body.classList.add('modal-open');
+  }
+  closeDailyMenu(): void { this.dailyDialog?.nativeElement.close(); this.onDailyDialogClosed(); }
+  onDailyDialogClosed(): void {
+    this.showDailyMenuModal=false;
+    if(!this.selectedItem)document.body.classList.remove('modal-open');
+    this.changeDetector.markForCheck();
+  }
+  onDailyDialogClick(event:MouseEvent): void {
+    if(event.target!==this.dailyDialog?.nativeElement)return;
+    const bounds=this.dailyDialog.nativeElement.getBoundingClientRect();
+    if(event.clientX<bounds.left || event.clientX>bounds.right || event.clientY<bounds.top || event.clientY>bounds.bottom)this.closeDailyMenu();
   }
 
   // The public menu comes exclusively from the database.
@@ -158,6 +290,8 @@ export class HomeComponent implements AfterViewInit {
         allergens: item.allergens,
         image: item.image,
         description: item.description,
+        imagePosition: item.imagePosition,
+        imageZoom: item.imageZoom,
         active: item.active !== false
       };
 
@@ -252,6 +386,9 @@ export class HomeComponent implements AfterViewInit {
     document.body.classList.add('modal-open');
   }
 
+  @HostListener('document:keydown.escape')
+  closeOnEscape(): void { if(this.selectedItem)this.closeDish(); this.mobileNavOpen = false; }
+
   closeDish(): void {
     this.selectedItem = null;
     document.body.classList.remove('modal-open');
@@ -259,6 +396,8 @@ export class HomeComponent implements AfterViewInit {
 
   goToMenu(event: Event): void {
     event.preventDefault();
+    this.mobileNavOpen = false;
+    this.setMenuUrl();
     this.selectedCategory = null;
     this.selectedParentCategory = null;
     this.showAllergens = false;
@@ -313,6 +452,7 @@ export class HomeComponent implements AfterViewInit {
 
   scrollToSection(event: Event, sectionId: string): void {
     event.preventDefault();
+    this.mobileNavOpen = false;
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -341,7 +481,7 @@ export class HomeComponent implements AfterViewInit {
 
   getImageSource(image?: string): string {
     if (!image) return 'assets/images/peru-flag.png';
-    return image.startsWith('data:image/') || image.startsWith('http') ? image : `assets/images/${image}`;
+    return image.startsWith('data:image/') || image.startsWith('http') || image.startsWith('assets/') ? image : `assets/images/${image}`;
   }
 
   getImageTransform(item: MenuItem): string {

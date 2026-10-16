@@ -8,3 +8,6 @@ body.admin-route #resenas, body:has(.admin-shell) #resenas { display: none !impo
 
 /* El acceso privado se extiende hasta los bordes de la ventana. */
 body:has(app-login), body:has(app-admin) { margin: 0; }
+
+body:has(app-home) { margin:0; background:#fbf7f1; }
+body:has(app-home).modal-open { overflow:hidden; }
