@@ -3,6 +3,8 @@ import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
+import { tableOrders } from './routes/table-orders.js';
+import { Reservation, reservationInput } from './models/reservation.model.js';
 import { MenuItem } from './models/menu-item.model.js';
 import { DailyMenu } from './models/daily-menu.model.js';
 import { InvoiceDraft, Expense, FinanceSettings } from './models/finance.model.js';
@@ -78,6 +80,29 @@ app.delete('/api/admin/menu/:id', requireAdmin, async (request, response) => {
   response.status(204).send();
 });
 
+app.use('/api/admin/table-orders', requireAdmin, tableOrders);
+
+// Las reservas manuales solo están disponibles para administración.
+const reservations = express.Router();
+reservations.use(requireAdmin);
+reservations.use((_req, res, next) => {
+  if (mongoose.connection.readyState !== 1) { res.status(503).json({ message: 'Base de datos no disponible.' }); return; }
+  next();
+});
+reservations.get('/', async (_req, res) => {
+  res.json(await Reservation.find().sort({ date: 1, time: 1, createdAt: 1 }).lean());
+});
+reservations.post('/', async (req, res) => {
+  let input;
+  try { input = reservationInput(req.body); }
+  catch (error) { res.status(400).json({ message: error instanceof Error ? error.message : 'Reserva no válida.' }); return; }
+  res.status(201).json(await Reservation.create(input));
+});
+reservations.use((_error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  res.status(500).json({ message: 'No se pudo completar la operación. Vuelve a intentarlo.' });
+});
+app.use('/api/admin/reservations', reservations);
+
 // La gestión financiera es privada y nunca se publica en la API de la carta.
 const finance = express.Router();
 finance.use(requireAdmin);
@@ -111,6 +136,8 @@ async function start(): Promise<void> {
       } },
       { upsert: true }
     );
+    // Espera al índice que evita comandas abiertas duplicadas por mesa.
+    await (await import('./models/table-order.model.js')).TableOrder.init();
     console.log('Conectado a MongoDB');
   } else {
     console.log('MONGODB_URI no configurada: servidor iniciado en modo preparación');

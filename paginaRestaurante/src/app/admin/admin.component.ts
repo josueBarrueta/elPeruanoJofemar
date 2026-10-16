@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { forkJoin } from 'rxjs';
+import { TableOrdersComponent } from './table-orders.component';
+import { ReservationsComponent } from './reservations.component';
 import { FinanceComponent } from './finance.component';
-type AdminSection = 'daily' | 'menu' | 'invoices' | 'expenses' | 'reports' | 'settings';
+type AdminSection = 'tables' | 'reservations' | 'daily' | 'menu' | 'invoices' | 'expenses' | 'reports' | 'settings';
 import { ApiMenuItem, MenuApiService } from '../menu-api.service';
 import { DailyMenu, DailyMenuService } from '../daily-menu.service';
 
@@ -14,15 +16,15 @@ type EditableItem = Omit<ApiMenuItem, '_id'> & { _id?: string };
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, FinanceComponent],
+  imports: [CommonModule, FormsModule, RouterLink, FinanceComponent, ReservationsComponent, TableOrdersComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {
   activeSection: AdminSection = 'daily';
-  get sectionTitle(): string { return {daily:'Menú del Día',menu:'Tu carta, a tu gusto.',invoices:'Facturas',expenses:'Gastos',reports:'Informes',settings:'Configuración'}[this.activeSection]; }
-  get sectionDescription(): string { return {daily:'Prepara las opciones de hoy y compártelas con tus clientes.',menu:'Gestiona tus productos, sus precios y su disponibilidad.',invoices:'Tus facturas, claras y organizadas.',expenses:'Cada gasto, en su lugar.',reports:'Los números de tu restaurante, de un vistazo.',settings:'Los datos fiscales y de contacto de tu restaurante.'}[this.activeSection]; }
+  get sectionTitle(): string { return {tables:'Mesas y comandas',reservations:'Reservas',daily:'Menú del Día',menu:'Tu carta, a tu gusto.',invoices:'Facturas',expenses:'Gastos',reports:'Informes',settings:'Configuración'}[this.activeSection]; }
+  get sectionDescription(): string { return {tables:'Gestiona las mesas y sus pedidos durante el servicio.',reservations:'Organiza las reservas de tu restaurante.',daily:'Prepara las opciones de hoy y compártelas con tus clientes.',menu:'Gestiona tus productos, sus precios y su disponibilidad.',invoices:'Tus facturas, claras y organizadas.',expenses:'Cada gasto, en su lugar.',reports:'Los números de tu restaurante, de un vistazo.',settings:'Los datos fiscales y de contacto de tu restaurante.'}[this.activeSection]; }
   sidebarCollapsed = false;
   mobileMenuOpen = false;
   openNavGroup: 'restaurant' | 'management' | 'settings' | null = null;

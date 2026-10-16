@@ -6,6 +6,8 @@ const menuItemSchema = new Schema({
     price: { type: Number, required: true, min: 0 },
     allergens: { type: [String], default: [] },
     image: { type: String, trim: true },
+    imagePosition: { type: String, trim: true, default: '50% 50%' },
+    imageZoom: { type: Number, min: 1, max: 3, default: 1 },
     description: { type: String, trim: true },
     order: { type: Number, default: 0 },
     active: { type: Boolean, default: true, index: true }

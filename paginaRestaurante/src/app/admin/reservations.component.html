@@ -1,0 +1,24 @@
+<section class="reservations-card">
+  <div class="heading"><div><h2>Agenda de reservas</h2><p>Añade y consulta las reservas recibidas en el restaurante.</p></div><button #addButton class="primary" type="button" (click)="open()"><span aria-hidden="true">＋</span> Añadir reserva</button></div>
+  <div class="toolbar"><label>Filtrar por día<input type="date" [(ngModel)]="day"></label><button type="button" *ngIf="day" (click)="day = ''">Ver todas</button><span *ngIf="!loading && !error">{{ visible.length }} reservas · {{ guests }} comensales</span></div>
+  <p class="success" role="status" *ngIf="message">{{ message }}</p>
+  <p role="status" *ngIf="loading">Cargando reservas…</p>
+  <div role="alert" *ngIf="error"><p>{{ error }}</p><button type="button" (click)="load()">Reintentar</button></div>
+  <ng-container *ngIf="!loading && !error">
+    <div class="empty" *ngIf="!visible.length"><i class="pi pi-calendar" aria-hidden="true"></i><h3>{{ day ? 'No hay reservas para este día' : 'Todavía no hay reservas' }}</h3><p>Pulsa «Añadir reserva» para registrar la primera.</p></div>
+    <div class="table-wrap" *ngIf="visible.length"><table><thead><tr><th scope="col">Día</th><th scope="col">Hora</th><th scope="col">Nombre</th><th scope="col">Comensales</th></tr></thead><tbody><tr *ngFor="let reservation of visible"><td>{{ reservation.date | date:'dd/MM/yyyy' }}</td><td><strong>{{ reservation.time }}</strong></td><td>{{ reservation.name }}</td><td>{{ reservation.guests }}</td></tr></tbody></table></div>
+  </ng-container>
+</section>
+<dialog #reservationDialog aria-labelledby="reservation-title" (cancel)="cancel($event)" (close)="restoreFocus()">
+  <form #form="ngForm" (ngSubmit)="form.valid && save()">
+    <div class="heading"><div><span class="eyebrow">NUEVA RESERVA</span><h2 id="reservation-title">Añadir reserva</h2></div><button type="button" aria-label="Cerrar formulario" [disabled]="saving" (click)="close()">✕</button></div>
+    <p class="intro">Introduce los datos de la reserva. Todos los campos son obligatorios.</p>
+    <fieldset [disabled]="saving">
+      <label>Nombre de la reserva<input autofocus name="name" [(ngModel)]="draft.name" required maxlength="120" pattern=".*\S.*" autocomplete="name" placeholder="Nombre y apellidos"></label>
+      <label>Número de comensales<input name="guests" type="number" [(ngModel)]="draft.guests" required min="1" step="1" pattern="[0-9]+" inputmode="numeric"></label>
+      <div class="date-time"><label>Día<input name="date" type="date" [(ngModel)]="draft.date" required></label><label>Hora<input name="time" type="time" [(ngModel)]="draft.time" required></label></div>
+    </fieldset>
+    <p class="error" role="alert" *ngIf="formError">{{ formError }}</p>
+    <div class="actions"><button type="button" [disabled]="saving" (click)="close()">Cancelar</button><button class="primary" type="submit" [disabled]="saving || form.invalid">{{ saving ? 'Guardando…' : 'Guardar reserva' }}</button></div>
+  </form>
+</dialog>

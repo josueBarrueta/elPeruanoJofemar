@@ -10,6 +10,8 @@
           <p class="desktop-group-label">RESTAURANTE</p>
           <button class="group-toggle" type="button" [attr.aria-expanded]="openNavGroup === 'restaurant'" aria-controls="nav-group-restaurant" (click)="toggleNavGroup('restaurant')">Restaurante<i class="pi pi-chevron-down" aria-hidden="true"></i></button>
           <div class="group-links" id="nav-group-restaurant">
+        <button type="button" aria-label="Mesas y comandas" title="Mesas y comandas" [class.active]="activeSection === 'tables'" [attr.aria-current]="activeSection === 'tables' ? 'page' : null" (click)="selectSection('tables')"><i class="pi pi-th-large" aria-hidden="true"></i><span class="nav-text">Mesas y comandas</span></button>
+        <button type="button" aria-label="Reservas" title="Reservas" [class.active]="activeSection === 'reservations'" [attr.aria-current]="activeSection === 'reservations' ? 'page' : null" (click)="selectSection('reservations')"><i class="pi pi-calendar-plus" aria-hidden="true"></i><span class="nav-text">Reservas</span></button>
         <button type="button" aria-label="Menú del Día" title="Menú del Día" [class.active]="activeSection === 'daily'" [attr.aria-current]="activeSection === 'daily' ? 'page' : null" (click)="selectSection('daily')"><i class="pi pi-calendar" aria-hidden="true"></i><span class="nav-text">Menú del Día</span></button>
         <button type="button" aria-label="Carta" title="Carta" [class.active]="activeSection === 'menu'" [attr.aria-current]="activeSection === 'menu' ? 'page' : null" (click)="selectSection('menu')"><i class="pi pi-book" aria-hidden="true"></i><span class="nav-text">Carta</span><span class="nav-count">{{ items.length }}</span></button>
           </div>
@@ -32,6 +34,8 @@
     <div class="dashboard-content">
       <header class="admin-header"><div><span class="eyebrow">PANEL DE CONTROL</span><h1>{{ sectionTitle }}</h1><p>{{ sectionDescription }}</p></div><span class="dashboard-date"><i class="pi pi-calendar" aria-hidden="true"></i>{{ today | date:'dd/MM/yyyy' }}</span></header>
       <section *ngIf="activeSection === 'daily' || activeSection === 'menu'" class="dashboard-stats" aria-label="Resumen del restaurante"><article><span class="stat-icon"><i class="pi pi-book" aria-hidden="true"></i></span><div><span>Productos en carta</span><strong>{{ items.length }}</strong></div></article><article><span class="stat-icon green"><i class="pi pi-check-circle" aria-hidden="true"></i></span><div><span>Disponibles</span><strong>{{ activeCount }}</strong></div></article><article><span class="stat-icon gold"><i class="pi pi-th-large" aria-hidden="true"></i></span><div><span>Categorías</span><strong>{{ categoryCount }}</strong></div></article></section>
+      <app-table-orders *ngIf="activeSection === 'tables'" [menu]="items"></app-table-orders>
+      <app-reservations *ngIf="activeSection === 'reservations'"></app-reservations>
       <app-finance *ngIf="activeSection === 'invoices' || activeSection === 'expenses' || activeSection === 'reports' || activeSection === 'settings'" [section]="activeSection"></app-finance>
       <p class="dashboard-status" role="status" *ngIf="activeSection === 'menu'">{{ status }}</p>
   <section class="daily-menu-card" [hidden]="activeSection !== 'daily'">

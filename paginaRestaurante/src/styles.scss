@@ -11,3 +11,14 @@ body:has(app-login), body:has(app-admin) { margin: 0; }
 
 body:has(app-home) { margin:0; background:#fbf7f1; }
 body:has(app-home).modal-open { overflow:hidden; }
+
+/* Los campos numéricos conservan el teclado numérico sin flechas internas. */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
