@@ -163,3 +163,9 @@
 .story-slideshow img.is-active{opacity:1}
 @media(max-width:600px){.story-slideshow{aspect-ratio:1/1.02;border-top-right-radius:80px}}
 @media(prefers-reduced-motion:reduce){.story-slideshow img{transition:none}}
+
+.category-tile{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
+.category-image{flex-shrink:0;width:100%}
+.category-image img{display:block}
+.daily-copy>.daily-schedule{color:#fff4e8;font-weight:600;max-width:350px}
+.welcome-schedule{font-size:12px;line-height:1.7;text-align:center;color:var(--wine);margin:0 0 20px;font-weight:600}
