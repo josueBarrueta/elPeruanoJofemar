@@ -22,6 +22,7 @@ export function receiptInvoiceInput(body: any, receipt: { lines: ReceiptLine[]; 
     clientName: text(body.clientName, 'nombre del cliente', 200, true),
     clientTaxId: text(body.clientTaxId, 'NIF del cliente', 40, true),
     clientAddress: text(body.clientAddress, 'domicilio del cliente', 500, true),
+    operationDate: receipt.closedAt ? new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid'}).format(new Date(receipt.closedAt)) : date(body.date),
     date: date(body.date), notes: text(body.notes, 'notas', 2000),
     lines, subtotalCents, taxCents, totalCents: receipt.totalCents
   };

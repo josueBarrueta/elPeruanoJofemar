@@ -1,20 +1,26 @@
 import type { TableOrder } from './table-orders.service';
-import type { ExpenseRecord } from './finance.service';
-export function reportTotals(receipts: TableOrder[], expenses: ExpenseRecord[]) {
+import type { ExpenseRecord, Invoice } from './finance.service';
+export function reportTotals(receipts: TableOrder[], expenses: ExpenseRecord[], invoices: Invoice[] = []) {
   let salesCents = 0, paidCents = 0, cashCents = 0, cardCents = 0, baseCents = 0, taxCents = 0, unknownTaxCents = 0;
   const groups = new Map<number, { rate: number; baseCents: number; taxCents: number; grossCents: number }>();
+  const addTax = (rate: number | null | undefined, gross: number, baseOverride?:number, taxOverride?:number) => {
+    if (typeof rate !== 'number') { unknownTaxCents += gross; return; }
+    const base = baseOverride ?? Math.round(gross / (1 + rate / 100)), tax = taxOverride ?? gross - base;
+    baseCents += base; taxCents += tax;
+    const group = groups.get(rate) || { rate, baseCents: 0, taxCents: 0, grossCents: 0 };
+    group.baseCents += base; group.taxCents += tax; group.grossCents += gross; groups.set(rate, group);
+  };
   for (const receipt of receipts) {
     salesCents += receipt.totalCents;
     if (receipt.payment) { paidCents += receipt.totalCents; cashCents += receipt.payment.cashCents; cardCents += receipt.payment.cardCents; }
-    for (const line of receipt.lines) {
-      const gross = line.quantity * line.unitPriceCents;
-      if (typeof line.taxRate !== 'number') { unknownTaxCents += gross; continue; }
-      const base = Math.round(gross / (1 + line.taxRate / 100));
-      const tax = gross - base;
-      baseCents += base; taxCents += tax;
-      const group = groups.get(line.taxRate) || { rate: line.taxRate, baseCents: 0, taxCents: 0, grossCents: 0 };
-      group.baseCents += base; group.taxCents += tax; group.grossCents += gross; groups.set(line.taxRate, group);
-    }
+    const issued = invoices.find(invoice => invoice.status === 'issued' && invoice.sourceOrderId === receipt._id && invoice.totalCents === receipt.totalCents);
+    if (issued) for (const line of issued.lines) { const base=line.baseCents ?? Math.round(line.unitPrice*line.quantity*100), tax=line.taxCents ?? Math.round(base*line.taxRate/100); addTax(line.taxRate,line.grossCents ?? base+tax,base,tax); }
+    else for (const line of receipt.lines) addTax(line.taxRate,line.quantity*line.unitPriceCents);
+  }
+  // Las facturas sin recibo son ventas adicionales; las vinculadas ya se contaron arriba.
+  for (const invoice of invoices.filter(row => row.status === 'issued' && !row.sourceOrderId)) {
+    salesCents += invoice.totalCents || 0;
+    for (const line of invoice.lines) {const base=line.baseCents ?? Math.round(line.unitPrice*line.quantity*100), tax=line.taxCents ?? Math.round(base*line.taxRate/100);addTax(line.taxRate,line.grossCents ?? base+tax,base,tax);}
   }
   const expenseCents = expenses.reduce((n, row) => n + row.totalCents, 0);
   const expenseTaxCents = expenses.reduce((n, row) => n + (row.taxCents ?? 0), 0);

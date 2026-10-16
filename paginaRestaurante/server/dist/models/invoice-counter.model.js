@@ -1,0 +1,3 @@
+import { Schema, model } from 'mongoose';
+export const InvoiceCounter = model('InvoiceCounter', new Schema({ _id: String, lastNumber: { type: Number, required: true }, lastIssueDate: String, lastHash: String }, { versionKey: false }));
+export const InvoiceIssueEvent = model('InvoiceIssueEvent', new Schema({ invoiceId: { type: String, required: true, unique: true }, invoiceNumber: { type: String, required: true }, counterKey: { type: String, required: true }, recordHash: { type: String, required: true }, previousHash: String, payload: { type: Schema.Types.Mixed, required: true } }, { timestamps: { createdAt: true, updatedAt: false } }));

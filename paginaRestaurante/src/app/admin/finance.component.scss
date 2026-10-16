@@ -22,3 +22,17 @@
 .tax-settings form { padding: 24px; }
 .saved-client { display: grid; gap: .5rem; margin-bottom: 1rem; font-size: 13px; }
 .saved-client select { max-width: 100%; min-height: 48px; }
+
+.issue-dialog{width:min(520px,calc(100vw - 2rem));padding:1.5rem;border:1px solid #ddd;border-radius:16px;color:#302b28}.issue-dialog::backdrop{background:#0008}.issue-dialog p{margin:1rem 0;line-height:1.6;font-size:14px}.issue-dialog>div{display:flex;justify-content:flex-end;gap:.75rem;flex-wrap:wrap}.issue-dialog button{min-height:48px}
+
+.verifactu-settings { margin-top: 24px; }
+.settings-eyebrow { display:block;margin-bottom:8px;color:#8a7d73;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase; }
+.integration-status { display:inline-flex;align-items:center;gap:8px;border:1px solid #e0dad3;border-radius:20px;padding:9px 13px;background:#f4f1ed;color:#625b55;font-size:12px;white-space:nowrap; }
+.integration-status > span { width:8px;height:8px;border-radius:50%;background:#8b857f; }
+.integration-body { padding:24px;font-size:13px;line-height:1.7;color:#74665c; }
+.integration-body dl { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0; }
+.integration-body dl > div { padding:16px;border:1px solid #e9e2da;border-radius:10px;background:#faf9f6; }
+.integration-body dt { font-size:12px;color:#8a7d73; }
+.integration-body dd { margin:6px 0 0;color:#433d38;font-weight:600; }
+.integration-note { font-size:12px;color:#8a7d73; }
+@media(max-width:700px){.integration-body{padding:18px}.integration-body dl{grid-template-columns:1fr}}

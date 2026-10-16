@@ -32,3 +32,7 @@ test('open accounts remain pending and paid receipts show the recorded method an
  api.receipt({...order,status:'open'},{});assert.match(api.preview().html,/CUENTA · PENDIENTE DE PAGO/);assert.match(api.preview().html,/mesa sigue abierta/);assert.equal(api.preview().receipt,undefined);
  api.receipt({...order,payment:{method:'cash',cashCents:760,cardCents:0,tenderedCents:1000,changeCents:240}},{});assert.match(api.preview().html,/RECIBO · PAGO REGISTRADO/);assert.match(api.preview().html,/2,40/);assert.equal(api.preview().receipt._id,order._id);
 });
+test('issued invoices print their frozen issuer and final number without draft wording',()=>{
+ api.invoice({_id:'123',status:'issued',invoiceNumber:'TEST/000041',issuerSnapshot:{legalName:'Emisor original',taxId:'TEST',address:'Dirección original'},clientName:'Cliente',clientTaxId:'CLIENTE',clientAddress:'Dirección',date:'2026-10-16',operationDate:'2026-10-15',totalCents:1100,lines:[{description:'Plato',quantity:1,unitPrice:10,taxRate:10}]},{legalName:'Emisor cambiado'});
+ const html=api.preview().html;assert.match(html,/TEST\/000041/);assert.match(html,/Emisor original/);assert.ok(!html.includes('Emisor cambiado'));assert.ok(!html.includes('BORRADOR'));assert.match(html,/15\/10\/2026/);
+});

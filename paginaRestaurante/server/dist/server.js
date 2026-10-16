@@ -4,6 +4,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
 import { TableOrder } from './models/table-order.model.js';
+import { invoiceIssuance } from './routes/invoice-issuance.js';
+import { InvoiceCounter, InvoiceIssueEvent } from './models/invoice-counter.model.js';
 import { expenseAttachment } from './models/expense-attachment.js';
 import { receiptRange, receiptInvoiceInput } from './models/receipt-validation.js';
 import { tableOrders } from './routes/table-orders.js';
@@ -139,20 +141,28 @@ finance.post('/receipts/:id/invoice', async (req, res) => {
         res.status(404).json({ message: 'Recibo no encontrado.' });
         return;
     }
+    if (await InvoiceDraft.exists({ sourceOrderId: String(receipt._id), status: 'issued' })) {
+        res.status(409).json({ message: 'Este recibo ya tiene una factura emitida. Reimprime la factura existente.' });
+        return;
+    }
     const input = receiptInvoiceInput(req.body, receipt);
     // El vínculo único impide crear dos facturas para el mismo recibo.
-    const draft = await InvoiceDraft.findOneAndUpdate({ sourceOrderId: String(receipt._id) }, { $set: input }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
+    const draft = await InvoiceDraft.findOneAndUpdate({ sourceOrderId: String(receipt._id), status: { $ne: 'issued' } }, { $set: input }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
     res.json(draft);
 });
+finance.use('/invoices', invoiceIssuance);
 finance.get('/invoices', async (_req, res) => { res.json(await InvoiceDraft.find().sort({ date: -1, createdAt: -1 }).lean()); });
 finance.post('/invoices', async (req, res) => { res.status(201).json(await InvoiceDraft.create(invoiceInput(req.body))); });
 finance.put('/invoices/:id', async (req, res) => { if (!mongoose.isValidObjectId(req.params.id)) {
     res.status(400).json({ message: 'Identificador no válido.' });
     return;
+} if (await InvoiceDraft.exists({ _id: req.params.id, status: 'issued' })) {
+    res.status(409).json({ message: 'Una factura emitida no se puede editar. Reimprime su versión definitiva.' });
+    return;
 } if (await InvoiceDraft.exists({ _id: req.params.id, sourceOrderId: { $exists: true } })) {
     res.status(409).json({ message: 'Modifica esta factura desde su recibo para conservar los importes originales.' });
     return;
-} const doc = await InvoiceDraft.findByIdAndUpdate(req.params.id, { $set: invoiceInput(req.body) }, { new: true, runValidators: true }); if (!doc) {
+} const doc = await InvoiceDraft.findOneAndUpdate({ _id: req.params.id, status: { $ne: 'issued' } }, { $set: invoiceInput(req.body) }, { new: true, runValidators: true }); if (!doc) {
     res.status(404).json({ message: 'Borrador no encontrado.' });
     return;
 } res.json(doc); });
@@ -181,12 +191,15 @@ finance.put('/expenses/:id', async (req, res) => { if (!mongoose.isValidObjectId
 finance.patch('/:kind/:id/archive', async (req, res) => { if (!['invoices', 'expenses'].includes(req.params.kind) || !mongoose.isValidObjectId(req.params.id) || typeof req.body?.archived !== 'boolean') {
     res.status(400).json({ message: 'Solicitud no válida.' });
     return;
-} const doc = req.params.kind === 'invoices' ? await InvoiceDraft.findByIdAndUpdate(req.params.id, { $set: { archived: req.body.archived } }, { new: true }) : await Expense.findByIdAndUpdate(req.params.id, { $set: { archived: req.body.archived } }, { new: true }); if (!doc) {
-    res.status(404).json({ message: 'Registro no encontrado.' });
+} const doc = req.params.kind === 'invoices' ? await InvoiceDraft.findOneAndUpdate({ _id: req.params.id, status: { $ne: 'issued' } }, { $set: { archived: req.body.archived } }, { new: true }) : await Expense.findByIdAndUpdate(req.params.id, { $set: { archived: req.body.archived } }, { new: true }); if (!doc) {
+    res.status(404).json({ message: 'Registro no encontrado o factura ya emitida. Las emitidas no se pueden archivar.' });
     return;
 } res.json(doc); });
-finance.use((error, _req, res, _next) => { if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
-    res.status(409).json({ message: 'El recibo ya tiene una factura. Actualiza los datos e inténtalo de nuevo.' });
+finance.use((error, _req, res, _next) => { if (error && typeof error === 'object' && 'code' in error && error.code === 20) {
+    res.status(503).json({ message: 'La emisión necesita transacciones de MongoDB. Utiliza MongoDB Atlas o una base de datos con réplica.' });
+    return;
+} if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+    res.status(409).json({ message: 'La factura o la serie se han actualizado. Actualiza la lista e inténtalo de nuevo. Una factura ya emitida conserva su número.' });
     return;
 } if (error instanceof FinanceInputError || error instanceof mongoose.Error.ValidationError) {
     res.status(400).json({ message: error.message });
@@ -208,6 +221,8 @@ async function start() {
         // Espera al índice que evita comandas abiertas duplicadas por mesa.
         await TableOrder.init();
         await InvoiceDraft.init();
+        await InvoiceCounter.init();
+        await InvoiceIssueEvent.init();
         console.log('Conectado a MongoDB');
     }
     else {

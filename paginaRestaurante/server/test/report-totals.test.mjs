@@ -15,3 +15,12 @@ test('CSV escapes formulas, quotes and newlines without executing spreadsheet fo
  const csv=csvDocument([['=HYPERLINK("x")','+cmd','@sum','-2',' normal','a\nb']]);
  assert.ok(csv.startsWith('\uFEFF'));assert.match(csv,/"'=HYPERLINK\(""x""\)"/);assert.match(csv,/"'\+cmd"/);assert.match(csv,/"a\nb"/);
 });
+test('issued receipt invoices are not counted twice and standalone issued invoices add revenue',()=>{
+ const receipt={_id:'r1',totalCents:1100,lines:[{quantity:1,unitPriceCents:1100,taxRate:null}]};
+ const lines=[{description:'Plato',quantity:1,unitPrice:10,taxRate:10,baseCents:1000,taxCents:100,grossCents:1100}];
+ const issued={status:'issued',sourceOrderId:'r1',totalCents:1100,lines};
+ const standalone={...issued,sourceOrderId:undefined};
+ const draft={...standalone,status:'draft'};
+ const totals=reportTotals([receipt],[],[issued,standalone,draft]);
+ assert.equal(totals.salesCents,2200);assert.equal(totals.baseCents,2000);assert.equal(totals.taxCents,200);assert.equal(totals.unknownTaxCents,0);
+});

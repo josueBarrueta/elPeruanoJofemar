@@ -1,5 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common';
-import { Component, Input, LOCALE_ID, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, effect, inject } from '@angular/core';
+import { Component, Input, LOCALE_ID, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, ElementRef, ViewChild, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { forkJoin, finalize, of } from 'rxjs';
 import localeEs from '@angular/common/locales/es';
@@ -12,7 +12,18 @@ registerLocaleData(localeEs);
 @Component({selector:'app-finance',standalone:true,imports:[CommonModule,FormsModule],providers:[{provide:LOCALE_ID,useValue:'es-ES'}],templateUrl:'./finance.component.html',styleUrl:'./finance.component.scss'})
 export class FinanceComponent implements OnInit, OnChanges {
  @Input() section:'invoices'|'expenses'|'reports'|'settings'='invoices';
+ @ViewChild('issueDialog') issueDialog?:ElementRef<HTMLDialogElement>;
+ issuingInvoice?:Invoice;
  private readonly api=inject(FinanceService);
+ get issuerMissing(){return [['razón social',this.settings.legalName],['NIF',this.settings.taxId],['domicilio fiscal',this.settings.address],['serie',this.settings.invoiceSeries]].filter(([,value])=>!String(value||'').trim()).map(([name])=>name);}
+ get issueReady(){return !this.issuerMissing.length;}
+ get issuedInvoices(){return this.monthInvoices.filter(row=>row.status==='issued');}
+ get draftInvoices(){return this.monthInvoices.filter(row=>row.status!=='issued');}
+ get issuedTotal(){return this.issuedInvoices.reduce((sum,row)=>sum+(row.totalCents||0),0)/100;}
+ requestIssue(row:Invoice){if(this.saving||row.status==='issued')return;if(!this.issueReady){this.error='Completa '+this.issuerMissing.join(', ')+' en Configuración.';return;}this.error='';this.issuingInvoice=row;this.issueDialog?.nativeElement.showModal();}
+ cancelIssue(event?:Event){event?.preventDefault();if(!this.saving)this.issueDialog?.nativeElement.close();}
+ confirmIssue(){const row=this.issuingInvoice;if(!row||this.saving)return;this.saving=true;this.error='';this.api.issueInvoice(row).pipe(finalize(()=>{this.saving=false;this.cd.markForCheck();})).subscribe({next:invoice=>{this.invoices=[invoice,...this.invoices.filter(r=>r._id!==invoice._id)];this.issueDialog?.nativeElement.close();this.message='Factura '+invoice.invoiceNumber+' emitida. Puedes reimprimirla conservando su número.';this.printInvoice(invoice);},error:e=>{this.error=this.errorText(e);}});}
+
  private readonly cd=inject(ChangeDetectorRef);
  private readonly menuApi=inject(MenuApiService);
  menu:ApiMenuItem[]=[]; taxCategory=''; menuTaxRate:number|null=null;
@@ -42,7 +53,7 @@ export class FinanceComponent implements OnInit, OnChanges {
   this.load();
  }
  inRange(day:string){return day>=this.appliedFrom&&day<=this.appliedTo;}
- get financialTotals(){return reportTotals(this.receipts,this.monthExpenses);}
+ get financialTotals(){return reportTotals(this.receipts,this.monthExpenses,this.invoices.filter(row=>!!row.sourceOrderId||this.inRange(row.date)));}
  get menuCategories(){return [...new Set(this.menu.map(item=>item.category))];}
  get missingProductTaxes(){return this.menu.filter(item=>item.taxRate==null).length;}
  configureMenuTax(){
@@ -51,13 +62,14 @@ export class FinanceComponent implements OnInit, OnChanges {
  }
  get savedClients(){const clients=new Map<string,Invoice>();for(const row of this.invoices){const key=row.clientTaxId?.replace(/\s/g,'').toUpperCase();if(key&&!clients.has(key))clients.set(key,row);}return [...clients.values()];}
  useSavedClient(taxId:string){const row=this.savedClients.find(row=>row.clientTaxId===taxId);if(row)this.receiptClient={...this.receiptClient,clientName:row.clientName,clientTaxId:row.clientTaxId,clientAddress:row.clientAddress};}
- get salesTotal(){return this.receipts.reduce((sum,row)=>sum+row.totalCents,0)/100;}
+ get salesTotal(){return this.financialTotals.salesCents/100;}
  get filteredReceipts(){const q=this.search.toLocaleLowerCase();return this.receipts.filter(row=>(receiptReference(row)+' '+row.tableName).toLocaleLowerCase().includes(q));}
  printReceipt(row:TableOrder){this.documents.receipt(row,this.settings);}
  printInvoice(row:Invoice){this.documents.invoice(row,this.settings);}
- printReport(){this.documents.report(this.appliedFrom,this.appliedTo,this.receipts,this.monthExpenses,this.settings);}
+ printReport(){this.documents.report(this.appliedFrom,this.appliedTo,this.receipts,this.monthExpenses,this.settings,this.invoices.filter(row=>!!row.sourceOrderId||this.inRange(row.date)));}
  prepareReceiptInvoice(row:TableOrder){
   const previous=this.invoices.find(invoice=>invoice.sourceOrderId===row._id);
+  if(previous?.status==='issued'){this.printInvoice(previous);return;}
   this.receiptEditor=row;
   this.receiptClient={clientName:previous?.clientName||'',clientTaxId:previous?.clientTaxId||'',clientAddress:previous?.clientAddress||'',date:previous?.date||this.today(),notes:previous?.notes||''};
   this.receiptTaxRates=row.lines.map((_,i)=>previous?.lines[i]?.taxRate??row.lines[i].taxRate??this.menu.find(product=>product._id===row.lines[i].productId)?.taxRate??null);this.message='';this.error='';
@@ -72,7 +84,7 @@ export class FinanceComponent implements OnInit, OnChanges {
  }
 
  invoices:Invoice[]=[]; expenses:ExpenseRecord[]=[];
- settings:BillingSettings={legalName:'',taxId:'',address:'',email:'',phone:'',invoiceSeries:'',currentBillingSystem:''};
+ settings:BillingSettings={legalName:'',taxId:'',address:'',email:'',phone:'',invoiceSeries:'',invoiceStartingNumber:1,currentBillingSystem:''};
  loading=true; ready=false; saving=false; error=''; message=''; search=''; showArchived=false;
  month=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit'}).format(new Date());
  editor:'invoice'|'expense'|null=null;
@@ -88,7 +100,7 @@ export class FinanceComponent implements OnInit, OnChanges {
  errorText(e:any){return e.status===401?'Tu sesión ha caducado. Cierra sesión y vuelve a entrar.':e.error?.message || 'No se pudo conectar con la gestión. Comprueba que la API actualizada esté desplegada e inténtalo de nuevo.';}
  get monthInvoices(){return this.invoices.filter(row=>!row.archived&&this.inRange(row.date));}
  get monthExpenses(){return this.expenses.filter(row=>!row.archived&&this.inRange(row.date));}
- get draftTotal(){return this.monthInvoices.reduce((sum,row)=>sum+(row.totalCents??0),0)/100;}
+ get draftTotal(){return this.draftInvoices.reduce((sum,row)=>sum+(row.totalCents??0),0)/100;}
  get expenseTotal(){return this.monthExpenses.reduce((sum,row)=>sum+row.totalCents,0)/100;}
  get paidExpenses(){return this.monthExpenses.filter(row=>row.paid).reduce((sum,row)=>sum+row.totalCents,0)/100;}
  get filteredInvoices(){return this.invoices.filter(row=>!!row.archived===this.showArchived&&this.inRange(row.date)&&(row.clientName+' '+row.clientTaxId).toLocaleLowerCase().includes(this.search.toLocaleLowerCase()));}
@@ -98,7 +110,7 @@ export class FinanceComponent implements OnInit, OnChanges {
  get maxWeek(){return Math.max(1,...this.weeks.map(row=>row.total));}
  get draftTotals(){let base=0,tax=0;for(const line of this.draft.lines){const cents=Math.round(line.quantity*line.unitPrice*100);base+=cents;tax+=Math.round(cents*line.taxRate/100);}return {base:base/100,tax:tax/100,total:(base+tax)/100};}
  newInvoice(){this.draft=this.emptyInvoice();this.editor='invoice';this.error='';this.message='';this.showEditor();}
- editInvoice(row:Invoice){if(row.sourceOrderId){this.message='Para modificar los datos de esta factura, abre su recibo de origen.';return;}this.draft={...row,lines:row.lines.map(line=>({...line}))};this.editor='invoice';this.error='';this.message='';this.showEditor();}
+ editInvoice(row:Invoice){if(row.status==='issued'){this.printInvoice(row);return;}if(row.sourceOrderId){this.message='Para modificar los datos de esta factura, abre su recibo de origen.';return;}this.draft={...row,lines:row.lines.map(line=>({...line}))};this.editor='invoice';this.error='';this.message='';this.showEditor();}
  newExpense(){this.expense=this.emptyExpense();this.editor='expense';this.error='';this.message='';this.showEditor();}
  editExpense(row:ExpenseRecord){this.expense={...row};this.editor='expense';this.error='';this.message='';this.showEditor();}
  showEditor(){requestAnimationFrame(()=>document.querySelector('.record-editor')?.scrollIntoView({block:'start',behavior:'smooth'}));}
@@ -121,7 +133,7 @@ export class FinanceComponent implements OnInit, OnChanges {
  archive(kind:'invoices'|'expenses',row:Invoice|ExpenseRecord){if(!row._id||this.saving)return;this.saving=true;this.error='';this.api.archive(kind,row._id,!row.archived).pipe(finalize(()=>{this.saving=false;this.cd.markForCheck();})).subscribe({next:()=>{row.archived=!row.archived;this.message=row.archived?'Registro archivado. Puedes recuperarlo desde Archivados.':'Registro restaurado.';},error:e=>this.error=this.errorText(e)});}
  exportMonthly(){
   const t=this.financialTotals;
-  const rows:unknown[][]=[['RESUMEN PARA GESTORÍA',this.appliedFrom,this.appliedTo],['Ventas EUR',t.salesCents/100],['Cobros registrados EUR',t.paidCents/100],['Efectivo EUR',t.cashCents/100],['Tarjeta EUR',t.cardCents/100],['Sin cobro registrado EUR',t.unrecordedPaymentCents/100],['Ventas pendientes de IVA EUR',t.unknownTaxCents/100],['Gastos EUR',t.expenseCents/100],['IVA de gastos registrado EUR',t.expenseTaxCents/100],['Gastos con IVA pendiente EUR',t.unknownExpenseTaxCents/100],[],['DESGLOSE IVA VENTAS'],['Tipo %','Base EUR','IVA EUR','Total EUR'],...t.groups.map(g=>[g.rate,g.baseCents/100,g.taxCents/100,g.grossCents/100]),[],['VENTAS / COBROS'],['Recibo','Mesa','Fecha cierre','Total EUR','Forma pago','Efectivo EUR','Tarjeta EUR','Factura vinculada (borrador)'],...this.receipts.map(r=>[receiptReference(r),r.tableName,madridTimestamp(r.closedAt),r.totalCents/100,r.payment?.method||'Sin registrar',r.payment?.cashCents!=null?r.payment.cashCents/100:'',r.payment?.cardCents!=null?r.payment.cardCents/100:'',this.invoices.find(i=>i.sourceOrderId===r._id)?'Sí':'No']),[],['GASTOS'],['Fecha','Proveedor','Concepto','Categoría','Referencia justificante','Total EUR','IVA EUR','Pagado'],...this.monthExpenses.map(e=>[e.date,e.supplier,e.description,e.category,e.reference,e.totalCents/100,e.taxCents==null?'Pendiente':e.taxCents/100,e.paid?'Sí':'No'])];
+  const rows:unknown[][]=[['RESUMEN PARA GESTORÍA',this.appliedFrom,this.appliedTo],['Ventas EUR',t.salesCents/100],['Cobros registrados EUR',t.paidCents/100],['Efectivo EUR',t.cashCents/100],['Tarjeta EUR',t.cardCents/100],['Sin cobro registrado EUR',t.unrecordedPaymentCents/100],['Ventas pendientes de IVA EUR',t.unknownTaxCents/100],['Gastos EUR',t.expenseCents/100],['IVA de gastos registrado EUR',t.expenseTaxCents/100],['Gastos con IVA pendiente EUR',t.unknownExpenseTaxCents/100],[],['DESGLOSE IVA VENTAS'],['Tipo %','Base EUR','IVA EUR','Total EUR'],...t.groups.map(g=>[g.rate,g.baseCents/100,g.taxCents/100,g.grossCents/100]),[],['VENTAS / COBROS'],['Recibo','Mesa','Fecha cierre','Total EUR','Forma pago','Efectivo EUR','Tarjeta EUR','Factura vinculada / Estado'],...this.receipts.map(r=>[receiptReference(r),r.tableName,madridTimestamp(r.closedAt),r.totalCents/100,r.payment?.method||'Sin registrar',r.payment?.cashCents!=null?r.payment.cashCents/100:'',r.payment?.cardCents!=null?r.payment.cardCents/100:'',this.invoices.find(i=>i.sourceOrderId===r._id)?.invoiceNumber||(this.invoices.some(i=>i.sourceOrderId===r._id)?'Borrador':'No')]),[],['FACTURAS EMITIDAS DEL PERIODO'],['Número','Fecha emisión','Cliente','NIF cliente','Recibo origen','Base EUR','IVA EUR','Total EUR'],...this.issuedInvoices.map(i=>[i.invoiceNumber,i.date,i.clientName,i.clientTaxId,i.sourceOrderId||'Venta sin recibo',(i.subtotalCents||0)/100,(i.taxCents||0)/100,(i.totalCents||0)/100]),[],['GASTOS'],['Fecha','Proveedor','Concepto','Categoría','Referencia justificante','Total EUR','IVA EUR','Pagado'],...this.monthExpenses.map(e=>[e.date,e.supplier,e.description,e.category,e.reference,e.totalCents/100,e.taxCents==null?'Pendiente':e.taxCents/100,e.paid?'Sí':'No'])];
   this.downloadCsv(rows,'gestoria');
  }
  downloadCsv(rows:unknown[][],prefix:string){const url=URL.createObjectURL(new Blob([csvDocument(rows)],{type:'text/csv;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download=prefix+'-'+this.appliedFrom+'-'+this.appliedTo+'.csv';link.click();URL.revokeObjectURL(url);}
