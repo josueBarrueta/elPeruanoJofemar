@@ -288,3 +288,19 @@ button { border: 0; border-radius: 9px; padding: .65rem .8rem; font: inherit; fo
  .group-open .group-links { display: grid; }
 }
 @media (prefers-reduced-motion: reduce) { .group-toggle .pi { transition: none; } }
+
+/* El menú móvil solo se desplaza verticalmente, también en Safari. */
+@media (max-width: 760px) {
+  .dashboard-sidebar { width: 100%; max-width: 100%; min-width: 0; }
+  .sidebar-navigation {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y pinch-zoom;
+  }
+  .sidebar-navigation *, .sidebar-header > * { box-sizing: border-box; min-width: 0; }
+  .sidebar-navigation nav, .nav-group, .group-links, .sidebar-bottom { max-width: 100%; }
+  .sidebar-navigation button, .sidebar-bottom > a { width: 100%; max-width: 100%; }
+  .sidebar-navigation .nav-text { white-space: normal; overflow-wrap: anywhere; }
+}
