@@ -1,4 +1,5 @@
-import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiMenuItem } from '../menu-api.service';
@@ -36,10 +37,35 @@ export class TableOrdersComponent {
   category = '';
   selected?: TableOrder;
   closing?: TableOrder;
+  remoteChange = '';
+  liveOffline = false;
+  private pendingRefresh = false;
+  private refreshRequest?: Subscription;
   private original = '';
   private returnFocus?: HTMLElement;
   draft: TableOrderDraft = this.empty();
-  constructor() { this.load(); }
+  constructor() {
+    this.load();
+    const refresh = () => {
+      if (document.visibilityState === 'visible' && !this.loading && !this.saving) this.load(true);
+    };
+    const stream = this.api.changes().subscribe(event => {
+      this.liveOffline = event === 'offline';
+      if (event === 'changed') {
+        if (this.loading || this.saving || (this.refreshRequest && !this.refreshRequest.closed)) this.pendingRefresh = true;
+        else this.load(true);
+      }
+      this.changes.markForCheck();
+    });
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    inject(DestroyRef).onDestroy(() => {
+      stream.unsubscribe();
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+      this.refreshRequest?.unsubscribe();
+    });
+  }
   private empty(): TableOrderDraft { return { tableName: '', guests: 2, notes: '', lines: [] }; }
   get readonly() { return this.selected?.status === 'closed'; }
   get categories() { return [...new Set(this.menu.filter(item => item.active !== false).map(item => item.category))]; }
@@ -60,11 +86,26 @@ export class TableOrdersComponent {
   get totalCents() { return this.draft.lines.reduce((total, line) => total + line.unitPriceCents * (Number(line.quantity) || 0), 0); }
   get guests() { return this.orders.reduce((total, order) => total + order.guests, 0); }
   changeView(view: 'open' | 'closed') { if (this.loading || this.saving) return; this.view = view; this.load(); }
-  load() {
-    this.loading = true; this.error = '';
-    this.api.list(this.view).subscribe({
-      next: orders => { this.orders = orders; this.loading = false; this.changes.markForCheck(); },
-      error: () => { this.error = 'No se pudieron cargar las mesas. Comprueba la conexión y vuelve a intentarlo.'; this.loading = false; this.changes.markForCheck(); }
+  load(background = false) {
+    this.pendingRefresh = false;
+    if (background && this.refreshRequest && !this.refreshRequest.closed) return;
+    this.refreshRequest?.unsubscribe();
+    if (!background) { this.loading = true; this.error = ''; }
+    const view = this.view;
+    this.refreshRequest = this.api.list(view).subscribe({
+      next: orders => {
+        this.orders = orders; this.loading = false; this.error = '';
+        // Only the table overview is refreshed; never replace a waiter's unsaved draft.
+        if (view === 'open' && this.editor?.nativeElement.open && !this.readonly) {
+          const current = this.selected ? orders.find(order => order._id === this.selected!._id) : orders.find(order => order.tableName === this.draft.tableName);
+          this.remoteChange = this.selected
+            ? (!current || current.revision !== this.selected.revision ? 'Otro camarero ha modificado o cerrado esta mesa. Tus cambios siguen aquí; cierra y vuelve a abrir la comanda para ver la versión actual antes de guardar o cobrar.' : '')
+            : (current ? 'Otro camarero ha abierto esta mesa. Cierra este formulario y abre su comanda para continuar.' : '');
+        }
+        this.changes.markForCheck();
+        if (this.pendingRefresh) { this.pendingRefresh = false; queueMicrotask(() => this.load(true)); }
+      },
+      error: () => { this.error = 'No se pudieron actualizar las mesas. Comprueba la conexión; se reintentará automáticamente.'; this.loading = false; this.changes.markForCheck(); }
     });
   }
   orderFor(name: string) { return this.orders.find(order => order.tableName === name && order.status === 'open'); }
@@ -75,6 +116,7 @@ export class TableOrdersComponent {
   adjustGuests(delta: number) { this.draft.guests = Math.min(1000, Math.max(1, (Number(this.draft.guests) || 1) + delta)); }
   open(order?: TableOrder, tableName = '') {
     this.returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
+    this.remoteChange = '';
     this.selected = order;
     this.draft = order ? { tableName: order.tableName, guests: order.guests, notes: order.notes, lines: order.lines.map(line => ({ ...line })) } : { ...this.empty(), tableName };
     this.pickingTable = !order && !tableName;
@@ -108,6 +150,7 @@ export class TableOrdersComponent {
   remove(index: number) { this.draft.lines.splice(index, 1); }
   save(action: 'save'|'account'|'checkout' = 'save') {
     if (this.saving || this.readonly) return;
+    this.refreshRequest?.unsubscribe();
     this.saving = true; this.formError = '';
     // Guarda antes de imprimir o cobrar para no usar un total desactualizado.
     this.api.save(this.draft, this.selected).subscribe({
@@ -121,9 +164,10 @@ export class TableOrdersComponent {
         if (action === 'account') this.showReceipt(order);
         else if (action === 'checkout') this.askClose(order);
         else { this.editor?.nativeElement.close(); this.view = 'open'; this.message = 'Comanda guardada correctamente.'; this.load(); }
+        if (this.pendingRefresh) this.load(true);
         this.changes.markForCheck();
       },
-      error: response => { this.saving = false; this.formError = response.error?.message || 'No se pudo guardar. Tus cambios siguen en el formulario.'; this.changes.markForCheck(); }
+      error: response => { this.saving = false; if (this.pendingRefresh) this.load(true); this.formError = response.error?.message || 'No se pudo guardar. Tus cambios siguen en el formulario.'; this.changes.markForCheck(); }
     });
   }
   get changeCents() { return Math.max(0, Math.round((this.payment.tendered || 0) * 100) - (this.closing?.totalCents || 0)); }
@@ -150,6 +194,7 @@ export class TableOrdersComponent {
   cancelClose(event?: Event) { event?.preventDefault(); if (!this.saving) this.closeDialog?.nativeElement.close(); }
   confirmClose() {
     if (this.saving || !this.closing || !this.paymentValid) return;
+    this.refreshRequest?.unsubscribe();
     this.saving = true; this.closeError = '';
     this.api.close(this.closing, this.payment).subscribe({
       next: order => { this.saving = false; this.closeDialog?.nativeElement.close(); this.editor?.nativeElement.close(); this.message = order.payment ? 'Cobro registrado y mesa liberada.' : 'Mesa vacía liberada.'; this.load(); if (this.printAfterPayment && order.lines.length) this.showReceipt(order); },

@@ -4,6 +4,7 @@ import { TableOrder } from '../models/table-order.model.js';
 import { MenuItem } from '../models/menu-item.model.js';
 import { OrderInputError, orderInput, orderVersion, priceOrder } from '../models/table-order-validation.js';
 import { paymentInput } from '../models/payment-validation.js';
+import { notifyTableOrdersChanged, tableOrderEvents } from './table-order-events.js';
 export const tableOrders = express.Router();
 tableOrders.use((_req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
@@ -12,6 +13,7 @@ tableOrders.use((_req, res, next) => {
     }
     next();
 });
+tableOrders.get('/events', tableOrderEvents);
 tableOrders.get('/', async (req, res) => {
     const status = req.query['status'] === 'closed' ? 'closed' : 'open';
     res.json(await TableOrder.find(status === 'closed' ? { status, 'lines.0': { $exists: true } } : { status }).sort({ createdAt: -1 }).limit(status === 'closed' ? 100 : 1000).lean());
@@ -21,6 +23,7 @@ tableOrders.post('/', async (req, res) => {
     const products = await MenuItem.find({ _id: { $in: input.lines.map(line => line.productId) } }).lean();
     const priced = priceOrder(input.lines, products);
     const order = await TableOrder.create({ ...input, ...priced, tableKey: input.tableName.toLocaleLowerCase('es') });
+    notifyTableOrdersChanged();
     res.status(201).json(order);
 });
 tableOrders.put('/:id', async (req, res) => {
@@ -42,6 +45,7 @@ tableOrders.put('/:id', async (req, res) => {
         res.status(409).json({ message: 'La comanda ha cambiado. Cierra el formulario y actualiza las mesas.' });
         return;
     }
+    notifyTableOrdersChanged();
     res.json(order);
 });
 tableOrders.post('/:id/close', (_req, res) => { res.status(409).json({ message: 'Actualiza el panel y utiliza Cobrar y cerrar para registrar la forma de pago.' }); });
@@ -62,6 +66,7 @@ tableOrders.post('/:id/checkout', async (req, res) => {
         res.status(409).json({ message: 'La comanda ha cambiado o ya está cerrada. Actualiza las mesas.' });
         return;
     }
+    notifyTableOrdersChanged();
     res.json(order);
 });
 tableOrders.use((error, _req, res, _next) => {
