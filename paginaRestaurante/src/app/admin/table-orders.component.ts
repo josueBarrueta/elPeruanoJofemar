@@ -2,6 +2,8 @@ import { Component, Input, ViewChild, ElementRef, ChangeDetectorRef, inject } fr
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiMenuItem } from '../menu-api.service';
+import { FinanceService } from './finance.service';
+import { DocumentPreviewService } from './document-preview.service';
 import { TableOrder, TableOrderDraft, TableOrderLine, TableOrdersService } from './table-orders.service';
 @Component({
   selector: 'app-table-orders', standalone: true, imports: [CommonModule, FormsModule],
@@ -12,6 +14,8 @@ export class TableOrdersComponent {
   @ViewChild('editor') editor?: ElementRef<HTMLDialogElement>;
   @ViewChild('closeDialog') closeDialog?: ElementRef<HTMLDialogElement>;
   private api = inject(TableOrdersService);
+  private finance = inject(FinanceService);
+  private documents = inject(DocumentPreviewService);
   private changes = inject(ChangeDetectorRef);
   readonly tableNames = ['Entrada', 'Banderas', 'Tumi', 'Cuadros', 'Loro', 'Araña', 'Espejo', 'Machupichu', 'Enchufe', 'Medio dentro', 'Aire', 'Pasillo 1', 'Pasillo 2', 'Terraza 1', 'Terraza 2', 'Terraza 3', 'Terraza 4'];
   editorTab: 'products' | 'order' = 'products';
@@ -106,6 +110,12 @@ export class TableOrdersComponent {
     this.api.save(this.draft, this.selected).subscribe({
       next: () => { this.saving = false; this.editor?.nativeElement.close(); this.view = 'open'; this.message = 'Comanda guardada correctamente.'; this.load(); },
       error: response => { this.saving = false; this.formError = response.error?.message || 'No se pudo guardar. Tus cambios siguen en el formulario.'; this.changes.markForCheck(); }
+    });
+  }
+  showReceipt(order: TableOrder) {
+    this.finance.settings().subscribe({
+      next: settings => { this.documents.receipt(order, settings); this.changes.markForCheck(); },
+      error: () => { this.error = 'No se pudieron cargar los datos del restaurante para el recibo.'; this.changes.markForCheck(); }
     });
   }
   askClose(order: TableOrder) {

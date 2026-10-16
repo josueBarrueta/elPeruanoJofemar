@@ -3,6 +3,8 @@ import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
+import { TableOrder } from './models/table-order.model.js';
+import { receiptRange, receiptInvoiceInput } from './models/receipt-validation.js';
 import { tableOrders } from './routes/table-orders.js';
 import { Reservation, reservationInput } from './models/reservation.model.js';
 import { MenuItem } from './models/menu-item.model.js';
@@ -111,10 +113,35 @@ finance.use((_req, res, next) => { if (mongoose.connection.readyState !== 1) {
 } next(); });
 finance.get('/settings', async (_req, res) => { res.json(await FinanceSettings.findById('restaurant').lean() ?? {}); });
 finance.put('/settings', async (req, res) => { res.json(await FinanceSettings.findByIdAndUpdate('restaurant', { $set: settingsInput(req.body) }, { upsert: true, new: true, runValidators: true }).lean()); });
+// Las comandas cerradas son la fuente única del recibo y de los ingresos registrados.
+finance.get('/receipts', async (req, res) => {
+    const { start, end } = receiptRange(req.query['from'], req.query['to']);
+    const rows = await TableOrder.find({ status: 'closed', closedAt: { $exists: true }, $expr: { $and: [
+                { $gte: [{ $dateToString: { date: '$closedAt', format: '%Y-%m-%d', timezone: 'Europe/Madrid' } }, start] },
+                { $lte: [{ $dateToString: { date: '$closedAt', format: '%Y-%m-%d', timezone: 'Europe/Madrid' } }, end] }
+            ] } }).sort({ closedAt: -1 }).lean();
+    res.json(rows);
+});
+finance.post('/receipts/:id/invoice', async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.id))
+        throw new FinanceInputError('Recibo no válido.');
+    const receipt = await TableOrder.findOne({ _id: req.params.id, status: 'closed' }).lean();
+    if (!receipt) {
+        res.status(404).json({ message: 'Recibo no encontrado.' });
+        return;
+    }
+    const input = receiptInvoiceInput(req.body, receipt);
+    // El vínculo único impide crear dos facturas para el mismo recibo.
+    const draft = await InvoiceDraft.findOneAndUpdate({ sourceOrderId: String(receipt._id) }, { $set: input }, { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }).lean();
+    res.json(draft);
+});
 finance.get('/invoices', async (_req, res) => { res.json(await InvoiceDraft.find().sort({ date: -1, createdAt: -1 }).lean()); });
 finance.post('/invoices', async (req, res) => { res.status(201).json(await InvoiceDraft.create(invoiceInput(req.body))); });
 finance.put('/invoices/:id', async (req, res) => { if (!mongoose.isValidObjectId(req.params.id)) {
     res.status(400).json({ message: 'Identificador no válido.' });
+    return;
+} if (await InvoiceDraft.exists({ _id: req.params.id, sourceOrderId: { $exists: true } })) {
+    res.status(409).json({ message: 'Modifica esta factura desde su recibo para conservar los importes originales.' });
     return;
 } const doc = await InvoiceDraft.findByIdAndUpdate(req.params.id, { $set: invoiceInput(req.body) }, { new: true, runValidators: true }); if (!doc) {
     res.status(404).json({ message: 'Borrador no encontrado.' });
@@ -136,7 +163,10 @@ finance.patch('/:kind/:id/archive', async (req, res) => { if (!['invoices', 'exp
     res.status(404).json({ message: 'Registro no encontrado.' });
     return;
 } res.json(doc); });
-finance.use((error, _req, res, _next) => { if (error instanceof FinanceInputError || error instanceof mongoose.Error.ValidationError) {
+finance.use((error, _req, res, _next) => { if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+    res.status(409).json({ message: 'El recibo ya tiene una factura. Actualiza los datos e inténtalo de nuevo.' });
+    return;
+} if (error instanceof FinanceInputError || error instanceof mongoose.Error.ValidationError) {
     res.status(400).json({ message: error.message });
     return;
 } console.error('Error de gestión financiera', error instanceof Error ? error.name : 'Error'); res.status(500).json({ message: 'No se pudo completar la operación. Vuelve a intentarlo.' }); });
@@ -154,7 +184,8 @@ async function start() {
                 order: 1003, active: true
             } }, { upsert: true });
         // Espera al índice que evita comandas abiertas duplicadas por mesa.
-        await (await import('./models/table-order.model.js')).TableOrder.init();
+        await TableOrder.init();
+        await InvoiceDraft.init();
         console.log('Conectado a MongoDB');
     }
     else {

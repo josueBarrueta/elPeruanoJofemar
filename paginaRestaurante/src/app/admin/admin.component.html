@@ -72,3 +72,5 @@
   </div>
 </main>
 <div class="delete-modal-backdrop" *ngIf="itemToDelete as item" (click)="cancelDelete()"><div class="delete-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()"><h2>¿Borrar producto?</h2><p>Vas a borrar <strong>{{ item.name }}</strong>. Esta acción no se puede deshacer.</p><div class="delete-modal-actions"><button type="button" (click)="cancelDelete()">Cancelar</button><button type="button" class="danger-confirm" (click)="confirmDelete()">Sí, borrar producto</button></div></div></div>
+
+<app-document-preview></app-document-preview>
