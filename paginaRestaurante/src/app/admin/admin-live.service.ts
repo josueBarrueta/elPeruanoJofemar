@@ -13,6 +13,8 @@ export class AdminLiveService {
       let watchdog: ReturnType<typeof setTimeout> | undefined;
       let delay = 1000;
       const connect = async () => {
+        if (stopped) return;
+        retry = undefined;
         controller = new AbortController();
         const watch = () => {
           clearTimeout(watchdog);
@@ -21,7 +23,7 @@ export class AdminLiveService {
         watch();
         try {
           const response = await fetch(`${url}/events`, {
-            headers: { Authorization: `Bearer ${this.auth.token() ?? ''}` }, signal: controller.signal
+            cache: 'no-store', headers: { Authorization: `Bearer ${this.auth.token() ?? ''}` }, signal: controller.signal
           });
           if (!response.ok || !response.body) {
             // A normal API call handles expired/revoked sessions through the interceptor.
@@ -35,7 +37,7 @@ export class AdminLiveService {
             const { value, done } = await reader.read();
             if (done) break;
             watch(); delay = 1000;
-            buffer += decoder.decode(value, { stream: true });
+            buffer += decoder.decode(value, { stream: true }).replace(/\r/g, '');
             let boundary: number;
             while ((boundary = buffer.indexOf('\n\n')) >= 0) {
               const event = buffer.slice(0, boundary); buffer = buffer.slice(boundary + 2);
@@ -53,8 +55,21 @@ export class AdminLiveService {
           }
         }
       };
+      const resume = () => {
+        if (document.visibilityState === 'hidden' || stopped) return;
+        // Mobile browsers may silently suspend a stream in the background.
+        subscriber.next('changed');
+        if (retry) { clearTimeout(retry); retry = undefined; void connect(); }
+        else controller?.abort();
+      };
+      window.addEventListener('online', resume);
+      document.addEventListener('visibilitychange', resume);
       void connect();
-      return () => { stopped = true; clearTimeout(retry); clearTimeout(watchdog); controller?.abort(); };
+      return () => {
+        stopped = true; clearTimeout(retry); clearTimeout(watchdog); controller?.abort();
+        window.removeEventListener('online', resume);
+        document.removeEventListener('visibilitychange', resume);
+      };
     });
   }
 }

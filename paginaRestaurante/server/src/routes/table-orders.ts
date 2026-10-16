@@ -12,6 +12,7 @@ tableOrders.use((_req, res, next) => {
 });
 tableOrders.get('/events', tableOrderEvents);
 tableOrders.get('/', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const status = req.query['status'] === 'closed' ? 'closed' : 'open';
   res.json(await TableOrder.find(status === 'closed' ? { status, 'lines.0': { $exists: true } } : { status }).sort({ createdAt: -1 }).limit(status === 'closed' ? 100 : 1000).lean());
 });

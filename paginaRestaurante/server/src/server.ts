@@ -1,4 +1,4 @@
-import { createLiveEvents } from './routes/table-order-events.js';
+import { notifyTableOrdersChanged, createLiveEvents } from './routes/table-order-events.js';
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
@@ -88,6 +88,29 @@ app.use('/api/admin/table-orders', requireAdmin, tableOrders);
 // Las reservas manuales solo están disponibles para administración.
 const reservations = express.Router();
 const reservationEvents = createLiveEvents();
+// MongoDB delivers writes to every server instance, including rolling deployments.
+let liveWatcher: ReturnType<typeof mongoose.connection.watch> | undefined;
+let liveRetry: ReturnType<typeof setTimeout> | undefined;
+function watchLiveChanges() {
+  if (liveWatcher || mongoose.connection.readyState !== 1) return;
+  clearTimeout(liveRetry);
+  const watcher = mongoose.connection.watch([{ $match: { 'ns.coll': { $in: [Reservation.collection.name, TableOrder.collection.name] } } }]);
+  liveWatcher = watcher;
+  const recover = () => {
+    if (liveWatcher !== watcher) return;
+    liveWatcher = undefined;
+    void watcher.close().catch(() => {});
+    liveRetry = setTimeout(watchLiveChanges, 5000);
+  };
+  watcher.on('change', change => {
+    if ('ns' in change && 'coll' in change.ns && change.ns.coll === Reservation.collection.name) reservationEvents.notify();
+    else notifyTableOrdersChanged();
+  });
+  watcher.on('error', recover);
+  watcher.on('close', recover);
+}
+mongoose.connection.on('connected', watchLiveChanges);
+
 reservations.use(requireAdmin);
 reservations.use((_req, res, next) => {
   if (mongoose.connection.readyState !== 1) { res.status(503).json({ message: 'Base de datos no disponible.' }); return; }
@@ -95,6 +118,7 @@ reservations.use((_req, res, next) => {
 });
 reservations.get('/events', reservationEvents.events);
 reservations.get('/', async (_req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json(await Reservation.find().sort({ date: 1, time: 1, createdAt: 1 }).lean());
 });
 reservations.post('/', async (req, res) => {

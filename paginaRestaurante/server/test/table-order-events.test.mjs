@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
-import { tableOrderEvents, notifyTableOrdersChanged } from '../dist/routes/table-order-events.js';
+import { createLiveEvents, tableOrderEvents, notifyTableOrdersChanged } from '../dist/routes/table-order-events.js';
 
 function client() {
   const response = new EventEmitter();
@@ -38,4 +38,22 @@ test('a slow device is disconnected without preventing delivery to other waiters
     assert.equal(slow.messages.length, 2);
     assert.equal(fast.messages.length, 3);
   } finally { slow.end(); fast.end(); }
+});
+
+test('periodic resync recovers a lost notification without any new write', async () => {
+  const hub = createLiveEvents(10);
+  const response = new EventEmitter();
+  const messages = [];
+  response.set = () => {};
+  response.flushHeaders = () => {};
+  response.write = message => { messages.push(message); return true; };
+  response.end = () => response.emit('close');
+  hub.events({}, response);
+  try {
+    await new Promise(resolve => setTimeout(resolve, 35));
+    assert.ok(messages.some(message => message.includes('data: resync')));
+  } finally { response.end(); }
+  const count = messages.length;
+  await new Promise(resolve => setTimeout(resolve, 25));
+  assert.equal(messages.length, count);
 });
