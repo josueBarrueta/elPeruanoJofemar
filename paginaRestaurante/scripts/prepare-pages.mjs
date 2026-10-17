@@ -31,10 +31,6 @@ export function preparePages(output) {
     mkdirSync(resolve(root, route), { recursive: true });
     writeFileSync(resolve(root, route, 'index.html'), html);
   }
-  const menu = metadata(source, 'Carta de comida peruana en Valencia | El Peruano Jofemar', 'Consulta la carta de El Peruano Jofemar: platos peruanos, precios y alérgenos. Estamos en Calle Marqués de Zenete, 17, Valencia.', 'https://elperuanojofemar.com/carta/', true)
-    .replace(/<noscript>[\s\S]*?<\/noscript>/, '<noscript><main><h1>Carta de El Peruano Jofemar</h1><p>Activa JavaScript para consultar los platos y precios actualizados. También puedes llamar al <a href="tel:+34606790925">606 790 925</a>.</p><a href="/">Volver al restaurante</a></main></noscript>');
-  mkdirSync(resolve(root, 'carta'), { recursive: true });
-  writeFileSync(resolve(root, 'carta', 'index.html'), menu);
   // Unknown paths remain HTTP 404 and must never advertise the homepage as indexable.
   const fallback = metadata(source, 'Página no encontrada | El Peruano Jofemar', 'La página solicitada no existe.', '', false)
     .replace(/<noscript>[\s\S]*?<\/noscript>/, '<noscript><main><h1>Página no encontrada</h1><a href="/">Volver al restaurante</a></main></noscript>');
