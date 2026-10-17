@@ -1,3 +1,4 @@
+import { prepareMenuPhoto } from './menu-photo';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -176,18 +177,26 @@ export class AdminComponent {
     this.selected.allergens = [...current];
   }
 
-  selectImage(event: Event): void {
+  private imageSelection = 0;
+  imageProcessing = false;
+  async selectImage(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      this.itemStatus = 'Selecciona un archivo de imagen válido.';
-      input.value = '';
-      return;
+    const selection = ++this.imageSelection;
+    const target = this.selected;
+    this.imageProcessing = true;
+    this.itemStatus = 'Preparando la foto…';
+    try {
+      const photo = await prepareMenuPhoto(file);
+      if (selection !== this.imageSelection || target !== this.selected) return;
+      this.selected.image = photo;
+      this.imagePosition = '50% 50%'; this.imageZoom = 1; this.itemStatus = '';
+    } catch (error) {
+      if (selection === this.imageSelection && target === this.selected) this.itemStatus = error instanceof Error ? error.message : 'No se pudo leer la foto.';
+    } finally {
+      if (selection === this.imageSelection) { this.imageProcessing = false; input.value = ''; this.changeDetector.markForCheck(); }
     }
-    const reader = new FileReader();
-    reader.onload = () => { this.selected.image = String(reader.result); this.imagePosition = '50% 50%'; this.imageZoom = 1; this.itemStatus = ''; this.changeDetector.markForCheck(); };
-    reader.readAsDataURL(file);
   }
 
   getPreviewImageSource(image?: string): string {
@@ -284,6 +293,7 @@ export class AdminComponent {
   }
 
   save(): void {
+    if (this.imageProcessing) { this.itemStatus = 'Espera a que termine de prepararse la foto.'; return; }
     const wasEditing = this.isEditing && !!this.selected._id;
     const item = {
       ...this.selected,
@@ -323,6 +333,8 @@ export class AdminComponent {
           // MongoDB before the user has explicitly saved a new order.
           const index = this.items.findIndex((entry) => entry._id === savedItem._id);
           if (index >= 0) this.items[index] = { ...this.items[index], ...savedItem };
+        } else {
+          this.items = [...this.items, savedItem];
         }
         this.newItem();
         this.itemStatus = wasEditing ? 'Plato actualizado en MongoDB y en la carta pública.' : 'Plato publicado en MongoDB y disponible en la carta pública.';

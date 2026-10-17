@@ -12,6 +12,7 @@ import { receiptRange, receiptInvoiceInput } from './models/receipt-validation.j
 import { tableOrders } from './routes/table-orders.js';
 import { Reservation, reservationInput } from './models/reservation.model.js';
 import { MenuItem } from './models/menu-item.model.js';
+import { listMenuItems, menuPatch, createMenuImagesRouter } from './models/menu-media.js';
 import { DailyMenu } from './models/daily-menu.model.js';
 import { InvoiceDraft, Expense, FinanceSettings } from './models/finance.model.js';
 import { FinanceInputError, invoiceInput, expenseInput, settingsInput } from './models/finance-validation.js';
@@ -27,14 +28,13 @@ app.get('/api/health', (_request, response) => {
         database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
     });
 });
+app.use('/api/menu-images', createMenuImagesRouter());
 app.get('/api/menu', async (_request, response) => {
     if (mongoose.connection.readyState !== 1) {
         response.status(503).json({ message: 'MongoDB todavía no está conectado.' });
         return;
     }
-    const items = await MenuItem.find()
-        .sort({ category: 1, subcategory: 1, order: 1 })
-        .lean();
+    const items = await listMenuItems();
     response.json(items);
 });
 app.get('/api/daily-menu', async (_request, response) => {
@@ -47,20 +47,22 @@ app.put('/api/admin/daily-menu', requireAdmin, async (request, response) => {
     response.json(menu);
 });
 app.get('/api/admin/menu', requireAdmin, async (_request, response) => {
-    const items = await MenuItem.find().sort({ category: 1, subcategory: 1, order: 1 }).lean();
+    const items = await listMenuItems();
     response.json(items);
 });
 app.post('/api/admin/menu', requireAdmin, async (request, response) => {
-    const item = await MenuItem.create(request.body);
-    response.status(201).json(item);
+    const item = await MenuItem.create(menuPatch(request.body));
+    const saved = (await listMenuItems(String(item._id)))[0];
+    response.status(201).json(saved);
 });
 app.patch('/api/admin/menu/:id', requireAdmin, async (request, response) => {
-    const item = await MenuItem.findByIdAndUpdate(request.params['id'], request.body, { new: true, runValidators: true }).lean();
+    const item = await MenuItem.findByIdAndUpdate(request.params['id'], menuPatch(request.body, String(request.params['id'])), { new: true, runValidators: true }).select('_id').lean();
     if (!item) {
         response.status(404).json({ message: 'Producto no encontrado.' });
         return;
     }
-    response.json(item);
+    const saved = (await listMenuItems(String(item._id)))[0];
+    response.json(saved);
 });
 app.delete('/api/admin/menu/:id', requireAdmin, async (request, response) => {
     const item = await MenuItem.findByIdAndDelete(request.params['id']);

@@ -41,3 +41,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Server dependencies are installed from the lockfile.
+/server/node_modules/
