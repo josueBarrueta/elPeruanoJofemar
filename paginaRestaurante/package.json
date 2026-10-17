@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:seo": "node --test scripts/tests/*.test.mjs"
   },
   "prettier": {
     "overrides": [

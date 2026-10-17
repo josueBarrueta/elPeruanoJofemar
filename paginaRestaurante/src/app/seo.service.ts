@@ -1,3 +1,4 @@
+import { RESTAURANT_SCHEMA } from './restaurant-schema';
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
@@ -11,19 +12,20 @@ export class SeoService {
   private document = inject(DOCUMENT);
   private title = inject(Title);
   private meta = inject(Meta);
-  private restaurantSchema = this.document.getElementById('restaurant-schema')?.textContent || '';
+  private restaurantSchema = JSON.stringify(RESTAURANT_SCHEMA);
   update(path: string) {
+    path = path.replace(/\/+$/, '') || '/';
     const privatePage = /^\/(admin|login)(\/|$)/.test(path);
-    const reviews = path === '/resenas';
+    const indexable = path === '/';
     const title = privatePage ? 'Administración | El Peruano Jofemar'
-      : reviews ? 'Opiniones de El Peruano Jofemar | Restaurante peruano en Valencia' : homeTitle;
+      : homeTitle;
     const description = privatePage ? 'Acceso privado a la administración de El Peruano Jofemar.'
-      : reviews ? 'Lee las opiniones de clientes de El Peruano Jofemar, restaurante peruano en Valencia. Consulta nuestra carta, ubicación y cómo reservar.' : homeDescription;
+      : homeDescription;
     // Legacy category routes show the same homepage; consolidate them into its canonical URL.
-    const canonicalUrl = `${origin}${reviews ? '/resenas' : '/'}`;
+    const canonicalUrl = `${origin}/`;
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });
-    this.meta.updateTag({ name: 'robots', content: privatePage ? 'noindex, nofollow' : 'index, follow, max-image-preview:large' });
+    this.meta.updateTag({ name: 'robots', content: privatePage ? 'noindex, nofollow' : indexable ? 'index, follow, max-image-preview:large' : 'noindex, follow' });
     for (const [property, content] of Object.entries({ 'og:title': title, 'og:description': description, 'og:url': canonicalUrl })) {
       this.meta.updateTag({ property, content });
     }
@@ -35,7 +37,7 @@ export class SeoService {
       canonical.rel = 'canonical'; canonical.href = canonicalUrl; this.document.head.appendChild(canonical);
     }
     this.document.getElementById('restaurant-schema')?.remove();
-    if (!privatePage && !reviews && this.restaurantSchema) {
+    if (path === '/' && this.restaurantSchema) {
       const script = this.document.createElement('script');
       script.id = 'restaurant-schema'; script.type = 'application/ld+json'; script.textContent = this.restaurantSchema;
       this.document.head.appendChild(script);

@@ -13,6 +13,7 @@ export class ConsentService {
   private sessionChoice = false;
   private path = '';
   private lastPage = '';
+  private readonly referrer = this.safeReferrer();
 
   constructor() {
     // A second tab may withdraw consent while this tab is measuring.
@@ -22,6 +23,13 @@ export class ConsentService {
         if (this.loaded) this.stop();
       }
     });
+  }
+
+  private safeReferrer(): string {
+    try {
+      const url = new URL(document.referrer);
+      return ['http:', 'https:'].includes(url.protocol) && url.hostname !== window.location.hostname ? url.origin + '/' : '';
+    } catch { return ''; }
   }
 
   private read(): boolean | null {
@@ -42,16 +50,19 @@ export class ConsentService {
   }
 
   page(path: string): void {
-    this.path = path.split(/[?#]/)[0];
-    // Only these two public screens are measured. Never load tags in administration.
-    if (!['/', '/resenas'].includes(this.path)) {
+    this.path = path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+    // Development previews must not contaminate the restaurant's production reports.
+    if (!['elperuanojofemar.com', 'www.elperuanojofemar.com'].includes(window.location.hostname)) return;
+    // Only the public homepage is measured. Never load tags in administration.
+    if (this.path !== '/') {
       if (this.loaded) this.stop();
       return;
     }
     if (this.choice() !== true) return;
     // Consent expires during long visits too.
-    if (!this.sessionChoice && this.read() === null) {
-      this.choice.set(null);
+    if (!this.sessionChoice && this.read() !== true) {
+      this.choice.set(this.read());
+      this.clearCookies();
       if (this.loaded) this.stop();
       return;
     }
@@ -66,7 +77,7 @@ export class ConsentService {
       win.gtag('config', MEASUREMENT_ID, {
         send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false,
         cookie_expires: 60 * 60 * 24 * 180, cookie_update: false,
-        page_location: `https://elperuanojofemar.com${this.path}`, page_referrer: '',
+        page_location: `https://elperuanojofemar.com${this.path}`, page_referrer: this.referrer,
       });
       const script = document.createElement('script');
       script.id = 'jofemar-analytics';
@@ -78,13 +89,13 @@ export class ConsentService {
     this.lastPage = this.path;
     win.gtag?.('event', 'page_view', {
       page_location: `https://elperuanojofemar.com${this.path}`,
-      page_title: this.path === '/' ? 'El Peruano Jofemar' : 'Opiniones | El Peruano Jofemar',
-      page_referrer: '',
+      page_title: 'El Peruano Jofemar',
+      page_referrer: this.referrer,
     });
   }
 
   trackContact(method: 'whatsapp' | 'phone'): void {
-    if (!this.loaded || this.choice() !== true || !['/', '/resenas'].includes(this.path)) return;
+    if (!this.loaded || this.choice() !== true || this.path !== '/') return;
     if (!this.sessionChoice && this.read() !== true) {
       this.choice.set(this.read());
       this.clearCookies();
@@ -95,7 +106,7 @@ export class ConsentService {
     (window as AnalyticsWindow).gtag?.('event', method === 'whatsapp' ? 'click_whatsapp' : 'click_phone', {
       contact_method: method,
       page_location: `https://elperuanojofemar.com${this.path}`,
-      page_referrer: '',
+      page_referrer: this.referrer,
       transport_type: 'beacon',
     });
   }

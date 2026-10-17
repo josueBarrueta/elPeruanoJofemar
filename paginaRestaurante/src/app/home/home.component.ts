@@ -208,7 +208,9 @@ export class HomeComponent implements AfterViewInit {
         }
       });
     }
-    if (typeof window !== 'undefined') window.addEventListener('popstate', () => this.applyUrlSelection());
+    const onPopState = () => this.applyUrlSelection();
+    window.addEventListener('popstate', onPopState);
+    this.destroyRef.onDestroy(() => window.removeEventListener('popstate', onPopState));
   }
 
   ngAfterViewInit(): void {

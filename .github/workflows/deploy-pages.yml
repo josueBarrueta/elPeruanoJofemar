@@ -30,7 +30,11 @@ jobs:
 
       - name: Instalar dependencias
         working-directory: paginaRestaurante
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
+
+      - name: Comprobar publicación y consentimiento
+        working-directory: paginaRestaurante
+        run: npm run test:seo
 
       - name: Generar la web
         working-directory: paginaRestaurante
@@ -39,10 +43,10 @@ jobs:
       - name: Preparar los archivos publicados
         working-directory: paginaRestaurante
         run: |
-          mkdir pages-artifact
-          output_dir="$(dirname "$(find dist -type f -name index.html -print -quit)")"
-          cp -a "$output_dir"/. pages-artifact/
-          cp pages-artifact/index.html pages-artifact/404.html
+          mkdir -p pages-artifact
+          test -f dist/paginaRestaurante/browser/index.html
+          cp -a dist/paginaRestaurante/browser/. pages-artifact/
+          node scripts/prepare-pages.mjs pages-artifact
 
       - name: Subir la web a GitHub Pages
         uses: actions/upload-pages-artifact@v3
