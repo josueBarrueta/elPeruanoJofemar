@@ -1,6 +1,7 @@
+import { ConsentService } from '../consent/consent.service';
 import { REVIEWS } from './reviews.data';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, HostListener, OnDestroy, OnInit } from '@angular/core';
 
 export interface Review {
   author: string;
@@ -24,6 +25,7 @@ export interface Review {
 })
 export class ReviewsComponent implements OnInit, OnDestroy {
   constructor(private readonly changeDetector: ChangeDetectorRef) {}
+  readonly consent = inject(ConsentService);
   readonly reviews: Review[] = REVIEWS;
 
   readonly overallRating = '4.3';

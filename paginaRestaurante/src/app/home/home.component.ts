@@ -1,3 +1,4 @@
+import { ConsentService } from '../consent/consent.service';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { retry } from 'rxjs';
 import { CommonModule, registerLocaleData } from '@angular/common';
@@ -252,7 +253,11 @@ export class HomeComponent implements AfterViewInit {
     { question: '¿Qué representa Jofemar hoy?', answer: 'Después de varios años de éxito y reconocimiento, seguimos creciendo como punto de encuentro para los amantes de la auténtica gastronomía peruana en Valencia. En Jofemar, cada plato cuenta una historia, cada ingrediente es una herencia y cada cliente es parte de nuestra familia.' }
   ];
 
+  readonly consent = inject(ConsentService);
+
   openDailyMenu(): void {
+    // The welcome menu must not cover the pending consent dialog.
+    if (this.consent.choice() === null || document.querySelector('app-consent dialog[open]')) return;
     const dialog=this.dailyDialog?.nativeElement;
     if(!dialog || dialog.open)return;
     this.showDailyMenuModal=true;

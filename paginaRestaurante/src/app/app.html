@@ -5,3 +5,7 @@
 <div class="site-loader" [class.route-transition]="isRouteTransitioning" aria-hidden="true">
   <img src="assets/logo-carga.png" alt="">
 </div>
+
+@if (showPublicConsent) {
+  <app-consent></app-consent>
+}

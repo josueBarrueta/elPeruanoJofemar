@@ -47,3 +47,6 @@ app-admin img {
 app-admin .admin-shell { cursor: grab; }
 app-admin .drag-scrolling,
 app-admin .drag-scrolling * { cursor: grabbing !important; }
+
+/* El consentimiento modal mantiene la página de fondo inmóvil. */
+html:has(app-consent dialog[open]) { overflow: hidden; }

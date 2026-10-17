@@ -67,3 +67,6 @@ h1 { margin: .75rem 0 .8rem; font-family: Georgia, serif; font-size: clamp(2.1re
 @keyframes scoreFirst { from { transform: translateX(1.5rem); opacity: .7; } to { transform: translateX(0); opacity: 1; } }
 @keyframes detailsSecond { from { transform: translateX(2rem); opacity: .45; } to { transform: translateX(0); opacity: 1; } }
 @media (max-width: 560px) { .reviews-hero { padding-top: 4rem; } .reviews-shell { padding: 1rem; } .carousel { gap: .35rem; } .carousel-control { width: 2.2rem; height: 2.2rem; font-size: 1.7rem; } .review-card { padding: 1rem; } .source { display: none; } }
+
+.reviews-privacy { text-align:right; padding:16px 24px; }
+.reviews-privacy button { min-height:44px; border:0; background:transparent; color:inherit; font:inherit; font-size:12px; text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
