@@ -65,6 +65,7 @@ export function createMenuImagesRouter(load = async (id) => MenuItem.findById(id
         const version = typeof request.query['v'] === 'string' ? request.query['v'] : '';
         const key = request.params.id + ':' + version;
         let result = version ? cache.get(key) : undefined;
+        let exactVersion = Boolean(result);
         try {
             if (!result) {
                 const item = await load(request.params.id);
@@ -75,7 +76,8 @@ export function createMenuImagesRouter(load = async (id) => MenuItem.findById(id
                 const bytes = await optimizeMenuImage(item.image);
                 result = { bytes, etag: '"' + createHash('sha256').update(bytes).digest('hex') + '"' };
                 const actualVersion = item.updatedAt instanceof Date ? item.updatedAt.toISOString() : String(item.updatedAt ?? 'original');
-                if (version && version === actualVersion && bytes.length <= maxCacheBytes) {
+                exactVersion = Boolean(version && version === actualVersion);
+                if (exactVersion && bytes.length <= maxCacheBytes) {
                     while (cachedBytes + bytes.length > maxCacheBytes && cache.size) {
                         const oldest = cache.keys().next().value;
                         cachedBytes -= cache.get(oldest).bytes.length;
@@ -88,7 +90,7 @@ export function createMenuImagesRouter(load = async (id) => MenuItem.findById(id
                     cachedBytes += bytes.length;
                 }
             }
-            response.set({ 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=300', 'ETag': result.etag, 'X-Content-Type-Options': 'nosniff' });
+            response.set({ 'Content-Type': 'image/webp', 'Cache-Control': exactVersion ? 'public, max-age=31536000, immutable' : 'public, max-age=300', 'ETag': result.etag, 'X-Content-Type-Options': 'nosniff' });
             if (request.headers['if-none-match'] === result.etag) {
                 response.status(304).end();
                 return;

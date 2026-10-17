@@ -144,7 +144,7 @@ export class HomeComponent implements AfterViewInit {
     const items = [...(category.items || []), ...(category.subcategories || []).flatMap(sub=>sub.items)].filter(item=>item.image && item.active!==false);
     const preferred:Record<string,string>={'Primer plato o Entradas':'causa','Pescado y Mariscos':'ceviche de pescado','Carnes y Pollo':'lomo saltado','Platos Combinados':'ceviche','Bebidas':'pisco sour','Postres':'tarta'};
     const first = items.find(item=>this.normalized(item.name).includes(preferred[category.title] || '---')) || items[0];
-    return this.getImageSource(first?.image);
+    return this.getCardImageSource(first?.image);
   }
   get dailyHasOptions(): boolean { return this.dailyMenu.starters.some(item => item.trim()) && this.dailyMenu.mains.some(item => item.trim()); }
   get publishedMenuDate(): string { const date=new Date(this.dailyMenu.date+'T12:00:00');return Number.isFinite(date.getTime())?new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long'}).format(date):''; }
@@ -513,6 +513,12 @@ export class HomeComponent implements AfterViewInit {
     // Only replace bundled photos; remote and uploaded images keep their original URL.
     if (LOSSLESS_PHOTOS.has(localPath)) return localPath.replace(/\.png$/, '-lossless.webp');
     return image.startsWith('data:image/') || image.startsWith('http') || image.startsWith('assets/') ? image : `assets/images/${image}`;
+  }
+
+  getCardImageSource(image?: string): string {
+    const source = this.getImageSource(image);
+    return source.endsWith('-lossless.webp') && LOSSLESS_PHOTOS.has(source.replace('-lossless.webp', '.png'))
+      ? source.replace('-lossless.webp', '-card.webp') : source;
   }
 
   getImageTransform(item: MenuItem): string {

@@ -19,9 +19,14 @@ test('photos are resized, retain transparency, and support browser caching', asy
     const base=`http://127.0.0.1:${server.address().port}/api/menu-images/`;
     const url=base+'6ab53d13ea30aa110770e641?v=2026-10-17T00:00:00.000Z';
     const response=await fetch(url); assert.equal(response.status,200); assert.equal(response.headers.get('content-type'),'image/webp');
+    assert.equal(response.headers.get('cache-control'),'public, max-age=31536000, immutable');
     assert.deepEqual(Buffer.from(await response.arrayBuffer()),optimized);
     const cached=await fetch(url,{headers:{'If-None-Match':response.headers.get('etag')}});
     assert.equal(cached.status,304); assert.equal(loads,1);
+    const stale=await fetch(base+'6ab53d13ea30aa110770e641?v=wrong');
+    assert.equal(stale.headers.get('cache-control'),'public, max-age=300');
+    const unversioned=await fetch(base+'6ab53d13ea30aa110770e641');
+    assert.equal(unversioned.headers.get('cache-control'),'public, max-age=300');
     assert.equal((await fetch(base+'not-an-id')).status,400);
   } finally { await new Promise(resolve=>server.close(resolve)); }
 });
