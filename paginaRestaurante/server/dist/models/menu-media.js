@@ -37,6 +37,27 @@ export function menuPatch(body, id) {
     }
     return patch;
 }
+// Normalize only a new uploaded photo. Price edits and existing photo URLs are untouched.
+export async function prepareMenuPatch(body, id) {
+    const patch = menuPatch(body, id);
+    if (typeof patch['image'] !== 'string' || !patch['image'].startsWith('data:image/'))
+        return patch;
+    const source = patch['image'];
+    const match = /^data:image\/(?:png|jpe?g|webp|gif|avif);base64,([A-Za-z0-9+/=\r\n]+)$/i.exec(source);
+    if (!match)
+        throw new Error('Formato de foto no compatible');
+    const bytes = Buffer.from(match[1], 'base64');
+    const metadata = await sharp(bytes, { limitInputPixels: 40000000 }).metadata();
+    // The dashboard already optimizes most uploads. Avoid another lossy encoding.
+    if (metadata.format === 'webp' && metadata.width && metadata.height &&
+        metadata.width <= 1600 && metadata.height <= 1600 && !metadata.orientation && (metadata.pages ?? 1) === 1) {
+        patch['image'] = 'data:image/webp;base64,' + bytes.toString('base64');
+    }
+    else {
+        patch['image'] = 'data:image/webp;base64,' + (await optimizeMenuImage(source)).toString('base64');
+    }
+    return patch;
+}
 const cache = new Map();
 let cachedBytes = 0;
 const maxCacheBytes = 16 * 1024 * 1024;

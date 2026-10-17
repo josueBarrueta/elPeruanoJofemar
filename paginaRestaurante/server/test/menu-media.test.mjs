@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
 import sharp from 'sharp';
-import { createMenuImagesRouter, optimizeMenuImage, menuPatch } from '../dist/models/menu-media.js';
+import { createMenuImagesRouter, optimizeMenuImage, menuPatch, prepareMenuPatch } from '../dist/models/menu-media.js';
 
 const photo = async () => 'data:image/png;base64,' + (await sharp({create:{width:2200,height:1100,channels:4,background:{r:255,g:0,b:0,alpha:0.5}}}).png().toBuffer()).toString('base64');
 
@@ -49,4 +49,21 @@ test('a broken or missing photo returns an error independently of the menu',asyn
     assert.equal((await fetch(base+'6ab53d13ea30aa110770e641')).status,404);
     const invalid=await fetch(base+'6ab53d13ea30aa110770e642');assert.equal(invalid.status,503);assert.equal(invalid.headers.get('cache-control'),'no-store');
   } finally {await new Promise(resolve=>server.close(resolve));}
+});
+
+
+test('new uploads become WebP while edits preserve existing photos', async () => {
+  for (const format of ['png', 'jpeg']) {
+    const bytes=await sharp({create:{width:2000,height:1000,channels:3,background:'red'}})[format]().toBuffer();
+    const patch=await prepareMenuPatch({image:`data:image/${format};base64,${bytes.toString('base64')}`,price:12});
+    assert.match(patch.image,/^data:image\/webp;base64,/);
+    const meta=await sharp(Buffer.from(patch.image.split(',')[1],'base64')).metadata();
+    assert.equal(meta.format,'webp');assert.equal(meta.width,1600);assert.equal(meta.height,800);assert.equal(patch.price,12);
+    const again=await prepareMenuPatch(patch);assert.equal(again.image,patch.image);
+  }
+  const id='6ab53d13ea30aa110770e641';
+  assert.deepEqual(await prepareMenuPatch({price:15,image:`https://elperuanojofemar.onrender.com/api/menu-images/${id}?v=old`},id),{price:15});
+  assert.deepEqual(await prepareMenuPatch({image:''},id),{image:''});
+  assert.deepEqual(await prepareMenuPatch({price:15},id),{price:15});
+  await assert.rejects(prepareMenuPatch({image:'data:image/png;base64,invalid'}));
 });
