@@ -1,5 +1,5 @@
 import { ConsentService } from '../consent/consent.service';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { publicMenuRequest } from '../public-menu-request';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, registerLocaleData } from '@angular/common';
@@ -10,6 +10,8 @@ import { MenuApiService, ApiMenuItem } from '../menu-api.service';
 import { REVIEWS } from '../reviews/reviews.data';
 import { HERO_ASSETS } from './hero-assets';
 import { DailyMenu, DailyMenuService } from '../daily-menu.service';
+
+const LOSSLESS_PHOTOS = new Set(["assets/images/lomo_saltado.png","assets/images/ceviche_de_pescado.png","assets/images/arroz_con_mariscos.png","assets/images/trio_ceviche_huancaina_arroz_pollo.png","assets/images/aji_de_gallina.png","assets/images/tarta_chocolate.png"]);
 
 interface Allergen {
   id: string;
@@ -174,20 +176,19 @@ export class HomeComponent implements AfterViewInit {
   menuLoadError = false;
 
   constructor() {
-    const slideshow = window.setInterval(() => {
+    const zone = inject(NgZone);
+    const slideshow = zone.runOutsideAngular(() => window.setInterval(() => {
       if(this.heroSlides.length > 1 && document.visibilityState === 'visible' && !this.showDailyMenuModal && !this.selectedTestimonial){
         const previous=(this.storySlide - 1 + this.heroSlides.length) % this.heroSlides.length;
         if(this.heroImagesReady.has(this.heroSlides[previous].image)){
-          this.storySlide=previous;
-          this.changeDetector.markForCheck();
+          zone.run(() => { this.storySlide=previous; this.changeDetector.markForCheck(); });
         }
         const next=(this.heroSlide + 1) % this.heroSlides.length;
         if(this.heroImagesReady.has(this.heroSlides[next].image)){
-          this.heroSlide=next;
-          this.changeDetector.markForCheck();
+          zone.run(() => { this.heroSlide=next; this.changeDetector.markForCheck(); });
         }
       }
-    },2500);
+    },2500));
     this.destroyRef.onDestroy(() => { this.viewDestroyed=true; window.clearInterval(slideshow); document.body.classList.remove('modal-open'); });
     this.dailyMenu = this.dailyMenuService.get();
     this.dailyMenuService.loadRemote().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({ next: menu => { this.dailyMenu = menu; this.dailyMenuLoaded = true; this.maybeOpenDailyMenu(); this.changeDetector.markForCheck(); }, error: () => undefined });
@@ -508,6 +509,9 @@ export class HomeComponent implements AfterViewInit {
 
   getImageSource(image?: string): string {
     if (!image) return 'assets/images/peru-flag.png';
+    const localPath = image.startsWith('assets/') ? image : `assets/images/${image}`;
+    // Only replace bundled photos; remote and uploaded images keep their original URL.
+    if (LOSSLESS_PHOTOS.has(localPath)) return localPath.replace(/\.png$/, '-lossless.webp');
     return image.startsWith('data:image/') || image.startsWith('http') || image.startsWith('assets/') ? image : `assets/images/${image}`;
   }
 
