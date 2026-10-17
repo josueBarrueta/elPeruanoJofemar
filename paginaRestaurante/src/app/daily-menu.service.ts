@@ -24,7 +24,9 @@ export class DailyMenuService {
     } catch { return this.empty(); }
   }
 
-  save(menu: DailyMenu): void { localStorage.setItem(STORAGE_KEY, JSON.stringify(menu)); }
+  save(menu: DailyMenu): void {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(menu)); } catch { /* Storage may be blocked; the live menu must still work. */ }
+  }
   loadRemote(): Observable<DailyMenu> { return this.http.get<DailyMenu>(`${this.apiUrl}/daily-menu`).pipe(tap(menu => this.save({ ...menu, price: '13,50€' }))); }
   saveRemote(menu: DailyMenu): Observable<DailyMenu> {
     const token = localStorage.getItem('admin_token');

@@ -1,6 +1,7 @@
 import { ConsentService } from '../consent/consent.service';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
-import { retry } from 'rxjs';
+import { publicMenuRequest } from '../public-menu-request';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { LOCALE_ID } from '@angular/core';
@@ -89,6 +90,7 @@ export class HomeComponent implements AfterViewInit {
     this.storySlide=Math.max(0,this.heroSlides.findIndex(slide=>slide.name===storyName));
     this.changeDetector.markForCheck();
   }
+  secondaryHeroEnabled = false;
   heroSlide = 0;
   storySlide = HERO_ASSETS.length - 1;
   private readonly destroyRef = inject(DestroyRef);
@@ -188,11 +190,15 @@ export class HomeComponent implements AfterViewInit {
     },2500);
     this.destroyRef.onDestroy(() => { this.viewDestroyed=true; window.clearInterval(slideshow); document.body.classList.remove('modal-open'); });
     this.dailyMenu = this.dailyMenuService.get();
-    this.dailyMenuService.loadRemote().subscribe({ next: menu => { this.dailyMenu = menu; this.dailyMenuLoaded = true; this.maybeOpenDailyMenu(); this.changeDetector.markForCheck(); }, error: () => undefined });
+    this.dailyMenuService.loadRemote().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({ next: menu => { this.dailyMenu = menu; this.dailyMenuLoaded = true; this.maybeOpenDailyMenu(); this.changeDetector.markForCheck(); }, error: () => undefined });
     this.menuApi = inject(MenuApiService);
     this.menuLoading = true;
     if (this.menuApi) {
-      this.menuApi.getMenu().pipe(retry({ count: 3, delay: 1800 })).subscribe({
+      publicMenuRequest(this.menuApi.getMenu(), () => {
+        this.menuLoading = false;
+        this.menuLoadError = true;
+        this.changeDetector.markForCheck();
+      }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (items) => {
           this.menuCategories = this.groupApiItems(items);
           void this.updateHeroSlides(items);
@@ -215,6 +221,20 @@ export class HomeComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.viewReady = true;
+    // Let the first screen finish loading before downloading the rest of the carousel.
+    let secondaryTimer: number | undefined;
+    const enableSecondary = () => {
+      secondaryTimer = window.setTimeout(() => {
+        this.secondaryHeroEnabled = true;
+        this.changeDetector.markForCheck();
+      }, 1500);
+    };
+    if (document.readyState === 'complete') enableSecondary();
+    else window.addEventListener('load', enableSecondary, {once:true});
+    this.destroyRef.onDestroy(() => {
+      window.removeEventListener('load', enableSecondary);
+      window.clearTimeout(secondaryTimer);
+    });
     const welcomeTimer = window.setTimeout(() => {
       this.welcomeDelayElapsed = true;
       this.maybeOpenDailyMenu();

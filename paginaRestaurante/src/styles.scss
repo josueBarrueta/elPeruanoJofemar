@@ -1,5 +1,14 @@
 @import 'primeicons/primeicons.css';
 
+/* Keep the existing icon font while avoiding invisible icons during its download. */
+@font-face {
+  font-family: 'primeicons';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('primeicons/fonts/primeicons.woff2') format('woff2');
+}
+
 body.admin-route .reviews-section { display: none !important; }
 body:has(.admin-shell) .reviews-section { display: none !important; }
 body.admin-route #resenas, body:has(.admin-shell) #resenas { display: none !important; }
