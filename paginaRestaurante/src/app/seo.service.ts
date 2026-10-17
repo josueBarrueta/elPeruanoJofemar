@@ -16,13 +16,14 @@ export class SeoService {
   update(path: string) {
     path = path.replace(/\/+$/, '') || '/';
     const privatePage = /^\/(admin|login)(\/|$)/.test(path);
-    const indexable = path === '/';
+    const menuPage = path === '/carta';
+    const indexable = path === '/' || menuPage;
     const title = privatePage ? 'Administración | El Peruano Jofemar'
-      : homeTitle;
+      : menuPage ? 'Carta de comida peruana en Valencia | El Peruano Jofemar' : homeTitle;
     const description = privatePage ? 'Acceso privado a la administración de El Peruano Jofemar.'
-      : homeDescription;
+      : menuPage ? 'Consulta la carta de El Peruano Jofemar: platos peruanos, precios y alérgenos. Estamos en Calle Marqués de Zenete, 17, Valencia.' : homeDescription;
     // Legacy category routes show the same homepage; consolidate them into its canonical URL.
-    const canonicalUrl = `${origin}/`;
+    const canonicalUrl = menuPage ? `${origin}/carta/` : `${origin}/`;
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ name: 'robots', content: privatePage ? 'noindex, nofollow' : indexable ? 'index, follow, max-image-preview:large' : 'noindex, follow' });

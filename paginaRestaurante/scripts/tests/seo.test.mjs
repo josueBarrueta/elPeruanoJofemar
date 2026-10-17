@@ -21,6 +21,10 @@ test('published routes have separate metadata and private/fallback files are noi
       assert(!html.includes('id="restaurant-schema"'));
     }
     assert.equal(readFileSync(join(dir, 'index.html'), 'utf8'), homepage);
+    const menu = readFileSync(join(dir, 'carta/index.html'), 'utf8');
+    assert.match(menu, /Carta de comida peruana en Valencia/);
+    assert.match(menu, /rel="canonical" href="https:\/\/elperuanojofemar.com\/carta\/"/);
+    assert(!menu.includes('noindex'));
     assert(existsSync(join(dir, '.nojekyll')));
     preparePages(dir);
     assert(!existsSync(join(dir, 'resenas/index.html')));
