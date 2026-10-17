@@ -83,6 +83,23 @@ export class ConsentService {
     });
   }
 
+  trackContact(method: 'whatsapp' | 'phone'): void {
+    if (!this.loaded || this.choice() !== true || !['/', '/resenas'].includes(this.path)) return;
+    if (!this.sessionChoice && this.read() !== true) {
+      this.choice.set(this.read());
+      this.clearCookies();
+      this.stop();
+      return;
+    }
+    // Send only the contact method and a clean public URL, never phone numbers or message text.
+    (window as AnalyticsWindow).gtag?.('event', method === 'whatsapp' ? 'click_whatsapp' : 'click_phone', {
+      contact_method: method,
+      page_location: `https://elperuanojofemar.com${this.path}`,
+      page_referrer: '',
+      transport_type: 'beacon',
+    });
+  }
+
   private stop(): void {
     // Unload Google's runtime as well as its script element; no cookieless pings after withdrawal.
     (window as unknown as Record<string, unknown>)[`ga-disable-${MEASUREMENT_ID}`] = true;
