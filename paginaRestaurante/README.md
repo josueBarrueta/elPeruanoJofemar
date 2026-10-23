@@ -57,3 +57,14 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Sesiones de administración
+
+Las sesiones de la API caducan a las 8 horas desde el login, también tras reiniciar el servidor.
+El servidor comprueba la caducidad en cada petición privada; MongoDB elimina después los registros
+caducados con un índice TTL. Las sesiones antiguas sin fecha de caducidad dejan de ser válidas.
+Cambiar `ADMIN_PASSWORD` o `ADMIN_EMAIL` en Render y reiniciar o desplegar la API invalida
+los tokens anteriores. El cambio afecta a todos los dispositivos: deben volver a iniciar sesión.
+El login admite hasta 10 solicitudes cada 15 minutos por proceso para la cuenta compartida;
+el límite devuelve HTTP 429 y `Retry-After`. Se reinicia al reiniciar el proceso y no se comparte
+entre réplicas; con varias instancias se debe usar un limitador compartido o protección del alojamiento.
