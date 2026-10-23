@@ -68,3 +68,18 @@ los tokens anteriores. El cambio afecta a todos los dispositivos: deben volver a
 El login admite hasta 10 solicitudes cada 15 minutos por proceso para la cuenta compartida;
 el límite devuelve HTTP 429 y `Retry-After`. Se reinicia al reiniciar el proceso y no se comparte
 entre réplicas; con varias instancias se debe usar un limitador compartido o protección del alojamiento.
+
+## Imágenes y carga inicial
+
+Las seis fotos locales destacadas usan miniaturas WebP de 640 píxeles con compresión
+para la carta y las tarjetas. Sus originales y las versiones grandes sin pérdida
+se conservan para el detalle del plato. El logo y la portada móvil también tienen
+copias optimizadas; el preload móvil apunta a la misma copia que el carrusel.
+Para regenerarlas, instala las dependencias de `server` y ejecuta
+`node scripts/optimize-public-images.mjs` desde `paginaRestaurante`.
+
+La portada carga primero la imagen inicial y después la siguiente, avanzando
+progresivamente. Las fotos de la historia empiezan a cargarse cuando esa sección
+se aproxima a la pantalla. GitHub Pages controla las cabeceras de caché de los
+archivos estáticos; un archivo de configuración de Apache o Nginx no las cambia.
+La nota de PageSpeed debe medirse de nuevo después de publicar.

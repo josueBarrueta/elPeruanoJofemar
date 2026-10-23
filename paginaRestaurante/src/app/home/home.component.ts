@@ -93,6 +93,8 @@ export class HomeComponent implements AfterViewInit {
     this.changeDetector.markForCheck();
   }
   secondaryHeroEnabled = false;
+  heroSlidesToLoad = 1;
+  storyImagesEnabled = false;
   heroSlide = 0;
   storySlide = HERO_ASSETS.length - 1;
   private readonly destroyRef = inject(DestroyRef);
@@ -185,7 +187,7 @@ export class HomeComponent implements AfterViewInit {
         }
         const next=(this.heroSlide + 1) % this.heroSlides.length;
         if(this.heroImagesReady.has(this.heroSlides[next].image)){
-          zone.run(() => { this.heroSlide=next; this.changeDetector.markForCheck(); });
+          zone.run(() => { this.heroSlide=next; this.heroSlidesToLoad=Math.min(this.heroSlides.length, Math.max(this.heroSlidesToLoad, next + 2)); this.changeDetector.markForCheck(); });
         }
       }
     },2500));
@@ -222,11 +224,25 @@ export class HomeComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.viewReady = true;
+    const story = document.getElementById('sobre-nosotros');
+    if (story && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        this.storyImagesEnabled = true;
+        this.changeDetector.markForCheck();
+        observer.disconnect();
+      }, { rootMargin: '200px' });
+      observer.observe(story);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    } else {
+      this.storyImagesEnabled = true;
+    }
     // Let the first screen finish loading before downloading the rest of the carousel.
     let secondaryTimer: number | undefined;
     const enableSecondary = () => {
       secondaryTimer = window.setTimeout(() => {
         this.secondaryHeroEnabled = true;
+        this.heroSlidesToLoad = Math.min(2, this.heroSlides.length);
         this.changeDetector.markForCheck();
       }, 1500);
     };
@@ -518,7 +534,7 @@ export class HomeComponent implements AfterViewInit {
   getCardImageSource(image?: string): string {
     const source = this.getImageSource(image);
     return source.endsWith('-lossless.webp') && LOSSLESS_PHOTOS.has(source.replace('-lossless.webp', '.png'))
-      ? source.replace('-lossless.webp', '-card.webp') : source;
+      ? source.replace('-lossless.webp', '-preview.webp') : source;
   }
 
   getImageTransform(item: MenuItem): string {
