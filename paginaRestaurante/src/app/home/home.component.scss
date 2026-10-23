@@ -18,6 +18,8 @@
 .hero-backgrounds,.hero-shade { position:absolute; inset:0; z-index:-1; }
 .hero-backgrounds img { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:65% 55%; opacity:0; transition:opacity .9s ease-in-out; }
 .hero-backgrounds img.is-active { opacity:1; }
+/* Paint the first photo immediately, without an initial opacity animation. */
+.hero-backgrounds picture:first-child img.is-active { transition:none; }
 .hero-shade { background:linear-gradient(90deg,rgba(27,17,12,.88) 0%,rgba(27,17,12,.69) 35%,rgba(27,17,12,.16) 72%,rgba(27,17,12,.1)),linear-gradient(0deg,rgba(23,15,10,.6),transparent 35%); }
 .hero-slideshow .hero-grid { display:block; min-height:0; padding-top:80px; padding-bottom:100px; }
 .hero-slideshow .hero-copy { max-width:660px; }

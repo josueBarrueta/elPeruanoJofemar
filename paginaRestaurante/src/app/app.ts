@@ -14,7 +14,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = 'El Peruano Jofemar';
   currentYear = new Date().getFullYear();
-  isRouteTransitioning = true;
+  isRouteTransitioning = false;
   showPublicConsent = false;
   private transitionTimer?: number;
   private previousRoutePath: string | null = null;
@@ -25,9 +25,12 @@ export class AppComponent {
         const routePath = event.urlAfterRedirects.split(/[?#]/, 1)[0];
         this.showPublicConsent = !/^\/(admin|login)(\/|$)/.test(routePath);
         if (this.previousRoutePath === routePath) return;
+        const firstNavigation = this.previousRoutePath === null;
         this.previousRoutePath = routePath;
         seo.update(routePath);
         consent.page(routePath);
+        // On entry show the page immediately; retain the logo transition between routes.
+        if (firstNavigation) return;
         // Animamos únicamente al cambiar de pantalla real, nunca al cambiar de hash.
         this.isRouteTransitioning = false;
         window.requestAnimationFrame(() => {
