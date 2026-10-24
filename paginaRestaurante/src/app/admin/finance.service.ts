@@ -5,7 +5,7 @@ export interface InvoiceLine {description:string; quantity:number; unitPrice:num
 export interface Invoice { _id?:string; status?:'draft'|'issued';invoiceNumber?:string;issuedAt?:string;updatedAt?:string;operationDate?:string;issuerSnapshot?:Partial<BillingSettings>;recordHash?:string; sourceOrderId?:string; clientName:string; clientTaxId:string; clientAddress:string; date:string; lines:InvoiceLine[]; notes:string; subtotalCents?:number; taxCents?:number; totalCents?:number; archived?:boolean; }
 export interface ExpenseRecord {_id?:string;supplier:string;description:string;category:string;date:string;totalCents:number;reference:string;attachmentName?:string;attachment?:{name:string;mimeType:string;data:string};taxCents?:number|null;paid:boolean;archived?:boolean;}
 export interface BillingSettings {legalName:string;taxId:string;address:string;email:string;phone:string;invoiceSeries:string;invoiceStartingNumber?:number;currentBillingSystem:string;}
-export const FINANCE_API_URL = new InjectionToken<string>('FINANCE_API_URL',{providedIn:'root',factory:()=> 'https://elperuanojofemar.onrender.com/api/admin/finance'});
+export const FINANCE_API_URL = new InjectionToken<string>('FINANCE_API_URL',{providedIn:'root',factory:()=> 'https://axwxlsai9xocqzi5jvnbebks.2.31.73.77.sslip.io/api/admin/finance'});
 @Injectable({providedIn:'root'})
 export class FinanceService {
  private readonly http=inject(HttpClient);

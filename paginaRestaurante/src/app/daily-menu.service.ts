@@ -15,7 +15,7 @@ const STORAGE_KEY = 'jofemar-daily-menu';
 @Injectable({ providedIn: 'root' })
 export class DailyMenuService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'https://elperuanojofemar.onrender.com/api';
+  private readonly apiUrl = 'https://axwxlsai9xocqzi5jvnbebks.2.31.73.77.sslip.io/api';
   get(): DailyMenu {
     if (typeof localStorage === 'undefined') return this.empty();
     try {

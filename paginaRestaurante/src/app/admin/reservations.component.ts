@@ -16,7 +16,7 @@ export class ReservationsComponent {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
   private changes = inject(ChangeDetectorRef);
-  private url = 'https://elperuanojofemar.onrender.com/api/admin/reservations';
+  private url = 'https://axwxlsai9xocqzi5jvnbebks.2.31.73.77.sslip.io/api/admin/reservations';
   @ViewChild('reservationDialog') dialog?: ElementRef<HTMLDialogElement>;
   @ViewChild('addButton') addButton?: ElementRef<HTMLButtonElement>;
   reservations: Reservation[] = [];

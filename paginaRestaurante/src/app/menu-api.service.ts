@@ -20,7 +20,7 @@ export interface ApiMenuItem {
 
 @Injectable({ providedIn: 'root' })
 export class MenuApiService {
-  private readonly apiUrl = 'https://elperuanojofemar.onrender.com/api';
+  private readonly apiUrl = 'https://axwxlsai9xocqzi5jvnbebks.2.31.73.77.sslip.io/api';
   private readonly http = inject(HttpClient);
   private adminOptions() { const token = localStorage.getItem('admin_token'); return { headers: new HttpHeaders(token ? { Authorization: `Bearer ${token}` } : {}) }; }
 

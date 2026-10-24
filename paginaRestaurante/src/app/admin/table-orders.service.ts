@@ -13,7 +13,7 @@ export interface TableOrderDraft { tableName: string; guests: number; notes: str
 export class TableOrdersService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
-  private url = 'https://elperuanojofemar.onrender.com/api/admin/table-orders';
+  private url = 'https://axwxlsai9xocqzi5jvnbebks.2.31.73.77.sslip.io/api/admin/table-orders';
   private options() { return { headers: new HttpHeaders({ Authorization: `Bearer ${this.auth.token() ?? ''}` }) }; }
   list(status: 'open' | 'closed') { return this.http.get<TableOrder[]>(`${this.url}?status=${status}`, this.options()); }
   private live = inject(AdminLiveService);
